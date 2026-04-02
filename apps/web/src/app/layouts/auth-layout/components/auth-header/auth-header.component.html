@@ -1,0 +1,25 @@
+<header
+  class="mx-auto flex w-[min(1200px,calc(100%-2rem))] items-center justify-between py-3 sm:py-4 max-sm:flex-col max-sm:items-start max-sm:gap-3"
+>
+  <a routerLink="/" class="inline-flex items-center gap-3 font-bold text-gray-50 no-underline">
+    <span
+      class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 text-[0.95rem] text-white shadow-[0_10px_30px_rgba(59,130,246,0.3)]"
+    >CM</span>
+    <span class="text-base tracking-wide">CaseFlow</span>
+  </a>
+
+  <nav class="flex flex-wrap items-center gap-3">
+    <a
+      routerLink="/"
+      class="rounded-full px-[0.95rem] py-[0.65rem] text-[0.95rem] text-slate-300 no-underline transition-colors duration-200 hover:bg-white/[0.06] hover:text-slate-50"
+    >Home</a>
+    <a
+      routerLink="/auth/sign-in"
+      class="rounded-full px-[0.95rem] py-[0.65rem] text-[0.95rem] text-slate-300 no-underline transition-colors duration-200 hover:bg-white/[0.06] hover:text-slate-50"
+    >Sign in</a>
+    <a
+      routerLink="/auth/sign-up"
+      class="rounded-full border border-blue-400/35 bg-blue-500/18 px-[0.95rem] py-[0.65rem] text-[0.95rem] text-slate-50 no-underline transition-colors duration-200 hover:bg-blue-500/28"
+    >Get started</a>
+  </nav>
+</header>

@@ -1,0 +1,52 @@
+<div class="flex min-h-dvh flex-col">
+  <app-auth-header />
+
+  <main
+    class="mx-auto grid w-[min(1200px,calc(100%-2rem))] flex-1 grid-cols-1 items-start gap-6 py-4 pb-6 min-[901px]:grid-cols-[1.1fr_0.9fr] min-[901px]:items-center min-[901px]:gap-8 min-[901px]:py-8 min-[901px]:pb-10 max-[900px]:pt-2"
+  >
+    <section class="px-0 py-4 pr-0 max-[900px]:py-2 min-[901px]:py-8 min-[901px]:pr-4">
+      <div class="max-w-136 max-[900px]:max-w-none">
+        <p class="mb-4 mt-0 text-[0.78rem] font-bold uppercase tracking-[0.14em] text-blue-300">
+          Case management platform
+        </p>
+        <h1
+          class="m-0 max-[640px]:text-4xl text-[clamp(2.25rem,5vw,4rem)] leading-[1.05] tracking-tight text-slate-50"
+        >
+          Manage cases with clarity and structure.
+        </h1>
+        <p class="mt-5 text-[1.05rem] leading-relaxed text-slate-300">
+          Keep case data organized, track progress, and build a workflow that feels modern, fast,
+          and reliable.
+        </p>
+
+        <ul class="mt-6 grid list-none gap-[0.85rem] p-0">
+          <li
+            class="relative pl-6 text-blue-100 before:absolute before:left-0 before:top-[0.55rem] before:h-[0.55rem] before:w-[0.55rem] before:rounded-full before:bg-linear-to-br before:from-blue-400 before:to-indigo-400 before:shadow-[0_0_0_6px_rgba(96,165,250,0.08)] before:content-['']"
+          >
+            Track active and closed cases
+          </li>
+          <li
+            class="relative pl-6 text-blue-100 before:absolute before:left-0 before:top-[0.55rem] before:h-[0.55rem] before:w-[0.55rem] before:rounded-full before:bg-linear-to-br before:from-blue-400 before:to-indigo-400 before:shadow-[0_0_0_6px_rgba(96,165,250,0.08)] before:content-['']"
+          >
+            Clear workflow and status visibility
+          </li>
+          <li
+            class="relative pl-6 text-blue-100 before:absolute before:left-0 before:top-[0.55rem] before:h-[0.55rem] before:w-[0.55rem] before:rounded-full before:bg-linear-to-br before:from-blue-400 before:to-indigo-400 before:shadow-[0_0_0_6px_rgba(96,165,250,0.08)] before:content-['']"
+          >
+            Built for secure, role-based access
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="flex justify-center max-[900px]:pb-2">
+      <div
+        class="w-full max-w-md rounded-3xl border border-slate-400/16 bg-slate-900/72 p-4 shadow-[0_20px_60px_rgba(2,6,23,0.45),inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-[18px] sm:p-5 min-[901px]:p-6 max-[900px]:max-h-[min(calc(100dvh-6.5rem),800px)] max-[900px]:overflow-y-auto max-[640px]:rounded-2xl"
+      >
+        <router-outlet></router-outlet>
+      </div>
+    </section>
+  </main>
+
+  <app-auth-footer />
+</div>

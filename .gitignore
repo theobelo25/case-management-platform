@@ -1,0 +1,32 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Node / pnpm
+node_modules/
+.pnpm-store/
+
+# Angular
+.angular/
+dist/
+coverage/
+
+# .NET
+bin/
+obj/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Misc
+tmp/
+temp/

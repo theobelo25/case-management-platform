@@ -1,0 +1,21 @@
+{
+  "name": "case-management-platform",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "concurrently \"pnpm --dir apps/web start\" \"dotnet run --project apps/api\"",
+    "web:start": "pnpm --dir apps/web start",
+    "web:build": "pnpm --dir apps/web build",
+    "api:start": "dotnet run --project apps/api",
+    "api:build": "dotnet build apps/api",
+    "api:test": "dotnet test"
+  },
+  "keywords": [],
+  "author": "Theodore Belo",
+  "license": "ISC",
+  "packageManager": "pnpm@10.33.0",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

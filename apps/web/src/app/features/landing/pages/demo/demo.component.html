@@ -1,0 +1,75 @@
+<div class="layout-container py-12 pb-16 text-gray-800">
+  <section class="mb-10 text-center">
+    <p class="landing-eyebrow mb-3">Product Demo</p>
+    <h1
+      class="mb-0 mt-0 text-[clamp(2.25rem,5vw,3.5rem)] font-bold leading-[1.05] tracking-[-0.03em] text-gray-900"
+    >
+      See CaseFlow in action
+    </h1>
+    <p class="mx-auto mt-4 max-w-2xl text-[1.05rem] leading-[1.7] text-gray-600">
+      A quick walkthrough of how cases are created, managed, and tracked through the system.
+    </p>
+  </section>
+
+  <section class="my-8 mb-12">
+    @if (loomEmbedUrl) {
+      <div
+        class="relative w-full overflow-hidden rounded-2xl border border-gray-200 bg-white pt-[56.25%] shadow-[0_10px_30px_rgba(15,23,42,0.06)]"
+      >
+        <iframe
+          class="absolute inset-0 h-full w-full"
+          [src]="loomEmbedUrl"
+          frameborder="0"
+          allowfullscreen
+        ></iframe>
+      </div>
+    } @else {
+      <div
+        class="rounded-2xl border border-dashed border-gray-300 bg-slate-50 px-8 py-12 text-center"
+      >
+        <div class="mb-4 text-3xl text-blue-600/80">▶</div>
+        <h3 class="mb-2 mt-0 text-lg font-bold text-gray-900">Demo video coming soon</h3>
+        <p class="m-0 text-gray-600">
+          I’m currently recording a walkthrough showing the full case management workflow.
+        </p>
+      </div>
+    }
+  </section>
+
+  <section class="mb-12 grid grid-cols-1 gap-5 md:grid-cols-3">
+    <article
+      class="rounded-[1.25rem] border border-gray-200 bg-white p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)]"
+    >
+      <h3 class="mb-3 mt-0 text-lg font-bold text-gray-900">Track progress</h3>
+      <p class="m-0 leading-relaxed text-gray-600">
+        Move cases through clear statuses with full visibility into their lifecycle.
+      </p>
+    </article>
+
+    <article
+      class="rounded-[1.25rem] border border-gray-200 bg-white p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)]"
+    >
+      <h3 class="mb-3 mt-0 text-lg font-bold text-gray-900">Clean architecture</h3>
+      <p class="m-0 leading-relaxed text-gray-600">
+        Built with Angular and .NET using scalable, production-ready patterns.
+      </p>
+    </article>
+  </section>
+
+  <section class="text-center">
+    <h2 class="landing-section-h2">Want to try it yourself?</h2>
+    <p class="text-gray-600">Sign up and explore the platform firsthand.</p>
+
+    <div class="mt-6 flex flex-wrap justify-center gap-4">
+      <a
+        routerLink="/auth/sign-up"
+        class="inline-block rounded-[0.85rem] bg-blue-600 px-5 py-3.5 text-[0.95rem] font-semibold text-white no-underline shadow-[0_8px_24px_rgba(37,99,235,0.2)] transition duration-150 ease-out hover:-translate-y-px hover:bg-blue-700"
+      >
+        Get Started
+      </a>
+      <a routerLink="/auth/sign-in" class="btn-public-outline inline-block no-underline">
+        Sign In
+      </a>
+    </div>
+  </section>
+</div>

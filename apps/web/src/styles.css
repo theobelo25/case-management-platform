@@ -1,0 +1,37 @@
+@import 'tailwindcss';
+
+@layer base {
+  /*
+   * Keep a vertical scrollbar track always present so centered layouts don’t shift when
+   * content height crosses the “scrollbar appears” threshold. Avoids scrollbar-gutter: stable,
+   * which left an empty strip that showed as a white bar next to the page.
+   */
+  html {
+    overflow-y: scroll;
+  }
+}
+
+/* Shared with app-public-header, app-public-footer, and routed pages — shell content width */
+@layer components {
+  .layout-container {
+    @apply mx-auto box-border w-[min(1120px,calc(100%-2rem))];
+  }
+
+  /* Landing / marketing — shared typography (avoid repeating long utility chains) */
+  .landing-eyebrow {
+    @apply mb-3 text-sm font-bold uppercase tracking-[0.08em] text-blue-600;
+  }
+
+  .landing-section-h2 {
+    @apply mb-3 mt-0 text-3xl leading-tight font-bold;
+  }
+
+  .landing-section-y {
+    @apply py-20;
+  }
+
+  /* Matches hero “View demo” + header “Sign in” */
+  .btn-public-outline {
+    @apply cursor-pointer rounded-[0.85rem] border border-gray-300 bg-white px-5 py-3.5 text-[0.95rem] font-semibold text-gray-900 transition duration-150 ease-out hover:-translate-y-px;
+  }
+}

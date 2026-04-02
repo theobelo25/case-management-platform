@@ -1,0 +1,11 @@
+<div class="grid min-h-dvh grid-cols-1 min-[981px]:grid-cols-[280px_1fr]">
+  <app-protected-sidebar />
+
+  <div class="flex min-w-0 flex-col">
+    <app-protected-header />
+
+    <main class="flex-1 overflow-auto p-6 max-[720px]:p-4">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
