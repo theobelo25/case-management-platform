@@ -1,7 +1,9 @@
 using System.Text;
 using CaseManagement.Api.Common.Middleware;
-using CaseManagement.Api.Configuration;
-using CaseManagement.Api.Data;
+using CaseManagement.Api.Features.Auth.Services;
+using CaseManagement.Api.Infrastructure.Authentication;
+using CaseManagement.Api.Infrastructure.Configuration;
+using CaseManagement.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -19,11 +21,13 @@ builder.Services.Configure<JwtOptions>(
 
 var databaseOptions = builder.Configuration
     .GetSection(DatabaseOptions.SectionName)
-    .Get<DatabaseOptions>() ?? throw new InvalidOperationException("Database configuration is missing.");
+    .Get<DatabaseOptions>() 
+    ?? throw new InvalidOperationException("Database configuration is missing.");
 
 var jwtOptions = builder.Configuration
     .GetSection(JwtOptions.SectionName)
-    .Get<JwtOptions>() ?? throw new InvalidOperationException("JWT configuration is missing.");
+    .Get<JwtOptions>() 
+    ?? throw new InvalidOperationException("JWT configuration is missing.");
 
 if (string.IsNullOrWhiteSpace(databaseOptions.ConnectionString))
 {
@@ -48,6 +52,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(databaseOptions.ConnectionString);
 });
 
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+
 builder.Services
     .AddHealthChecks()
     .AddNpgSql(databaseOptions.ConnectionString, name: "postgres");
@@ -69,7 +77,7 @@ builder.Services
                 Encoding.UTF8.GetBytes(jwtOptions.Secret)),
             
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.FromMinutes(1)
+            ClockSkew = TimeSpan.Zero
         };
     });
 

@@ -39,8 +39,17 @@ public sealed class GlobalExceptionMiddleware
         }
     }
 
-    private static async Task WriteErrorAsync(HttpContext context, int statusCode, string message)
+    private static async Task WriteErrorAsync(
+        HttpContext context, 
+        int statusCode, 
+        string message)
     {
+        if (context.Response.HasStarted)
+        {
+            return;
+        }
+
+        context.Response.Clear();
         context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
 
