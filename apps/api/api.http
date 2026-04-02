@@ -1,6 +1,28 @@
+### Case Management API — REST Client
+### Default profile (`http`): port 5082. For HTTPS use `https://localhost:7277` and `--launch-profile https`.
+### Requires valid `Database` and `Jwt` config (see appsettings / user secrets) for the API to start.
+
 @api_HostAddress = http://localhost:5082
 
-GET {{api_HostAddress}}/weatherforecast/
+### Root — service name and status
+GET {{api_HostAddress}}/
 Accept: application/json
+
+###
+
+### Health — ASP.NET health checks (includes PostgreSQL when configured)
+GET {{api_HostAddress}}/health
+
+###
+
+### OpenAPI document (Development only)
+GET {{api_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+###
+
+### Swagger UI — open in a browser (Development only)
+# https://localhost:7277/swagger
+# {{api_HostAddress}}/swagger
 
 ###

@@ -69,8 +69,9 @@ Uses the Angular CLI **Vitest** builder (`ng test`). Sample specs: `app.spec.ts`
 
 - **Stack:** ASP.NET Core 10, **controllers** pipeline (`AddControllers` / `MapControllers`), **OpenAPI** (`MapOpenApi` in Development), **Swagger** (Swashbuckle: JSON + UI in Development).
 - **CORS:** Policy `Frontend` allows `http://localhost:4200` for local Angular development.
+- **Configuration:** `appsettings.json` commits **no secrets**. For local development, set **`Database:ConnectionString`** and **`Jwt:Secret`** with [.NET User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) from `apps/api` (see `appsettings.Development.example.json` for the shape). For production, use environment variables or your host’s secret store (e.g. `Database__ConnectionString`, `Jwt__Secret`).
 
-There are **no API controllers** checked in yet; add controllers and register any extra services in `Program.cs` as you build case-management endpoints.
+The API validates these values at startup; extend `Program.cs` and add controllers as you build case-management endpoints.
 
 ## Tooling
 
