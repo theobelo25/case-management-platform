@@ -2,6 +2,8 @@
   <Folder Name="/apps/">
     <Project Path="apps/api/CaseManagement.Api/CaseManagement.Api.csproj" />
     <Project Path="apps/api/CaseManagement.Application/CaseManagement.Application.csproj" />
+    <Project Path="apps/api/CaseManagement.Api.Tests/CaseManagement.Api.Tests.csproj" />
+    <Project Path="apps/api/CaseManagement.Application.Tests/CaseManagement.Application.Tests.csproj" />
     <Project Path="apps/api/CaseManagement.Domain/CaseManagement.Domain.csproj" />
     <Project Path="apps/api/CaseManagement.Infrastructure/CaseManagement.Infrastructure.csproj" />
     <Project Path="apps/api/CaseManagement.ArchitectureTests/CaseManagement.ArchitectureTests.csproj" />

@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CaseManagement.Infrastructure.Persistence;
 
-public sealed class AppDbContext: DbContext
+public sealed class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {}
+    { }
 
     public DbSet<UserEntity> Users => Set<UserEntity>();
 

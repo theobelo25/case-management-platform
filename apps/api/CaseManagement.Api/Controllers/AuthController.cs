@@ -1,4 +1,5 @@
 using CaseManagement.Application.Auth;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ public sealed class AuthController : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<AuthResponse>> SignIn(
         [FromBody] SignInRequest request,
         CancellationToken cancellationToken)
@@ -32,13 +34,14 @@ public sealed class AuthController : ControllerBase
     [Authorize]
     [ProducesResponseType(typeof(MeResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<MeResponse>> Me(
         CancellationToken cancellationToken)
     {
-        var userIdClaim = 
+        var userIdClaim =
             User.FindFirstValue(ClaimTypes.NameIdentifier) ??
-            User.FindFirstValue("sub");
-        
+            User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
         if (!Guid.TryParse(userIdClaim, out var userId))
         {
             return Unauthorized();

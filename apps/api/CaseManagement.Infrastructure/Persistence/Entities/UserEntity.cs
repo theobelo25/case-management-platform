@@ -1,4 +1,5 @@
 namespace CaseManagement.Infrastructure.Persistence.Entities;
+
 public sealed class UserEntity
 {
     public Guid Id { get; set; }

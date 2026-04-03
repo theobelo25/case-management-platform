@@ -1,5 +1,4 @@
 using CaseManagement.Application.Common.Exceptions;
-using CaseManagement.Domain.Users;
 
 namespace CaseManagement.Application.Auth;
 
@@ -20,31 +19,35 @@ public sealed class AuthService : IAuthService
     }
 
     public async Task<AuthResponse> SignInAsync(
-    SignInRequest request,
-    CancellationToken cancellationToken = default)
-{
-    var normalizedEmail = request.Email.Trim().ToLowerInvariant();
-    var user = await _users.GetByEmailAsync(normalizedEmail, cancellationToken)
-        ?? throw new UnauthorizedException("Invalid email or password.");
-    if (!_passwordHasher.Verify(request.Password, user.PasswordHash))
-        throw new UnauthorizedException("Invalid email or password.");
-    var token = _jwtTokenService.CreateAccessToken(
-        user.Id,
-        user.Email,
-        user.FullName);
-    return new AuthResponse(
-        token.AccessToken,
-        token.ExpiresAtUtc,
-        user.Id,
-        user.Email,
-        user.FullName);
-}
-public async Task<MeResponse> GetMeAsync(
-    Guid userId,
-    CancellationToken cancellationToken = default)
-{
-    var user = await _users.GetByIdAsync(userId, cancellationToken)
-        ?? throw new UnauthorizedException("User not found.");
-    return new MeResponse(user.Id, user.Email, user.FullName);
-}
+        SignInRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+        var user = await _users.GetByEmailAsync(normalizedEmail, cancellationToken)
+            ?? throw new UnauthorizedException("Invalid email or password.");
+
+        if (!_passwordHasher.Verify(request.Password, user.PasswordHash))
+            throw new UnauthorizedException("Invalid email or password.");
+
+        var token = _jwtTokenService.CreateAccessToken(
+            user.Id,
+            user.Email,
+            user.FullName);
+
+        return new AuthResponse(
+            token.AccessToken,
+            token.ExpiresAtUtc,
+            user.Id,
+            user.Email,
+            user.FullName);
+    }
+    public async Task<MeResponse> GetMeAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _users.GetByIdAsync(userId, cancellationToken)
+            ?? throw new NotFoundException("User not found.");
+
+        return new MeResponse(user.Id, user.Email, user.FullName);
+    }
 }

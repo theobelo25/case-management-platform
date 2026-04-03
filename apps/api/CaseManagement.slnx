@@ -1,6 +1,8 @@
 <Solution>
   <Project Path="CaseManagement.Api/CaseManagement.Api.csproj" />
   <Project Path="CaseManagement.Application/CaseManagement.Application.csproj" />
+  <Project Path="CaseManagement.Api.Tests/CaseManagement.Api.Tests.csproj" />
+  <Project Path="CaseManagement.Application.Tests/CaseManagement.Application.Tests.csproj" />
   <Project Path="CaseManagement.ArchitectureTests/CaseManagement.ArchitectureTests.csproj" />
   <Project Path="CaseManagement.Domain/CaseManagement.Domain.csproj" />
   <Project Path="CaseManagement.Infrastructure/CaseManagement.Infrastructure.csproj" />

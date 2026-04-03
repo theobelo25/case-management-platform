@@ -32,11 +32,11 @@ public sealed class JwtTokenService : IJwtTokenService
 
         var signingKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_jwtOptions.Secret));
-        
+
         var signingCredentials = new SigningCredentials(
             signingKey,
             SecurityAlgorithms.HmacSha256);
-        
+
         var token = new JwtSecurityToken(
             issuer: _jwtOptions.Issuer,
             audience: _jwtOptions.Audience,

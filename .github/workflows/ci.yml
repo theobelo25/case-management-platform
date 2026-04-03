@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api:
+    name: API (.NET)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore case-management-platform.slnx
+
+      - name: dotnet format (verify)
+        run: dotnet format case-management-platform.slnx --verify-no-changes --no-restore
+
+      - name: Build
+        run: dotnet build case-management-platform.slnx --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test case-management-platform.slnx --no-build --configuration Release --verbosity normal
+
+  web:
+    name: Web (Angular)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: ESLint
+        run: pnpm --dir apps/web lint
+
+      - name: Prettier
+        run: pnpm --dir apps/web format:check
+
+      - name: Unit tests
+        run: pnpm --dir apps/web exec ng test --watch=false

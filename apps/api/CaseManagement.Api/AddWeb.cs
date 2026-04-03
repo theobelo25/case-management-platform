@@ -1,16 +1,21 @@
 using CaseManagement.Api.Middleware;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using FluentValidation;
+using Microsoft.Extensions.Configuration;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 namespace CaseManagement.Api;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddWeb(this IServiceCollection services)
+    public static IServiceCollection AddWeb(this IServiceCollection services, IConfiguration configuration)
     {
+        var corsSection = configuration.GetSection(CorsOptions.SectionName);
+        services.AddOptions<CorsOptions>().Bind(corsSection);
+        var corsOrigins = corsSection.Get<CorsOptions>()?.AllowedOrigins ?? [];
+
         services.AddControllers();
+        services.AddFluentValidationAutoValidation();
+        services.AddValidatorsFromAssemblyContaining<Validation.SignInRequestValidator>();
         services.AddOpenApi();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
@@ -21,10 +26,20 @@ public static class ServiceCollectionExtensions
         {
             options.AddPolicy("Frontend", policy =>
             {
-                policy
-                    .WithOrigins("http://localhost:4200")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
+                if (corsOrigins.Length > 0)
+                {
+                    policy
+                        .WithOrigins(corsOrigins)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                }
+                else
+                {
+                    policy
+                        .SetIsOriginAllowed(_ => false)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                }
             });
         });
 

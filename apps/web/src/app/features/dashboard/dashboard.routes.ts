@@ -9,7 +9,9 @@ export const DASHBOARD_ROUTES: Routes = [
       {
         path: '',
         loadComponent: () =>
-          import('./pages/dashboard-home/dashboard-home.component').then((m) => m.DashboardHomeComponent),
+          import('./pages/dashboard-home/dashboard-home.component').then(
+            (m) => m.DashboardHomeComponent,
+          ),
         title: 'Dashboard',
       },
     ],

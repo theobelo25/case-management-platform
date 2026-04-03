@@ -8,12 +8,14 @@ export const AUTH_ROUTES: Routes = [
     children: [
       {
         path: 'sign-in',
-        loadComponent: () => import('./pages/sign-in/sign-in.component').then((m) => m.SignInComponent),
+        loadComponent: () =>
+          import('./pages/sign-in/sign-in.component').then((m) => m.SignInComponent),
         title: 'Sign in',
       },
       {
         path: 'sign-up',
-        loadComponent: () => import('./pages/sign-up/sign-up.component').then((m) => m.SignUpComponent),
+        loadComponent: () =>
+          import('./pages/sign-up/sign-up.component').then((m) => m.SignUpComponent),
         title: 'Sign up',
       },
       {

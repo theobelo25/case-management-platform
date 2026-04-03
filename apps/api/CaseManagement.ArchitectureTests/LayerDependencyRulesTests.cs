@@ -41,7 +41,8 @@ public sealed class LayerDependencyRulesTests
                 "CaseManagement.Api",
                 "Microsoft.EntityFrameworkCore",
                 "Npgsql.EntityFrameworkCore.PostgreSQL",
-                "Microsoft.AspNetCore"
+                "Microsoft.AspNetCore",
+                "FluentValidation"
             )
             .GetResult();
 

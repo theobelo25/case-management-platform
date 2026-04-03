@@ -14,7 +14,7 @@ public static class DbInitializer
     {
         await dbContext.Database.MigrateAsync(cancellationToken);
 
-        if (await dbContext.Users.AnyAsync(cancellationToken))
+        if (await userRepository.AnyUsersAsync(cancellationToken))
             return;
 
         var email = "demo@caseplatform.local".Trim().ToLowerInvariant();
