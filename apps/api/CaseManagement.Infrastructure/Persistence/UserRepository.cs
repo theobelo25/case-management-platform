@@ -42,9 +42,6 @@ public sealed class UserRepository : IUserRepository
         await _db.SaveChangesAsync(cancellationToken);
     }
 
-    public Task<bool> AnyUsersAsync(CancellationToken cancellationToken) =>
-        _db.Users.AnyAsync(cancellationToken);
-
     private static User ToDomain(UserEntity entity) =>
         new(
             entity.Id,

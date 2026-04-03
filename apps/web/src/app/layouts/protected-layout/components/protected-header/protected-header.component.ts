@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-protected-header',
@@ -11,4 +12,6 @@ import { RouterLink } from '@angular/router';
     class: 'contents',
   },
 })
-export class ProtectedHeaderComponent {}
+export class ProtectedHeaderComponent {
+  protected readonly auth = inject(AuthService);
+}

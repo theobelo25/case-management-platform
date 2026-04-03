@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-dashboard-home',
@@ -6,4 +7,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   templateUrl: './dashboard-home.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardHomeComponent {}
+export class DashboardHomeComponent {
+  protected readonly auth = inject(AuthService);
+}
