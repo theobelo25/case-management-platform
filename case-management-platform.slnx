@@ -6,6 +6,7 @@
     <Project Path="apps/api/CaseManagement.Application.Tests/CaseManagement.Application.Tests.csproj" />
     <Project Path="apps/api/CaseManagement.Domain/CaseManagement.Domain.csproj" />
     <Project Path="apps/api/CaseManagement.Infrastructure/CaseManagement.Infrastructure.csproj" />
+    <Project Path="apps/api/CaseManagement.Infrastructure.Tests/CaseManagement.Infrastructure.Tests.csproj" />
     <Project Path="apps/api/CaseManagement.ArchitectureTests/CaseManagement.ArchitectureTests.csproj" />
   </Folder>
 </Solution>

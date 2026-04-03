@@ -26,3 +26,22 @@ Accept: application/json
 # {{api_HostAddress}}/swagger
 
 ###
+
+### Sign in — issues JWT in body and sets HttpOnly refresh cookie (see Set-Cookie in response)
+POST {{api_HostAddress}}/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "your-password"
+}
+
+###
+
+### Refresh access token — refresh token is read only from the HttpOnly cookie (never from JSON).
+### From this file: copy the refresh value from the sign-in response `Set-Cookie` header, or send e.g.
+###   Cookie: refresh_token=<paste-cookie-value-here>
+### (cookie name matches Jwt:RefreshToken:CookieName in appsettings, default `refresh_token`).
+POST {{api_HostAddress}}/auth/refresh
+
+###

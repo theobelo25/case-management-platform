@@ -1,6 +1,11 @@
+using System.Threading.RateLimiting;
 using CaseManagement.Api.Middleware;
+using CaseManagement.Api.RateLimiting;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 namespace CaseManagement.Api;
@@ -21,6 +26,49 @@ public static class ServiceCollectionExtensions
         services.AddSwaggerGen();
 
         services.AddAuthorization();
+
+        services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+            options.OnRejected = async (context, _) =>
+            {
+                if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+                {
+                    context.HttpContext.Response.Headers.RetryAfter =
+                        ((int)retryAfter.TotalSeconds).ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
+                }
+
+                var problemDetailsService =
+                    context.HttpContext.RequestServices.GetRequiredService<IProblemDetailsService>();
+                var problemDetails = new ProblemDetails
+                {
+                    Status = StatusCodes.Status429TooManyRequests,
+                    Title = "Too Many Requests",
+                    Detail = "Too many refresh token requests from this address. Try again later.",
+                    Instance = context.HttpContext.Request.Path.Value
+                };
+
+                await problemDetailsService.WriteAsync(new ProblemDetailsContext
+                {
+                    HttpContext = context.HttpContext,
+                    ProblemDetails = problemDetails
+                });
+            };
+
+            options.AddPolicy(RateLimitPolicyNames.Refresh, httpContext =>
+            {
+                var partitionKey = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+                return RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey,
+                    _ => new FixedWindowRateLimiterOptions
+                    {
+                        PermitLimit = 30,
+                        Window = TimeSpan.FromMinutes(1),
+                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                        QueueLimit = 0
+                    });
+            });
+        });
 
         services.AddCors(options =>
         {
@@ -70,6 +118,7 @@ public static class ServiceCollectionExtensions
         app.UseCors("Frontend");
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseRateLimiter();
         app.MapControllers();
         app.MapHealthChecks("/health");
 

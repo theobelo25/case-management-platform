@@ -1,6 +1,6 @@
 using CaseManagement.Domain.Users;
 
-namespace CaseManagement.Application.Auth;
+namespace CaseManagement.Application.Auth.Ports;
 
 public interface IUserRepository
 {

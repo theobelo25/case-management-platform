@@ -1,4 +1,4 @@
-using CaseManagement.Application.Auth;
+using CaseManagement.Application.Auth.Ports;
 using CaseManagement.Application.Database;
 
 namespace CaseManagement.Infrastructure.Persistence;

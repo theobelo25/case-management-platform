@@ -1,4 +1,6 @@
 using CaseManagement.Application.Auth;
+using CaseManagement.Application.Auth.Options;
+using CaseManagement.Application.Auth.Ports;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
