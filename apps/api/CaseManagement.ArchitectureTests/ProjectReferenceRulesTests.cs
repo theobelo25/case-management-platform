@@ -27,7 +27,7 @@ public sealed class ProjectReferenceRulesTests
             .Descendants("ProjectReference")
             .Select(e => e.Attribute("Include")?.Value)
             .Where(v => !string.IsNullOrWhiteSpace(v))
-            .Select(v => Path.GetFileNameWithoutExtension(v!))
+            .Select(v => ProjectReferenceName(v!))
             .OrderBy(n => n, StringComparer.Ordinal)
             .ToArray();
 
@@ -49,4 +49,14 @@ public sealed class ProjectReferenceRulesTests
                 ["CaseManagement.Application", "CaseManagement.Infrastructure"]
             },
         };
+
+    /// <summary>
+    /// .csproj files use backslashes in Include paths; on Linux, <see cref="Path"/> APIs only
+    /// treat '/' as a separator, so we normalize before taking the file name.
+    /// </summary>
+    private static string ProjectReferenceName(string include)
+    {
+        var normalized = include.Replace('\\', Path.AltDirectorySeparatorChar);
+        return Path.GetFileNameWithoutExtension(normalized);
+    }
 }
