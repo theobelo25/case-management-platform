@@ -5,17 +5,28 @@ Monorepo for a case-management style product: an **Angular** SPA backed by an **
 ## Repository layout
 
 | Path | Description |
-|------|-------------|
+| ---- | ----------- |
 | `apps/web` | Angular 21 frontend (standalone components, lazy routes, Tailwind CSS 4) |
-| `apps/api` | ASP.NET Core 10 Web API (OpenAPI + Swagger in Development, CORS for the dev server) |
+| `apps/api` | .NET 10 backend split into layered projects (see below) |
 | `packages/*` | Reserved for shared libraries (nothing checked in yet) |
 
-The .NET solution file is `case-management-platform.slnx` and currently includes only `apps/api`.
+### Backend projects (`apps/api`)
+
+| Project | Role |
+| ------- | ---- |
+| `CaseManagement.Api` | ASP.NET Core host: controllers, middleware, OpenAPI/Swagger, JWT bearer setup |
+| `CaseManagement.Application` | Use cases and application services (e.g. auth) |
+| `CaseManagement.Domain` | Domain model |
+| `CaseManagement.Infrastructure` | EF Core (Npgsql), repositories, JWT/password services, health checks |
+| `CaseManagement.ArchitectureTests` | xUnit + NetArchTest rules for layer dependencies |
+
+The repo-level solution is `case-management-platform.slnx` and references all of the projects above. There is also `apps/api/CaseManagement.slnx` if you prefer working from the API folder only.
 
 ## Prerequisites
 
 - **Node.js** (LTS recommended) and **pnpm** 10.x (see root `package.json` → `packageManager`, currently `pnpm@10.33.0`)
-- **.NET SDK** for **.NET 10** (`net10.0` in `apps/api/api.csproj`)
+- **.NET SDK** for **.NET 10** (`net10.0` in `apps/api/CaseManagement.Api/CaseManagement.Api.csproj`)
+- **PostgreSQL** for the API (connection string in configuration; see below)
 
 ## Quick start
 
@@ -26,23 +37,23 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm dev` runs the Angular dev server and the API together (via `concurrently`): frontend at **http://localhost:4200**, API using the default launch profile in `apps/api/Properties/launchSettings.json`.
+`pnpm dev` runs the Angular dev server and the API together (via `concurrently`): frontend at **http://localhost:4200**, API using the default launch profile in `apps/api/CaseManagement.Api/Properties/launchSettings.json`.
 
 **API URLs in development**
 
 - Default `dotnet run` profile (`http`): **http://localhost:5082**
-- With HTTPS profile: `dotnet run --project apps/api --launch-profile https` → **https://localhost:7277** and **http://localhost:5082**
+- With HTTPS profile: `dotnet run --project apps/api/CaseManagement.Api --launch-profile https` → **https://localhost:7277** and **http://localhost:5082**
 
 ### Run apps separately
 
 | Goal | Command |
-|------|---------|
+| ---- | ------- |
 | Web only | `pnpm web:start` |
 | API only | `pnpm api:start` |
 | Production build (web) | `pnpm web:build` |
-| Build API | `pnpm api:build` |
+| Build API (whole solution) | `pnpm api:build` |
 
-`pnpm api:test` runs `dotnet test` from the repo root. There is no separate test project in the solution yet, so this is a no-op until you add one.
+`pnpm api:test` runs `dotnet test` from the repo root. Today that executes **CaseManagement.ArchitectureTests** (xUnit + NetArchTest layering rules).
 
 ### Web tests
 
@@ -67,11 +78,16 @@ Uses the Angular CLI **Vitest** builder (`ng test`). Sample specs: `app.spec.ts`
 
 ## API (`apps/api`)
 
-- **Stack:** ASP.NET Core 10, **controllers** pipeline (`AddControllers` / `MapControllers`), **OpenAPI** (`MapOpenApi` in Development), **Swagger** (Swashbuckle: JSON + UI in Development).
+- **Shape:** Controller-based ASP.NET Core 10 host with **Application** / **Domain** / **Infrastructure** projects; startup wires `AddWeb()`, `AddApplication()`, `AddInfrastructure()`, and JWT bearer authentication in `CaseManagement.Api/Program.cs`.
+- **Persistence:** **EF Core** with **Npgsql** (`UseNpgsql`). In Development, the database is initialized via a development initializer (see `DevelopmentDatabaseExtensions` / `IDevelopmentDatabaseInitializer`).
+- **Stack (host):** **OpenAPI** (`MapOpenApi` in Development), **Swagger** (Swashbuckle: JSON + UI in Development), **Problem Details** and a **global exception handler**, **health checks** at **`/health`** (including PostgreSQL).
 - **CORS:** Policy `Frontend` allows `http://localhost:4200` for local Angular development.
-- **Configuration:** `appsettings.json` commits **no secrets**. For local development, set **`Database:ConnectionString`** and **`Jwt:Secret`** with [.NET User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) from `apps/api` (see `appsettings.Development.example.json` for the shape). For production, use environment variables or your host’s secret store (e.g. `Database__ConnectionString`, `Jwt__Secret`).
+- **Auth (HTTP):**
+  - `POST /auth/sign-in` — issue tokens (anonymous).
+  - `GET /auth/me` — current user (requires JWT).
+- **Configuration:** `appsettings.json` commits **no secrets**. For local development, set **`Database:ConnectionString`** and **`Jwt:Secret`** with [.NET User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) from `apps/api/CaseManagement.Api` (see `appsettings.Development.example.json` for the shape). For production, use environment variables or your host’s secret store (e.g. `Database__ConnectionString`, `Jwt__Secret`).
 
-The API validates these values at startup; extend `Program.cs` and add controllers as you build case-management endpoints.
+The API validates JWT options at startup and requires a non-empty database connection string before registering EF Core.
 
 ## Tooling
 
