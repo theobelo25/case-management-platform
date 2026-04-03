@@ -3,7 +3,12 @@
     class="rounded-3xl border border-slate-400/14 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
   >
     <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-300">Overview</p>
-    <h2 class="m-0 text-[1.8rem] text-slate-50">Welcome back</h2>
+    @if (auth.session(); as s) {
+      <h2 class="m-0 text-[1.8rem] text-slate-50">Welcome, {{ s.fullName }}</h2>
+      <p class="text-sm text-slate-400">{{ s.email }}</p>
+    } @else {
+      <h2 class="m-0 text-[1.8rem] text-slate-50">Welcome back</h2>
+    }
     <p class="mb-0 mt-[0.85rem] max-w-2xl leading-[1.7] text-slate-300">
       This is your protected application area. From here you can manage cases, tasks, and other
       internal workflows.
