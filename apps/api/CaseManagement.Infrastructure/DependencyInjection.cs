@@ -41,7 +41,7 @@ public static class DependencyInjection
 
         services.AddDbContext<AppDbContext>(o =>
             o.UseNpgsql(databaseOptions.ConnectionString));
-            
+
         services.AddScoped<IDevelopmentDatabaseInitializer, DevelopmentDatabaseInitializer>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
@@ -49,7 +49,7 @@ public static class DependencyInjection
         services.AddScoped<IRefreshTokenStore, RefreshTokenStore>();
         services.AddScoped<IRefreshTokenIssuer, RefreshTokenIssuer>();
         services.AddScoped<IRefreshTokenValidator, RefreshTokenValidator>();
-        
+
         services
             .AddHealthChecks()
             .AddNpgSql(databaseOptions.ConnectionString, name: "postgres");

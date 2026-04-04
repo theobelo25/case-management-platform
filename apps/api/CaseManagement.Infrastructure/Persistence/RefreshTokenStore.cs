@@ -73,8 +73,8 @@ public sealed class RefreshTokenStore : IRefreshTokenStore
     }
 
     public async Task<RefreshTokenSession?> GetActiveByLookupIdAsync(
-        string lookupId, 
-        DateTime utcNow, 
+        string lookupId,
+        DateTime utcNow,
         CancellationToken cancellationToken = default)
     {
         var row = await _db.RefreshSessions
@@ -84,7 +84,7 @@ public sealed class RefreshTokenStore : IRefreshTokenStore
                     && x.RevokedAtUtc == null
                     && x.ExpiresAtUtc > utcNow,
                 cancellationToken);
-        
+
         return row is null
             ? null
             : new RefreshTokenSession(
@@ -111,7 +111,7 @@ public sealed class RefreshTokenStore : IRefreshTokenStore
     public async Task RevokeAsync(Guid sessionId, CancellationToken cancellationToken = default)
     {
         var utcNow = DateTime.UtcNow;
-        
+
         await _db.RefreshSessions
             .Where(x => x.Id == sessionId && x.RevokedAtUtc == null)
             .ExecuteUpdateAsync(

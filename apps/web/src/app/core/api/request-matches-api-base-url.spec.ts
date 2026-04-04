@@ -7,9 +7,9 @@ describe('requestMatchesApiBaseUrl', () => {
   });
 
   it('returns true when request URL starts with configured API base', () => {
-    expect(requestMatchesApiBaseUrl('http://localhost:5082/api/v1/cases', 'http://localhost:5082')).toBe(
-      true,
-    );
+    expect(
+      requestMatchesApiBaseUrl('http://localhost:5082/api/v1/cases', 'http://localhost:5082'),
+    ).toBe(true);
   });
 
   it('returns false when request URL does not start with API base', () => {

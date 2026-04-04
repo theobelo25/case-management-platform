@@ -25,11 +25,7 @@ describe('auth401Interceptor', () => {
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(
-          withInterceptors([
-            withCredentialsInterceptor,
-            authInterceptor,
-            auth401Interceptor,
-          ]),
+          withInterceptors([withCredentialsInterceptor, authInterceptor, auth401Interceptor]),
         ),
         provideHttpClientTesting(),
         { provide: API_BASE_URL, useValue: baseUrl },

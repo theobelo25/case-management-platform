@@ -1,4 +1,5 @@
 namespace CaseManagement.Application.Auth;
+
 public sealed record RefreshTokenSession(
     Guid Id,
     Guid UserId,

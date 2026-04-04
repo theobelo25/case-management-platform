@@ -106,12 +106,12 @@ public sealed class AuthController : ControllerBase
         Guid? authenticatedUserId = null;
         if (User.Identity?.IsAuthenticated == true)
         {
-            var userIdClaim = 
+            var userIdClaim =
                 User.FindFirstValue(ClaimTypes.NameIdentifier) ??
                 User.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
             if (Guid.TryParse(userIdClaim, out var id))
-                authenticatedUserId = id; 
+                authenticatedUserId = id;
         }
 
         await _authService.SignOutAsync(

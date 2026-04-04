@@ -12,7 +12,7 @@ public sealed class AuthService : IAuthService
     private readonly IRefreshTokenIssuer _refreshTokenIssuer;
     private readonly IRefreshTokenValidator _refreshTokenValidator;
     private readonly IRefreshTokenStore _refreshTokenStore;
-    
+
     public AuthService(
         IUserRepository users,
         IPasswordHasher passwordHasher,
@@ -44,7 +44,7 @@ public sealed class AuthService : IAuthService
             user.Id,
             user.Email,
             user.FullName);
-        
+
         var (refreshRaw, refreshExpires) =
             await _refreshTokenIssuer.IssueAsync(user.Id, cancellationToken);
 
@@ -132,7 +132,7 @@ public sealed class AuthService : IAuthService
             clientUserAgent,
             clientIpAddress,
             cancellationToken);
-        
+
         return new SignInResult(
             new AuthResponse(
                 token.AccessToken,
@@ -143,7 +143,7 @@ public sealed class AuthService : IAuthService
             refreshRaw,
             refreshExpires);
     }
-    
+
     public async Task SignOutAsync(
         string? refreshTokenRaw,
         bool revokeAllSessions,

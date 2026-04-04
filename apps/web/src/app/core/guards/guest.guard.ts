@@ -18,7 +18,7 @@ export const guestGuard: CanActivateFn = (route) => {
     return redirectWhenSignedIn();
   }
 
-  return auth.whenSessionRestored().pipe(
-    map(() => (auth.session() !== null ? redirectWhenSignedIn() : true)),
-  );
+  return auth
+    .whenSessionRestored()
+    .pipe(map(() => (auth.session() !== null ? redirectWhenSignedIn() : true)));
 };

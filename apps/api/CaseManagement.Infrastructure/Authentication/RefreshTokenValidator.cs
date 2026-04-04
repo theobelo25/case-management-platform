@@ -17,7 +17,7 @@ public sealed class RefreshTokenValidator : IRefreshTokenValidator
     {
         if (string.IsNullOrWhiteSpace(rawToken))
             return null;
-        
+
         var dot = rawToken.IndexOf(".");
         if (dot <= 0 || dot == rawToken.Length - 1)
             return null;
@@ -35,7 +35,7 @@ public sealed class RefreshTokenValidator : IRefreshTokenValidator
 
         if (secret.Length != 32)
             return null;
-        
+
         var session = await _store.GetActiveByLookupIdAsync(lookupId, utcNow, cancellationToken);
         if (session is null)
             return null;

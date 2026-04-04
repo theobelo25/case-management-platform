@@ -65,7 +65,9 @@ describe('guestGuard', () => {
     const result = await runGuard({});
 
     expect(result).toBeInstanceOf(UrlTree);
-    expect(router.serializeUrl(result as UrlTree)).toBe(router.serializeUrl(router.parseUrl('/app')));
+    expect(router.serializeUrl(result as UrlTree)).toBe(
+      router.serializeUrl(router.parseUrl('/app')),
+    );
   });
 
   it('redirects to returnUrl when signed in and returnUrl is internal', async () => {
@@ -85,6 +87,8 @@ describe('guestGuard', () => {
     const result = await runGuard({ returnUrl: '//evil.example/phish' });
 
     expect(result).toBeInstanceOf(UrlTree);
-    expect(router.serializeUrl(result as UrlTree)).toBe(router.serializeUrl(router.parseUrl('/app')));
+    expect(router.serializeUrl(result as UrlTree)).toBe(
+      router.serializeUrl(router.parseUrl('/app')),
+    );
   });
 });
