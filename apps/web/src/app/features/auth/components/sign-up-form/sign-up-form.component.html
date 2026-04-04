@@ -105,6 +105,10 @@
     </div>
   </div>
 
+  @if (submitError(); as err) {
+    <p class="text-xs leading-tight text-red-400 sm:text-sm">{{ err }}</p>
+  }
+
   <button
     class="mt-1 w-full rounded-xl bg-blue-600 py-2.5 text-[0.9rem] font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50 sm:text-[0.95rem]"
     type="submit"

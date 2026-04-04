@@ -2,15 +2,24 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.6.
 
+## API base URL (build-time)
+
+`__WEB_API_BASE_URL__` is set by esbuild **`define`**:
+
+- **`angular.json`:** `development` → `http://localhost:5082`; **`production` → `""`** (same origin as the deployed site).
+- **`scripts/ng-with-web-env.mjs`:** If **`API_BASE_URL`** is set in the environment or `apps/web/.env`, it adds `--define` and overrides the above. If unset, the configuration-specific values from `angular.json` apply.
+
+Use `pnpm start` / `pnpm build` from this package (they use the script). For a custom API origin in CI or production, set `API_BASE_URL` (no trailing slash).
+
 ## Development server
 
 To start a local development server, run:
 
 ```bash
-ng serve
+pnpm start
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+(or `ng serve --configuration development` if you are not using the pnpm script). Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
 ## Code scaffolding
 
@@ -31,10 +40,10 @@ ng generate --help
 To build the project run:
 
 ```bash
-ng build
+pnpm build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+This runs the production configuration by default (`dist/` output). The bundle does **not** embed `http://localhost:5082` unless you set `API_BASE_URL` or build with `--configuration development`.
 
 ## Running unit tests
 

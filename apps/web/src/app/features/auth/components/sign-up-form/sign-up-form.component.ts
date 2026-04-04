@@ -1,8 +1,11 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { EMPTY, finalize, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 
-import { passwordsMatchValidator } from '../../../../shared/validators/passwords-match.validator';
+import { AuthService } from '@app/core/auth/auth.service';
+import { passwordsMatchValidator } from '@app/shared/validators/passwords-match.validator';
 
 @Component({
   selector: 'app-sign-up-form',
@@ -13,6 +16,10 @@ import { passwordsMatchValidator } from '../../../../shared/validators/passwords
 })
 export class SignUpFormComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
+  public submitError = signal<string | null>(null);
 
   protected readonly form = this.fb.nonNullable.group(
     {
@@ -37,21 +44,38 @@ export class SignUpFormComponent {
     }
 
     this.isSubmitting.set(true);
+    this.submitError.set(null);
 
     const raw = this.form.getRawValue();
 
-    EMPTY.pipe(
-      tap(() => {
-        console.log('Sign up payload', {
-          firstName: raw.firstName,
-          lastName: raw.lastName,
-          email: raw.email,
-          password: raw.password,
-        });
-        // Replace EMPTY with this.auth.signUp(payload) when the auth service exists.
-      }),
-      finalize(() => this.isSubmitting.set(false)),
-    ).subscribe();
+    this.auth
+      .signUp({
+        firstName: raw.firstName,
+        lastName: raw.lastName,
+        email: raw.email,
+        password: raw.password,
+      })
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          void this.router.navigate(['/app']);
+        },
+        error: (err: unknown) => {
+          let message = 'Something went wrong. Please try again.';
+
+          if (err instanceof HttpErrorResponse) {
+            if (err.status === 409) {
+              message = 'An account with this email already exists.';
+            } else if (err.status === 400) {
+              message = 'Check your details and try again.';
+            } else if (err.status === 0) {
+              message = 'Cannot reach the server. Check your connection.';
+            }
+          }
+
+          this.submitError.set(message);
+        },
+      });
   }
 
   protected get firstName() {

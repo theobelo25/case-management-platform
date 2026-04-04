@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { PublicLayoutComponent } from '../../layouts/public-layout/public-layout.component';
+import { PublicLayoutComponent } from '@app/layouts/public-layout/public-layout.component';
 
 export const LANDING_ROUTES: Routes = [
   {

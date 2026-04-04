@@ -1,5 +1,5 @@
 using Isopoh.Cryptography.Argon2;
-using CaseManagement.Application.Auth;
+using CaseManagement.Application.Auth.Ports;
 
 namespace CaseManagement.Infrastructure.Authentication;
 

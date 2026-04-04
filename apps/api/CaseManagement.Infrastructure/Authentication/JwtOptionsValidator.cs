@@ -1,4 +1,5 @@
 using System.Text;
+using CaseManagement.Application.Auth.Options;
 using Microsoft.Extensions.Options;
 
 namespace CaseManagement.Infrastructure.Authentication;

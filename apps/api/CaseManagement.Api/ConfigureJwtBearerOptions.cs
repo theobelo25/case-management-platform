@@ -1,5 +1,5 @@
 using System.Text;
-using CaseManagement.Infrastructure.Authentication;
+using CaseManagement.Application.Auth.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

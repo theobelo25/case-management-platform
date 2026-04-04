@@ -1,8 +1,17 @@
 ### Case Management API — REST Client
 ### Default profile (`http`): port 5082. For HTTPS use `https://localhost:7277` and `--launch-profile https`.
 ### Requires valid `Database` and `Jwt` config (see appsettings / user secrets) for the API to start.
+###
+### Integration flow (manual):
+### 1) Sign in or sign up — copy `accessToken` from JSON into @accessToken; copy `refresh_token` value from `Set-Cookie` into @refreshCookie (REST Client does not jar cookies).
+### 2) GET /auth/me with Bearer — expect 200.
+### 3) Wait until access JWT expires (Development uses Jwt:ExpiryMinutes, e.g. 5) — same GET — expect 401.
+### 4) POST /auth/refresh with Cookie header — expect 200 and new access token; paste new values into @accessToken (and cookie if rotated).
+### 5) GET /auth/me again with new Bearer — expect 200.
 
 @api_HostAddress = http://localhost:5082
+@accessToken = paste-access-token-here
+@refreshCookie = paste-refresh-cookie-value-here
 
 ### Root — service name and status
 GET {{api_HostAddress}}/
@@ -24,5 +33,54 @@ Accept: application/json
 ### Swagger UI — open in a browser (Development only)
 # https://localhost:7277/swagger
 # {{api_HostAddress}}/swagger
+
+###
+
+### Sign up — same response shape as sign-in; sets HttpOnly refresh cookie (see Set-Cookie)
+POST {{api_HostAddress}}/auth/sign-up
+Content-Type: application/json
+
+{
+  "firstName": "Ada",
+  "lastName": "Lovelace",
+  "email": "ada@example.com",
+  "password": "your-password-8-chars-min"
+}
+
+###
+
+### Sign in — issues JWT in body and sets HttpOnly refresh cookie (see Set-Cookie in response)
+POST {{api_HostAddress}}/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "your-password"
+}
+
+###
+
+### Me — protected; set @accessToken after sign-in/sign-up
+GET {{api_HostAddress}}/auth/me
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+###
+
+### Refresh access token — refresh token is read only from the HttpOnly cookie (never from JSON).
+### Set @refreshCookie from the sign-in/sign-up `Set-Cookie` body value, or use:
+###   Cookie: refresh_token=<value>
+### (cookie name matches Jwt:RefreshToken:CookieName in appsettings, default `refresh_token`).
+POST {{api_HostAddress}}/auth/refresh
+Cookie: refresh_token={{refreshCookie}}
+
+###
+
+### Sign out — clears refresh cookie when sent
+POST {{api_HostAddress}}/auth/sign-out
+Content-Type: application/json
+Cookie: refresh_token={{refreshCookie}}
+
+{}
 
 ###

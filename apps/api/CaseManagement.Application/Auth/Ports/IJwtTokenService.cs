@@ -1,4 +1,4 @@
-namespace CaseManagement.Application.Auth;
+namespace CaseManagement.Application.Auth.Ports;
 
 public interface IJwtTokenService
 {

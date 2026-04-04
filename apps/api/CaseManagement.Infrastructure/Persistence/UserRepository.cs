@@ -1,4 +1,4 @@
-using CaseManagement.Application.Auth;
+using CaseManagement.Application.Auth.Ports;
 using CaseManagement.Domain.Users;
 using CaseManagement.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;

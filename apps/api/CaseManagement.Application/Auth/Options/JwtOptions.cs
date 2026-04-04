@@ -1,4 +1,4 @@
-namespace CaseManagement.Infrastructure.Authentication;
+namespace CaseManagement.Application.Auth.Options;
 
 public sealed class JwtOptions
 {

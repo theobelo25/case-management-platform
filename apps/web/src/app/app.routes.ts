@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '@app/core/guards/auth.guard';
 
 /**
  * More specific paths (`auth`, `app`) must come before `path: ''`.
@@ -12,6 +13,7 @@ export const routes: Routes = [
   },
   {
     path: 'app',
+    canActivate: [authGuard],
     loadChildren: () =>
       import('./features/dashboard/dashboard.routes').then((m) => m.DASHBOARD_ROUTES),
   },
