@@ -57,5 +57,8 @@ jobs:
       - name: Prettier
         run: pnpm --dir apps/web format:check
 
+      - name: Production build
+        run: pnpm --dir apps/web build
+
       - name: Unit tests
         run: pnpm --dir apps/web exec ng test --watch=false

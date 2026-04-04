@@ -1,5 +1,6 @@
-using CaseManagement.Application.Common.Exceptions;
 using CaseManagement.Application.Auth.Ports;
+using CaseManagement.Application.Common.Exceptions;
+using CaseManagement.Domain.Users;
 
 namespace CaseManagement.Application.Auth;
 
@@ -57,6 +58,45 @@ public sealed class AuthService : IAuthService
             refreshRaw,
             refreshExpires);
     }
+
+    public async Task<SignInResult> SignUpAsync(
+        SignUpRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+        if (await _users.GetByEmailAsync(normalizedEmail, cancellationToken) is not null)
+            throw new ConflictException("An account with this email already exists.");
+
+        var passwordHash = _passwordHasher.Hash(request.Password);
+        var user = new User(
+            Guid.NewGuid(),
+            normalizedEmail,
+            request.FirstName.Trim(),
+            request.LastName.Trim(),
+            passwordHash,
+            DateTime.UtcNow);
+
+        await _users.AddAsync(user, cancellationToken);
+
+        var token = _jwtTokenService.CreateAccessToken(
+            user.Id,
+            user.Email,
+            user.FullName);
+
+        var (refreshRaw, refreshExpires) =
+            await _refreshTokenIssuer.IssueAsync(user.Id, cancellationToken);
+
+        return new SignInResult(
+            new AuthResponse(
+                token.AccessToken,
+                token.ExpiresAtUtc,
+                user.Id,
+                user.Email,
+                user.FullName),
+            refreshRaw,
+            refreshExpires);
+    }
+
     public async Task<MeResponse> GetMeAsync(
         Guid userId,
         CancellationToken cancellationToken = default)

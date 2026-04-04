@@ -79,7 +79,8 @@ public static class ServiceCollectionExtensions
                     policy
                         .WithOrigins(corsOrigins)
                         .AllowAnyHeader()
-                        .AllowAnyMethod();
+                        .AllowAnyMethod()
+                        .AllowCredentials();
                 }
                 else
                 {

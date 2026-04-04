@@ -34,6 +34,9 @@
           },
           "configurations": {
             "production": {
+              "define": {
+                "__WEB_API_BASE_URL__": "\"\""
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -51,7 +54,10 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "define": {
+                "__WEB_API_BASE_URL__": "\"http://localhost:5082\""
+              }
             }
           },
           "defaultConfiguration": "production"

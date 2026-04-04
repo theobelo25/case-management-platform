@@ -6,6 +6,10 @@ public interface IAuthService
         SignInRequest request,
         CancellationToken cancellationToken = default);
 
+    Task<SignInResult> SignUpAsync(
+        SignUpRequest request,
+        CancellationToken cancellationToken = default);
+
     Task<MeResponse> GetMeAsync(
         Guid userId,
         CancellationToken cancellationToken = default);

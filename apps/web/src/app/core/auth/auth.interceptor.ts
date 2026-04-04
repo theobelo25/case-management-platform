@@ -1,7 +1,8 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from './auth.service';
-import { API_BASE_URL } from '../api/api-base-url.token';
+import { API_BASE_URL } from '@app/core/api/api-base-url.token';
+import { requestMatchesApiBaseUrl } from '@app/core/api/request-matches-api-base-url';
 
 const AUTH_SKIP_SUBSTRINGS = ['/auth/sign-in', '/auth/sign-up', '/auth/refresh'];
 
@@ -12,7 +13,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = auth.accessTokenReadonly();
   const url = req.url;
 
-  const isOurApi = url.startsWith(baseUrl);
+  const isOurApi = requestMatchesApiBaseUrl(url, baseUrl);
   const skipAuthHeader = AUTH_SKIP_SUBSTRINGS.some((fragment) => url.includes(fragment));
 
   if (!token || !isOurApi || skipAuthHeader) {

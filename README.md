@@ -52,7 +52,7 @@ pnpm dev
 | ---- | ------- |
 | Web only | `pnpm web:start` |
 | API only | `pnpm api:start` |
-| Production build (web) | `pnpm web:build` |
+| Production build (web) | `pnpm web:build` (same-origin API base by default; see **Web API base URL** below) |
 | Build API (whole solution) | `pnpm api:build` |
 
 `pnpm api:test` runs `dotnet test` from the repo root against `case-management-platform.slnx`, which includes **CaseManagement.Application.Tests** and **CaseManagement.ArchitectureTests**.
@@ -66,6 +66,8 @@ pnpm --dir apps/web test
 Uses the Angular CLI **Vitest** builder (`ng test`). Sample specs: `app.spec.ts`, `home.component.spec.ts`.
 
 ## Frontend (`apps/web`)
+
+- **Web API base URL:** The SPA reads the API origin from a compile-time constant `__WEB_API_BASE_URL__`. **Production** builds default to an **empty** base (requests go to the same origin as the static app, e.g. behind a reverse proxy). **Development** uses `http://localhost:5082` via `angular.json` → `build.configurations.development.define`. To override any configuration, set **`API_BASE_URL`** in `apps/web/.env` (or the environment); `pnpm web:start` / `pnpm web:build` run `scripts/ng-with-web-env.mjs`, which passes `--define` only when that variable is non-empty. Raw `ng build` / `ng serve` without the wrapper use the same `angular.json` rules. CI runs a production web build so release artifacts are not built with localhost baked in unless you opt in via env.
 
 - **Stack:** Angular 21, TypeScript 5.9, RxJS, **Tailwind CSS 4** (PostCSS via `@tailwindcss/postcss`), **Vitest** for unit tests, **`@angular/build`** application builder.
 - **Structure:** Feature areas under `src/app/features` (`landing`, `auth`, `dashboard`), layouts under `src/app/layouts`, shared pieces under `src/app/shared`.

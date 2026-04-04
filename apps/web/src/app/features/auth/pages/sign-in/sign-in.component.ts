@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SignInFormComponent } from '../../components/sign-in-form/sign-in-form.component';
+import { SignInFormComponent } from '@app/features/auth/components/sign-in-form/sign-in-form.component';
 
 @Component({
   selector: 'app-sign-in',

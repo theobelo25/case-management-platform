@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { ProtectedLayoutComponent } from '../../layouts/protected-layout/protected-layout.component';
+import { ProtectedLayoutComponent } from '@app/layouts/protected-layout/protected-layout.component';
 
 export const DASHBOARD_ROUTES: Routes = [
   {

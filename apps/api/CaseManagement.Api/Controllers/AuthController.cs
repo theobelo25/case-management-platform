@@ -33,17 +33,21 @@ public sealed class AuthController : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await _authService.SignInAsync(request, cancellationToken);
-        var rt = _refreshOptions.Value;
+        AppendRefreshCookie(result.RefreshToken, result.RefreshTokenExpiresAtUtc);
+        return Ok(result.Auth);
+    }
 
-        Response.Cookies.Append(rt.CookieName, result.RefreshToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Lax,
-            Expires = result.RefreshTokenExpiresAtUtc,
-            Path = rt.CookiePath
-        });
-
+    [HttpPost("sign-up")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<AuthResponse>> SignUp(
+        [FromBody] SignUpRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await _authService.SignUpAsync(request, cancellationToken);
+        AppendRefreshCookie(result.RefreshToken, result.RefreshTokenExpiresAtUtc);
         return Ok(result.Auth);
     }
 
@@ -84,16 +88,8 @@ public sealed class AuthController : ControllerBase
             Request.Headers.UserAgent.ToString(),
             HttpContext.Connection.RemoteIpAddress?.ToString(),
             cancellationToken);
-        
-        Response.Cookies.Append(rt.CookieName, result.RefreshToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Lax,
-            Expires = result.RefreshTokenExpiresAtUtc,
-            Path = rt.CookiePath
-        });
 
+        AppendRefreshCookie(result.RefreshToken, result.RefreshTokenExpiresAtUtc);
         return Ok(result.Auth);
     }
 
@@ -135,5 +131,18 @@ public sealed class AuthController : ControllerBase
             });
 
         return NoContent();
+    }
+
+    private void AppendRefreshCookie(string refreshToken, DateTime expiresAtUtc)
+    {
+        var rt = _refreshOptions.Value;
+        Response.Cookies.Append(rt.CookieName, refreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = expiresAtUtc,
+            Path = rt.CookiePath
+        });
     }
 }
