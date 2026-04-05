@@ -14,18 +14,51 @@
       class="rounded-full border border-slate-400/14 bg-white/5 px-[0.95rem] py-[0.7rem] text-slate-300 no-underline transition-colors hover:bg-white/[0.07] hover:text-slate-50"
       >View Demo</a
     >
-    <a
-      routerLink="/app/settings"
-      class="inline-flex items-center gap-3 rounded-full border border-slate-400/14 bg-white/5 py-[0.45rem] pl-[0.45rem] pr-3 text-gray-200 no-underline"
-    >
-      <span
-        class="inline-flex h-[2.2rem] w-[2.2rem] items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-[0.85rem] font-bold text-white"
-        >TB</span
+    <div class="relative">
+      <button
+        type="button"
+        class="inline-flex w-full cursor-pointer items-center gap-3 rounded-full border border-slate-400/14 bg-white/5 py-[0.45rem] pl-[0.45rem] pr-3 text-left text-gray-200 transition-colors hover:bg-white/[0.07] max-[720px]:justify-center min-[721px]:w-auto"
+        (click)="toggleUserMenu($event)"
+        [attr.aria-expanded]="userMenuOpen()"
+        aria-haspopup="menu"
+        aria-controls="protected-header-user-menu"
+        [attr.aria-label]="
+          auth.session()?.fullName ? 'Account menu for ' + auth.session()!.fullName : 'Account menu'
+        "
       >
-      <span class="hidden flex-col leading-tight min-[721px]:flex">
-        <strong class="text-[0.92rem] text-slate-50">{{ auth.session()?.fullName }}</strong>
-        <small class="text-[0.78rem] text-slate-400">Administrator</small>
-      </span>
-    </a>
+        <span
+          class="inline-flex h-[2.2rem] w-[2.2rem] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-[0.85rem] font-bold text-white"
+          >TB</span
+        >
+        <span class="hidden min-w-0 flex-col leading-tight min-[721px]:flex">
+          <strong class="truncate text-[0.92rem] text-slate-50">{{ auth.session()?.fullName }}</strong>
+          <small class="text-[0.78rem] text-slate-400">Administrator</small>
+        </span>
+      </button>
+
+      @if (userMenuOpen()) {
+        <div
+          id="protected-header-user-menu"
+          role="menu"
+          class="absolute right-0 top-[calc(100%+0.45rem)] z-50 min-w-[12.5rem] rounded-xl border border-slate-400/20 bg-slate-900/95 py-1 shadow-lg shadow-black/40 backdrop-blur-md"
+        >
+          <a
+            routerLink="/app/settings"
+            role="menuitem"
+            class="block px-4 py-2.5 text-[0.92rem] text-slate-200 no-underline transition-colors hover:bg-white/[0.06] hover:text-slate-50"
+            (click)="closeUserMenu()"
+            >Settings</a
+          >
+          <button
+            type="button"
+            role="menuitem"
+            class="block w-full px-4 py-2.5 text-left text-[0.92rem] text-slate-200 transition-colors hover:bg-white/[0.06] hover:text-slate-50"
+            (click)="logout()"
+          >
+            Log out
+          </button>
+        </div>
+      }
+    </div>
   </div>
 </header>
