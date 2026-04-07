@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/apps/" />
+  <Folder Name="/apps/api/">
+    <Project Path="apps/api/src/CaseManagement.Api/CaseManagement.Api.csproj" />
+  </Folder>
+  <Folder Name="/apps/api/src/">
+    <Project Path="apps/api/src/CaseManagement.Application/CaseManagement.Application.csproj" />
+    <Project Path="apps/api/src/CaseManagement.Domain/CaseManagement.Domain.csproj" />
+    <Project Path="apps/api/src/CaseManagement.Infrastructure/CaseManagement.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/apps/api/tests/">
+    <Project Path="apps/api/tests/CaseManagement.ArchitectureTests/CaseManagement.ArchitectureTests.csproj" />
+  </Folder>
+</Solution>

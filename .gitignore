@@ -1,0 +1,17 @@
+# pnpm / node / angular
+node_modules
+.pnpm-store
+apps/web/node_modules
+apps/web/dist
+apps/web/.angular
+apps/web/coverage
+
+# .NET
+**/bin
+**/obj
+
+# IDE / OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
