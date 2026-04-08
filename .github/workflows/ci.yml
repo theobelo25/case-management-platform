@@ -26,13 +26,15 @@ jobs:
             **/global.json
 
       - name: Restore
-        run: dotnet restore apps/api/CaseManagement.Api/CaseManagement.Api.csproj
+        run: dotnet restore apps/api/src/CaseManagement.Api/CaseManagement.Api.csproj
 
       - name: Build
-        run: dotnet build apps/api/CaseManagement.Api/CaseManagement.Api.csproj --no-restore --configuration Release
+        run: dotnet build apps/api/src/CaseManagement.Api/CaseManagement.Api.csproj --no-restore --configuration Release
 
       - name: Test
-        run: dotnet test --no-build --configuration Release --verbosity normal
+        run: |
+          dotnet test apps/api/tests/CaseManagement.Api.Tests/CaseManagement.Api.Tests.csproj --configuration Release --verbosity normal
+          dotnet test apps/api/tests/CaseManagement.ArchitectureTests/CaseManagement.ArchitectureTests.csproj --configuration Release --verbosity normal
 
   web:
     name: Web - install and build
