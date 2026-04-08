@@ -6,8 +6,8 @@
     "web:start": "pnpm --dir apps/web start",
     "web:build": "pnpm --dir apps/web build",
     "web:test": "pnpm --dir apps/web test",
-    "api:run": "dotnet run --project apps/api/CaseManagement.Api",
-    "api:build": "dotnet build apps/api/CaseManagement.Api/CaseManagement.Api.csproj",
+    "api:run": "dotnet run --project apps/api/src/CaseManagement.Api",
+    "api:build": "dotnet build apps/api/src/CaseManagement.Api/CaseManagement.Api.csproj",
     "api:test": "dotnet test",
     "dev": "echo Run API and Web in separate terminals for now"
   },
