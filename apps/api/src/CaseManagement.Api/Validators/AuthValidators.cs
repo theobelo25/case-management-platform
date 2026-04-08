@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using CaseManagement.Api.Contracts;
+using CaseManagement.Api.Auth.Contracts;
 using FluentValidation;
 
 namespace CaseManagement.Api.Validators;
