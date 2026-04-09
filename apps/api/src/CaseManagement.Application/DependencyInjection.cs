@@ -1,7 +1,8 @@
-namespace CaseManagement.Application;
-
 using CaseManagement.Application.Auth;
+using CaseManagement.Application.Ports;
 using Microsoft.Extensions.DependencyInjection;
+
+namespace CaseManagement.Application;
 
 public static class DependencyInjection
 {
