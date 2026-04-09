@@ -29,7 +29,10 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"]
+            "styles": ["src/styles.css"],
+            "define": {
+              "__WEB_API_BASE_URL__": "'/api'"
+            }
           },
           "configurations": {
             "production": {

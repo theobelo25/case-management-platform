@@ -1,0 +1,107 @@
+<header
+  class="flex shrink-0 flex-row items-center justify-between gap-2 border-b border-slate-400/12 bg-slate-900/40 px-3 py-3 backdrop-blur-md min-[721px]:gap-4 min-[721px]:px-6 min-[721px]:py-5"
+>
+  <div class="flex min-w-0 flex-1 items-center gap-2 min-[721px]:gap-3">
+    <button
+      type="button"
+      class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-400/14 bg-white/5 text-slate-200 transition-colors hover:bg-white/[0.07] min-[721px]:h-10 min-[721px]:w-10 min-[721px]:rounded-xl min-[981px]:hidden"
+      (click)="layout.toggleMobileNav()"
+      [attr.aria-expanded]="layout.mobileNavOpen()"
+      aria-controls="protected-app-sidebar"
+      [attr.aria-label]="layout.mobileNavOpen() ? 'Close navigation menu' : 'Open navigation menu'"
+    >
+      @if (layout.mobileNavOpen()) {
+        <svg
+          class="h-[1.15rem] w-[1.15rem] min-[721px]:h-5 min-[721px]:w-5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      } @else {
+        <svg
+          class="h-[1.15rem] w-[1.15rem] min-[721px]:h-5 min-[721px]:w-5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      }
+    </button>
+
+    <div class="min-w-0 flex-1">
+      <p
+        class="mb-0 mt-0 hidden text-[0.72rem] font-bold uppercase tracking-[0.14em] text-blue-300 min-[721px]:mb-1 min-[721px]:block"
+      >
+        Signed in
+      </p>
+      <h1
+        class="m-0 truncate text-base font-semibold leading-tight text-slate-50 min-[480px]:text-lg min-[721px]:text-xl min-[981px]:text-2xl min-[981px]:font-normal"
+      >
+        Case Management Platform
+      </h1>
+    </div>
+  </div>
+
+  <div class="flex shrink-0 items-center gap-2 min-[721px]:gap-[0.85rem]">
+    <a
+      routerLink="/demo"
+      class="hidden items-center rounded-full border border-slate-400/14 bg-white/5 px-3 py-2 text-sm text-slate-300 no-underline transition-colors hover:bg-white/[0.07] hover:text-slate-50 min-[981px]:inline-flex min-[981px]:px-[0.95rem] min-[981px]:py-[0.7rem] min-[981px]:text-base"
+      >View Demo</a
+    >
+    <div class="relative shrink-0">
+      <button
+        type="button"
+        class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-400/14 bg-white/5 p-0 text-left text-gray-200 transition-colors hover:bg-white/[0.07] max-[720px]:aspect-square max-[720px]:size-9 max-[720px]:justify-center min-[721px]:gap-3 min-[721px]:py-[0.45rem] min-[721px]:pl-[0.45rem] min-[721px]:pr-3"
+        (click)="toggleUserMenu($event)"
+        [attr.aria-expanded]="userMenuOpen()"
+        aria-haspopup="menu"
+        aria-controls="protected-header-user-menu"
+        [attr.aria-label]="
+          userDisplayName() ? 'Account menu for ' + userDisplayName() : 'Account menu'
+        "
+      >
+        <span
+          class="grid size-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-[0.8rem] font-bold leading-none tracking-tight text-white min-[721px]:size-[2.2rem] min-[721px]:text-[0.85rem]"
+          >{{ userInitials() }}</span
+        >
+        <span class="hidden min-w-0 max-w-[10rem] flex-col leading-tight min-[721px]:flex">
+          <strong class="truncate text-[0.92rem] text-slate-50">{{ userDisplayName() }}</strong>
+          <small class="text-[0.78rem] text-slate-400">Administrator</small>
+        </span>
+      </button>
+
+      @if (userMenuOpen()) {
+        <div
+          id="protected-header-user-menu"
+          role="menu"
+          class="absolute right-0 top-[calc(100%+0.35rem)] z-[60] w-48 max-w-[calc(100vw-1rem)] rounded-xl border border-slate-400/20 bg-slate-900/95 py-1 shadow-lg shadow-black/40 backdrop-blur-md min-[721px]:top-[calc(100%+0.45rem)] min-[721px]:w-auto min-[721px]:min-w-[12.5rem] min-[721px]:max-w-none"
+        >
+          <a
+            routerLink="/app/settings"
+            role="menuitem"
+            class="block px-3 py-2 text-[0.88rem] text-slate-200 no-underline transition-colors hover:bg-white/[0.06] hover:text-slate-50 min-[721px]:px-4 min-[721px]:py-2.5 min-[721px]:text-[0.92rem]"
+            (click)="closeUserMenu()"
+            >Settings</a
+          >
+          <button
+            type="button"
+            role="menuitem"
+            class="block w-full px-3 py-2 text-left text-[0.88rem] text-slate-200 transition-colors hover:bg-white/[0.06] hover:text-slate-50 min-[721px]:px-4 min-[721px]:py-2.5 min-[721px]:text-[0.92rem]"
+            (click)="logout()"
+          >
+            Log out
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</header>

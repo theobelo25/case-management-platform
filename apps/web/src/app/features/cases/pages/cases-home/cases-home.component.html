@@ -1,0 +1,42 @@
+<div class="flex flex-col gap-8">
+  <section class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div class="space-y-1">
+      <h1 class="text-3xl font-semibold tracking-tight text-foreground">Cases</h1>
+      <p class="text-sm text-muted-foreground">
+        Manage, review, and track all active cases in one place.
+      </p>
+    </div>
+
+    <a
+      routerLink="/app/cases/new"
+      class="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
+    >
+      <span class="mr-2 text-base leading-none">+</span>
+      New Case
+    </a>
+  </section>
+
+  <app-case-summary-cards [cards]="summaryCards()" />
+
+  <section class="rounded-2xl border border-border bg-card shadow-sm">
+    <div class="border-b border-border p-6">
+      <h2 class="text-lg font-semibold text-foreground">Case Directory</h2>
+      <p class="mt-1 text-sm text-muted-foreground">Search, filter, and browse all case records.</p>
+    </div>
+
+    <div class="flex flex-col gap-8 p-6">
+      <app-case-filters
+        [searchTerm]="searchTerm()"
+        [selectedStatus]="selectedStatus()"
+        [selectedPriority]="selectedPriority()"
+        [sortBy]="sortBy()"
+        (searchTermChange)="updateSearchTerm($event)"
+        (selectedStatusChange)="updateSelectedStatus($event)"
+        (selectedPriorityChange)="updateSelectedPriority($event)"
+        (sortByChange)="updateSortBy($event)"
+      />
+
+      <app-case-table [cases]="visibleCases()" />
+    </div>
+  </section>
+</div>

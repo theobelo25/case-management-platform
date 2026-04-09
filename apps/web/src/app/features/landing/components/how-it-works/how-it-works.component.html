@@ -1,0 +1,23 @@
+<section id="how-it-works" class="landing-section-y bg-white">
+  <div class="layout-container">
+    <div class="mb-8 max-w-180">
+      <p class="landing-eyebrow">How it works</p>
+      <h2 class="landing-section-h2">Built around a clear daily workflow</h2>
+    </div>
+
+    <div class="grid gap-4">
+      @for (step of steps; track $index) {
+        <div
+          class="flex items-start gap-4 rounded-2xl border border-gray-200 bg-slate-50 py-4 px-5"
+        >
+          <div
+            class="grid size-8 shrink-0 place-items-center rounded-full bg-blue-600 font-bold text-white"
+          >
+            {{ $index + 1 }}
+          </div>
+          <p class="m-0 leading-relaxed text-gray-700">{{ step }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
