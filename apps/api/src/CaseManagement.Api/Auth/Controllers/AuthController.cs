@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.RateLimiting;
 namespace CaseManagement.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/auth")]
 public sealed class AuthController(
     IAuthService auth,
     IUserProfileService userProfile,

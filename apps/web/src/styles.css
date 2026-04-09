@@ -1,0 +1,79 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
+
+/*
+ * Explicit content paths: Angular’s CSS pipeline can leave `@import "tailwindcss" source(...)`
+ * malformed, and automatic scanning may not see templates. `@source` is processed by Tailwind
+ * and ensures utilities are generated from our HTML + TS.
+ */
+@source './app/**/*.html';
+@source './app/**/*.ts';
+
+@layer base {
+  /*
+   * Match html background to each shell so any scrollbar gutter/track doesn’t read as a bright strip.
+   */
+  html {
+    overflow-y: auto;
+    background-color: rgb(248 250 252);
+    scrollbar-color: rgb(148 163 184) rgb(248 250 252);
+  }
+
+  html.auth-layout-active,
+  html.protected-layout-active {
+    background-color: #0f172a;
+    scrollbar-color: rgb(71 85 105) rgb(15 23 42);
+  }
+
+  /* Protected app scrolls inside <main>; suppress the document scrollbar to avoid double bars. */
+  html.protected-layout-active {
+    overflow: hidden;
+  }
+}
+
+/* Scroll regions on dark UIs — avoid default light scrollbar track next to content */
+@layer utilities {
+  .scrollbar-chrome-dark {
+    scrollbar-color: rgb(100 116 139) rgb(15 23 42);
+  }
+
+  .scrollbar-chrome-dark::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .scrollbar-chrome-dark::-webkit-scrollbar-track {
+    background: rgb(15 23 42);
+  }
+
+  .scrollbar-chrome-dark::-webkit-scrollbar-thumb {
+    background-color: rgb(71 85 105);
+    border-radius: 9999px;
+    border: 2px solid rgb(15 23 42);
+  }
+}
+
+/* Shared with app-public-header, app-public-footer, and routed pages — shell content width */
+@layer components {
+  .layout-container {
+    @apply mx-auto box-border;
+    width: min(1120px, calc(100% - 2rem));
+  }
+
+  /* Landing / marketing — shared typography (avoid repeating long utility chains) */
+  .landing-eyebrow {
+    @apply mb-3 text-sm font-bold uppercase tracking-[0.08em] text-blue-600;
+  }
+
+  .landing-section-h2 {
+    @apply mb-3 mt-0 text-3xl leading-tight font-bold;
+  }
+
+  .landing-section-y {
+    @apply py-20;
+  }
+
+  /* Matches hero “View demo” + header “Sign in” */
+  .btn-public-outline {
+    @apply cursor-pointer rounded-[0.85rem] border border-gray-300 bg-white px-5 py-3.5 text-[0.95rem] font-semibold text-gray-900 transition duration-150 ease-out hover:-translate-y-px;
+  }
+}

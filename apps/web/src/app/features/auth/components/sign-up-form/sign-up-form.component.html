@@ -1,0 +1,119 @@
+<form class="flex flex-col gap-2.5" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
+    <div class="flex flex-col gap-1">
+      <label class="text-xs font-medium text-slate-300 sm:text-sm" for="firstName"
+        >First name</label
+      >
+      <input
+        id="firstName"
+        type="text"
+        formControlName="firstName"
+        class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+      />
+      <div class="mt-0.5 min-h-4.5">
+        @if (firstName.touched && firstName.invalid) {
+          <p class="text-xs leading-tight text-red-400 sm:text-sm">First name is required.</p>
+        }
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-xs font-medium text-slate-300 sm:text-sm" for="lastName">Last name</label>
+      <input
+        id="lastName"
+        type="text"
+        formControlName="lastName"
+        class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+      />
+      <div class="mt-0.5 min-h-4.5">
+        @if (lastName.touched && lastName.invalid) {
+          <p class="text-xs leading-tight text-red-400 sm:text-sm">Last name is required.</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-xs font-medium text-slate-300 sm:text-sm" for="email">Email</label>
+    <input
+      id="email"
+      type="email"
+      formControlName="email"
+      class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+    />
+    <div class="mt-0.5 min-h-4.5">
+      @if (email.touched && email.invalid) {
+        <p class="text-xs leading-tight text-red-400 sm:text-sm">
+          Please enter a valid email address.
+        </p>
+      }
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-xs font-medium text-slate-300 sm:text-sm" for="password">Password</label>
+    <input
+      id="password"
+      type="password"
+      formControlName="password"
+      class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+    />
+    <div class="mt-0.5 min-h-4.5">
+      @if (password.touched && password.invalid) {
+        <p class="text-xs leading-tight text-red-400 sm:text-sm">
+          Password must be at least 8 characters.
+        </p>
+      }
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-xs font-medium text-slate-300 sm:text-sm" for="confirmPassword"
+      >Confirm password</label
+    >
+    <input
+      id="confirmPassword"
+      type="password"
+      formControlName="confirmPassword"
+      class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+    />
+    <div class="mt-0.5 min-h-9">
+      @if (confirmPassword.touched && confirmPassword.invalid) {
+        <p class="text-xs leading-tight text-red-400 sm:text-sm">Please confirm your password.</p>
+      }
+      @if (passwordsMismatch) {
+        <p class="text-xs leading-tight text-red-400 sm:text-sm">Passwords do not match.</p>
+      }
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-0.5">
+    <label class="flex cursor-pointer items-start gap-2 text-xs text-slate-300 sm:text-sm">
+      <input
+        type="checkbox"
+        formControlName="acceptTerms"
+        class="mt-0.5 size-4 shrink-0 rounded border-slate-500/50 bg-slate-950/50 text-blue-600 focus:ring-blue-500/50"
+      />
+      <span>I agree to the terms and conditions</span>
+    </label>
+    <div class="min-h-4.5 pl-6 sm:pl-7">
+      @if (acceptTerms.touched && acceptTerms.invalid) {
+        <p class="text-xs leading-tight text-red-400 sm:text-sm">
+          You must accept the terms to continue.
+        </p>
+      }
+    </div>
+  </div>
+
+  @if (submitError(); as err) {
+    <p class="text-xs leading-tight text-red-400 sm:text-sm">{{ err }}</p>
+  }
+
+  <button
+    class="mt-1 w-full rounded-xl bg-blue-600 py-2.5 text-[0.9rem] font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50 sm:text-[0.95rem]"
+    type="submit"
+    [disabled]="isSubmitting()"
+  >
+    {{ isSubmitting() ? 'Creating account...' : 'Create account' }}
+  </button>
+</form>

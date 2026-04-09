@@ -1,0 +1,56 @@
+<section class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-sm">
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div class="grid flex-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <label class="flex flex-col gap-2">
+        <span class="text-sm text-white/70">Search</span>
+        <input
+          type="text"
+          class="rounded-xl border border-white/10 bg-slate-950/40 px-4 py-2.5 text-sm text-white outline-none"
+          [value]="searchTerm()"
+          (input)="onSearchChange($event)"
+          placeholder="Search cases..."
+        />
+      </label>
+
+      <label class="flex flex-col gap-2">
+        <span class="text-sm text-white/70">Status</span>
+        <select
+          class="rounded-xl border border-white/10 bg-slate-950/40 px-4 py-2.5 text-sm text-white outline-none"
+          [value]="selectedStatus()"
+          (change)="onStatusChange($event)"
+        >
+          <option value="All">All</option>
+          <option value="Open">Open</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Closed">Closed</option>
+        </select>
+      </label>
+
+      <label class="flex flex-col gap-2">
+        <span class="text-sm text-white/70">Priority</span>
+        <select
+          class="rounded-xl border border-white/10 bg-slate-950/40 px-4 py-2.5 text-sm text-white outline-none"
+          [value]="selectedPriority()"
+          (change)="onPriorityChange($event)"
+        >
+          <option value="All">All</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+      </label>
+
+      <label class="flex flex-col gap-2">
+        <span class="text-sm text-white/70">Sort by</span>
+        <select
+          class="rounded-xl border border-white/10 bg-slate-950/40 px-4 py-2.5 text-sm text-white outline-none"
+          [value]="sortBy()"
+          (change)="onSortChange($event)"
+        >
+          <option value="updatedAt">Last Updated</option>
+          <option value="priority">Priority</option>
+        </select>
+      </label>
+    </div>
+  </div>
+</section>

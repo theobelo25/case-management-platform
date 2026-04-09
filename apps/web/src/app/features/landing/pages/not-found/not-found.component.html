@@ -1,0 +1,37 @@
+<section
+  class="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.12),transparent_30%),linear-gradient(to_bottom,#eff6ff,#f8fafc)] text-gray-800"
+>
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
+    <div class="absolute -left-20 -top-20 size-72 rounded-full bg-blue-500/15 blur-3xl"></div>
+    <div class="absolute -bottom-28 -right-20 size-96 rounded-full bg-indigo-500/10 blur-3xl"></div>
+  </div>
+
+  <div
+    class="layout-container relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center px-4 py-16 text-center"
+  >
+    <div class="mx-auto w-full max-w-[640px]">
+      <p class="landing-eyebrow">404</p>
+
+      <h1
+        class="m-0 mt-2 text-[clamp(2.25rem,5vw,3.25rem)] font-bold leading-[1.05] tracking-[-0.03em] text-gray-900"
+      >
+        Page not found
+      </h1>
+
+      <p class="mx-auto mt-5 max-w-lg text-[1.05rem] leading-[1.7] text-gray-600">
+        The page you’re looking for doesn’t exist or may have been moved.
+      </p>
+
+      <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <a
+          routerLink="/"
+          class="inline-block cursor-pointer rounded-[0.85rem] border-0 bg-blue-600 px-5 py-3.5 text-[0.95rem] font-semibold text-white no-underline shadow-[0_8px_24px_rgba(37,99,235,0.2)] transition duration-150 ease-out hover:-translate-y-px hover:bg-blue-700"
+        >
+          Go home
+        </a>
+
+        <a routerLink="/demo" class="btn-public-outline inline-block no-underline">View demo</a>
+      </div>
+    </div>
+  </div>
+</section>

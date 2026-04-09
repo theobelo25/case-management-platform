@@ -1,0 +1,23 @@
+<div
+  class="relative flex h-dvh max-h-dvh flex-col overflow-hidden min-[981px]:min-h-0 min-[981px]:flex-row"
+>
+  @if (layout.mobileNavOpen()) {
+    <div
+      class="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-[2px] min-[981px]:hidden"
+      (click)="layout.closeMobileNav()"
+      aria-hidden="true"
+    ></div>
+  }
+
+  <app-protected-sidebar />
+
+  <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+    <app-protected-header />
+
+    <main
+      class="scrollbar-chrome-dark min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-6 max-[720px]:p-4"
+    >
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
