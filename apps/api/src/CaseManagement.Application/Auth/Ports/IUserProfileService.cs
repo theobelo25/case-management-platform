@@ -1,4 +1,6 @@
-namespace CaseManagement.Application.Auth;
+using CaseManagement.Application.Auth;
+
+namespace CaseManagement.Application.Ports;
 
 public interface IUserProfileService
 {

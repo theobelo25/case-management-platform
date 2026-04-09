@@ -62,15 +62,14 @@ public sealed class AuthService : IAuthService
     }
 
     public async Task<AuthResult> LoginAsync(
-        string email, 
-        string password, 
+        LoginUserInput input, 
         CancellationToken ct = default)
     {
-        var normalized = email.Trim().ToLowerInvariant();
+        var normalized = input.Email.Trim().ToLowerInvariant();
         var user = await _users.GetByEmailNormalizedAsync(normalized, ct)
             ?? throw new AuthenticationFailedException();
         
-        if (!_passwordHasher.Verify(password, user.PasswordHash))
+        if (!_passwordHasher.Verify(input.Password, user.PasswordHash))
             throw new AuthenticationFailedException();
         
         return await IssueForUserAsync(user, ct);

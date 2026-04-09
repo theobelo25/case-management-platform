@@ -7,8 +7,7 @@ public interface IAuthService
         CancellationToken ct = default);
 
     public Task<AuthResult> LoginAsync(
-        string email, 
-        string password, 
+        LoginUserInput input, 
         CancellationToken ct = default);
 
     public Task<AuthResult> RefreshAsync(
