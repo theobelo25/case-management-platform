@@ -52,4 +52,16 @@ public sealed class User
         ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
         PasswordHash = passwordHash;
     }
+
+    public void ChangeFirstName(string firstName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
+        FirstName = NormalizeName(firstName.Trim());
+    }
+
+    public void ChangeLastName(string lastName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
+        LastName = NormalizeName(lastName.Trim());
+    }
 }

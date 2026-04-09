@@ -1,4 +1,4 @@
-namespace CaseManagement.Api.Contracts;
+namespace CaseManagement.Api.Auth.Contracts;
 
 public sealed record RegisterRequest(
     string Email, 
@@ -16,4 +16,11 @@ public sealed record LoginRequest(string Email, string Password)
 {
     public string EmailForValidation => Email.Trim();
 }
+
+public sealed record UpdateProfileRequest(
+    string? FirstName,
+    string? LastName,
+    string? CurrentPassword,
+    string? NewPassword,
+    string? ConfirmNewPassword);
 

@@ -1,5 +1,5 @@
 using CaseManagement.Api.Auth;
-using CaseManagement.Api.Contracts;
+using CaseManagement.Api.Auth.Contracts;
 using CaseManagement.Application.Auth;
 using CaseManagement.Application.Exceptions;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +12,7 @@ namespace CaseManagement.Api.Controllers;
 [Route("api/[controller]")]
 public sealed class AuthController(
     IAuthService auth,
+    IUserProfileService userProfile,
     IRefreshTokenCookieService cookieService) : ControllerBase
 {
     [HttpPost("register")]
@@ -81,5 +82,48 @@ public sealed class AuthController(
         cookieService.Delete(Response);
 
         return NoContent();
+    }
+
+    [HttpPatch("me")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> UpdateProfileAsync(
+        [FromBody] UpdateProfileRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (User.GetUserIdOrNull() is not Guid userId)
+            return Unauthorized();
+
+        await userProfile.UpdateProfileAsync(
+            new UpdateUserProfileInput(
+                userId,
+                request.FirstName,
+                request.LastName,
+                request.CurrentPassword,
+                request.NewPassword,
+                request.ConfirmNewPassword),
+            cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpGet("me")]
+    [Authorize]
+    [ProducesResponseType(typeof(CurrentUserResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<CurrentUserResponse>> GetProfileAsync(
+        CancellationToken cancellationToken = default)
+    {
+        if (User.GetUserIdOrNull() is not Guid userId)
+            return Unauthorized();
+
+        var profile = await userProfile.GetMeAsync(
+            userId,
+            cancellationToken);
+
+        return Ok(new CurrentUserResponse(
+            profile.Id,
+            profile.Email,
+            profile.FirstName,
+            profile.LastName));
     }
 }
