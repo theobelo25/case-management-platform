@@ -23,12 +23,6 @@ public sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<Refresh
             .HasMaxLength(128)
             .IsRequired();
 
-        builder.Property(e => e.ExpiresAtUtc)
-            .IsRequired();
-
-        builder.Property(e => e.CreatedAtUtc)
-            .IsRequired();
-
         builder.HasOne<User>()
             .WithMany()
             .HasForeignKey(e => e.UserId)

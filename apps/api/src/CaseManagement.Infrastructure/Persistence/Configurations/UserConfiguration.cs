@@ -31,8 +31,5 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(e => e.PasswordHash)
             .HasMaxLength(512)
             .IsRequired();
-        
-        builder.Property(e => e.CreatedAtUtc)
-            .IsRequired();
     }
 }

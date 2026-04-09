@@ -16,6 +16,7 @@ public sealed class AuthService : IAuthService
     private readonly IRefreshTokenPersistence _refreshTokenPersistence;
     private readonly IRefreshTokenHasher _refreshTokenHasher;
     private readonly TimeProvider _time;
+    private readonly IUserRegistration _userRegistration;
 
     public AuthService(
         IUserRepository users,
@@ -25,7 +26,8 @@ public sealed class AuthService : IAuthService
         IAccessTokenIssuer accessTokenIssuer,
         IRefreshTokenPersistence refreshTokenPersistence,
         IRefreshTokenHasher refreshTokenHasher,
-        TimeProvider time)
+        TimeProvider time,
+        IUserRegistration userRegistration)
     {
         _users = users;
         _refreshTokens = refreshTokens;
@@ -35,6 +37,7 @@ public sealed class AuthService : IAuthService
         _refreshTokenPersistence = refreshTokenPersistence;
         _refreshTokenHasher = refreshTokenHasher;
         _time = time; 
+        _userRegistration = userRegistration;
     }
     public async Task<AuthResult> RegisterAsync(
         RegisterUserInput input, 
@@ -48,15 +51,7 @@ public sealed class AuthService : IAuthService
         if (await _users.GetByEmailNormalizedAsync(normalized, ct) is not null)
             throw new ConflictException("Email already registered.", code: AppErrorCodes.DuplicateEmail);
         
-        var user = User.Register(
-            Guid.NewGuid(), 
-            normalized, 
-            _passwordHasher.Hash(input.Password),
-            input.FirstName,
-            input.LastName,
-            _time.GetUtcNow());
-        
-        _users.Add(user);
+        var user = await _userRegistration.Register(input, ct);
 
         return await IssueForUserAsync(user, ct);
     }
