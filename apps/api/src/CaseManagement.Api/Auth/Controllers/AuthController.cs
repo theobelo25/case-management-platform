@@ -2,6 +2,7 @@ using CaseManagement.Api.Auth;
 using CaseManagement.Api.Auth.Contracts;
 using CaseManagement.Application.Auth;
 using CaseManagement.Application.Exceptions;
+using CaseManagement.Application.Ports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -44,7 +45,9 @@ public sealed class AuthController(
         [FromBody] LoginRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await auth.LoginAsync(request.Email, request.Password, cancellationToken);
+        var result = await auth.LoginAsync(
+            new LoginUserInput(request.Email, request.Password),
+            cancellationToken);
 
         cookieService.Append(Response, result.RefreshToken, result.RefreshTokenExpiresAtUtc);
         
