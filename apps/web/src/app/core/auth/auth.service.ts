@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import {
   AuthApiService,
   AuthResponseDto,
+  MeResponseDto,
   SignUpRequestDto,
   UpdateProfileRequestDto,
 } from './auth-api.service';
@@ -28,6 +29,9 @@ export class AuthService {
 
   readonly session = signal<AuthResponseDto | null>(null);
 
+  /** Populated from `GET /auth/me` after a valid access token is applied. */
+  readonly userProfile = signal<MeResponseDto | null>(null);
+
   private readonly sessionRestorePhase = signal<'idle' | 'pending' | 'done'>('idle');
   private readonly sessionRestoreFinished$ = new ReplaySubject<void>(1);
 
@@ -36,9 +40,31 @@ export class AuthService {
     this.accessToken.set(accessToken);
     if (!parsed) {
       this.session.set(null);
+      this.userProfile.set(null);
       return;
     }
     this.session.set({ accessToken, ...parsed });
+    this.loadUserProfile();
+  }
+
+  private loadUserProfile(): void {
+    const expectedUserId = this.session()?.userId;
+    if (!expectedUserId) {
+      return;
+    }
+
+    this.api
+      .getMe()
+      .pipe(take(1), catchError(() => of(null)))
+      .subscribe((profile) => {
+        if (!profile) {
+          return;
+        }
+        const currentUserId = this.session()?.userId;
+        if (currentUserId && currentUserId === profile.id) {
+          this.userProfile.set(profile);
+        }
+      });
   }
 
   signIn(payload: { email: string; password: string }): Observable<AuthResponseDto> {
@@ -69,6 +95,23 @@ export class AuthService {
 
   updateProfile(payload: UpdateProfileRequestDto): Observable<AuthResponseDto> {
     return this.api.updateProfile(payload).pipe(switchMap(() => this.refreshSession()));
+  }
+
+  /** Updates active organization via `PATCH /auth/me` and reloads `userProfile` from `GET /auth/me`. */
+  switchActiveOrganization(organizationId: string): Observable<void> {
+    return this.api.patchProfile({ activeOrganizationId: organizationId }).pipe(
+      switchMap(() => this.api.getMe().pipe(take(1))),
+      tap((profile) => {
+        if (!profile) {
+          return;
+        }
+        const currentUserId = this.session()?.userId;
+        if (currentUserId && currentUserId === profile.id) {
+          this.userProfile.set(profile);
+        }
+      }),
+      map(() => void 0),
+    );
   }
 
   refreshSession(): Observable<AuthResponseDto> {
@@ -113,6 +156,7 @@ export class AuthService {
   clearLocalSession(): void {
     this.accessToken.set(null);
     this.session.set(null);
+    this.userProfile.set(null);
   }
 
   signOut(options?: { revokeAllSessions?: boolean }): Observable<void> {

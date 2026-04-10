@@ -27,6 +27,14 @@ export const DASHBOARD_ROUTES: Routes = [
         loadChildren: () => import('../cases/cases.routes').then((m) => m.CASES_ROUTES),
         title: 'Cases',
       },
+      {
+        path: 'organizations/new',
+        loadComponent: () =>
+          import('./pages/dashboard-organization-new/dashboard-organization-new.component').then(
+            (m) => m.DashboardOrganizationNewComponent,
+          ),
+        title: 'Add organization',
+      },
     ],
   },
 ];

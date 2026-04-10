@@ -6,6 +6,8 @@ public static class AppErrorCodes
     public const string AuthFailed = "auth_failed";
     public const string UserNotFound = "user_not_found";
     public const string PasswordPolicy = "password_policy";
+    public const string MembershipNotFound = "membership_not_found";
+    public const string NoActiveOrganization = "no_active_organization";
 }
 
 public abstract class AppException : Exception

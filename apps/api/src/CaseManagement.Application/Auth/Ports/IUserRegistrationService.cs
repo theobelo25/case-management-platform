@@ -3,7 +3,7 @@ using CaseManagement.Domain.Entities;
 
 namespace CaseManagement.Application.Ports;
 
-public interface IUserRegistration
+public interface IUserRegistrationService
 {
     Task<User> Register(
         RegisterUserInput input,

@@ -1,6 +1,8 @@
+using CaseManagement.Application.Auth;
 using CaseManagement.Application.Ports;
 using CaseManagement.Infrastructure.Auth;
 using CaseManagement.Infrastructure.Persistence;
+using CaseManagement.Infrastructure.Persistence.Queries;
 using CaseManagement.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -35,7 +37,8 @@ public static class DependencyInjection
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<CaseManagementDbContext>());
         services.AddScoped<IOrganizationRepository, OrganizationRepository>();
-
+        services.AddScoped<IUserOrganizationMembershipsQuery, UserOrganizationMembershipsQuery>();
+        
         return services;
     }
 }

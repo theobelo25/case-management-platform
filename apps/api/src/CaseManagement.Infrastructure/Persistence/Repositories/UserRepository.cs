@@ -7,14 +7,14 @@ namespace CaseManagement.Infrastructure.Persistence.Repositories;
 public sealed class UserRepository(CaseManagementDbContext db) : IUserRepository
 {
     public Task<User?> GetByEmailNormalizedAsync(
-        string emailNormalized, 
-        CancellationToken ct = default) =>
-        db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.EmailNormalized == emailNormalized, ct);
+        string emailNormalized,
+        CancellationToken cancellationToken = default) =>
+        db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.EmailNormalized == emailNormalized, cancellationToken);
 
     public Task<User?> GetByIdAsync(
-        Guid id, 
-        CancellationToken ct = default) =>
-        db.Users.FirstOrDefaultAsync(u => u.Id == id, ct);
+        Guid id,
+        CancellationToken cancellationToken = default) =>
+        db.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
     
     public void Add(User user) => db.Users.Add(user);
 }

@@ -40,12 +40,31 @@ export interface UpdateProfileRequestDto {
   confirmNewPassword: string;
 }
 
+/** Partial PATCH body for `PATCH /auth/me` (camelCase JSON). */
+export interface PatchProfileRequestDto {
+  firstName?: string | null;
+  lastName?: string | null;
+  currentPassword?: string | null;
+  newPassword?: string | null;
+  confirmNewPassword?: string | null;
+  activeOrganizationId?: string | null;
+}
+
+/** Matches `GET /auth/me` (ASP.NET camelCase JSON). */
+export interface MeOrganizationDto {
+  id: string;
+  name: string;
+  role: string;
+}
+
 /** Matches `GET /auth/me` (ASP.NET camelCase JSON). */
 export interface MeResponseDto {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
+  activeOrganizationId: string;
+  organizations: MeOrganizationDto[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -74,6 +93,10 @@ export class AuthApiService {
   }
 
   updateProfile(body: UpdateProfileRequestDto): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/auth/me`, body);
+  }
+
+  patchProfile(body: PatchProfileRequestDto): Observable<void> {
     return this.http.patch<void>(`${this.baseUrl}/auth/me`, body);
   }
 }

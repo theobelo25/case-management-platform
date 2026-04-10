@@ -22,5 +22,6 @@ public sealed record UpdateProfileRequest(
     string? LastName,
     string? CurrentPassword,
     string? NewPassword,
-    string? ConfirmNewPassword);
+    string? ConfirmNewPassword,
+    Guid? ActiveOrganizationId);
 

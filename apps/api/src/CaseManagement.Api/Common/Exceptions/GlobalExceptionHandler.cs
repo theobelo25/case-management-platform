@@ -14,7 +14,7 @@ public sealed class GlobalExceptionHandler(
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
         Exception exception,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         switch (exception)
         {
@@ -85,7 +85,7 @@ public sealed class GlobalExceptionHandler(
     private async Task WriteValidationProblemAsync(
         HttpContext httpContext,
         ValidationException ve,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var problem = new ProblemDetails
         {
@@ -106,7 +106,7 @@ public sealed class GlobalExceptionHandler(
         string title,
         string? code,
         string detail,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var problem = new ProblemDetails
         {
@@ -123,7 +123,7 @@ public sealed class GlobalExceptionHandler(
     private async Task WriteProblemAsync(
         HttpContext httpContext,
         ProblemDetails problem,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         problem.Extensions["traceId"] = Activity.Current?.Id ?? httpContext.TraceIdentifier;
         var status = problem.Status ?? StatusCodes.Status500InternalServerError;

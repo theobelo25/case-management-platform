@@ -1,0 +1,8 @@
+@media (max-width: 980px) {
+  .sidebar-drawer {
+    transform: translateX(-100%);
+  }
+  .sidebar-drawer.sidebar-drawer--open {
+    transform: translateX(0);
+  }
+}/*# sourceMappingURL=protected-sidebar.component.css.map */

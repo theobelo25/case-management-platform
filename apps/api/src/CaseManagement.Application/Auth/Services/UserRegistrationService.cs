@@ -1,11 +1,9 @@
-using CaseManagement.Application.Auth;
-using CaseManagement.Application.Exceptions;
 using CaseManagement.Application.Ports;
 using CaseManagement.Domain.Entities;
 
 namespace CaseManagement.Application.Auth;
 
-public sealed class UserRegistrationService : IUserRegistration
+public sealed class UserRegistrationService : IUserRegistrationService
 {
     private readonly IPasswordHasher _passwordHasher;
     private readonly IUserRepository _users;
@@ -33,8 +31,6 @@ public sealed class UserRegistrationService : IUserRegistration
     {
         var organizationName = input.FirstName + "'s Organization";
         var organization = await _organizations.Create(organizationName, cancellationToken);
-        if (organization is null)
-            throw new BadRequestArgumentException("Error creating default organization");
 
         var normalized = input.Email.Trim().ToLowerInvariant();
 

@@ -1,4 +1,5 @@
 using CaseManagement.Application.Auth;
+using CaseManagement.Application.Organizations;
 using CaseManagement.Application.Ports;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,6 +11,9 @@ public static class DependencyInjection
     {
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserProfileService, UserProfileService>();
+        services.AddScoped<IUserRegistrationService, UserRegistrationService>();
+        
+        services.AddScoped<ICreateOrganizationService, CreateOrganizationService>();
 
         services.AddSingleton(TimeProvider.System);
 

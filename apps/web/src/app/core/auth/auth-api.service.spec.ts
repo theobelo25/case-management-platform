@@ -32,6 +32,10 @@ describe('AuthApiService', () => {
         email: 'a@b.c',
         firstName: 'Test',
         lastName: 'User',
+        activeOrganizationId: '22222222-2222-2222-2222-222222222222',
+        organizations: [
+          { id: '22222222-2222-2222-2222-222222222222', name: 'Org', role: 'Member' },
+        ],
       };
 
       service.getMe().subscribe((res) => {

@@ -4,4 +4,5 @@ public sealed record UpdateUserProfileInput(
     string? LastName,
     string? CurrentPassword,
     string? NewPassword,
-    string? ConfirmNewPassword);
+    string? ConfirmNewPassword,
+    Guid? ActiveOrganizationId);
