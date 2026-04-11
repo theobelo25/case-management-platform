@@ -1,6 +1,8 @@
+using CaseManagement.Domain.Entities;
+
 namespace CaseManagement.Api.Organizations.Contracts;
 
 public sealed record OrganizationResponse(
     Guid Id, 
-    string Name, 
+    string Name,
     DateTimeOffset CreatedAtUtc);

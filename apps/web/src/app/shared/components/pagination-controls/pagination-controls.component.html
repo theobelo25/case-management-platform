@@ -1,0 +1,40 @@
+<div
+  class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-500/20 pt-4"
+  role="navigation"
+  aria-label="Pagination"
+>
+  <p class="m-0 text-sm text-slate-400">{{ rangeLabel() }}</p>
+  <div class="flex flex-wrap items-center gap-3">
+    <label class="flex items-center gap-2 text-sm text-slate-400">
+      <span class="whitespace-nowrap">Rows per page</span>
+      <select
+        class="rounded-lg border border-slate-500/30 bg-slate-950/60 px-2.5 py-1.5 text-sm text-slate-100 outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+        [disabled]="disabled()"
+        [value]="limit()"
+        (change)="onLimitSelect($event)"
+      >
+        @for (opt of pageSizeOptions(); track opt) {
+          <option [value]="opt">{{ opt }}</option>
+        }
+      </select>
+    </label>
+    <div class="flex gap-2">
+      <button
+        type="button"
+        class="rounded-lg border border-slate-500/35 bg-slate-950/50 px-3 py-1.5 text-sm font-medium text-slate-200 transition hover:border-slate-400/50 hover:bg-slate-900/70 disabled:cursor-not-allowed disabled:opacity-40"
+        [disabled]="disabled() || !canGoPrevious()"
+        (click)="goPrevious()"
+      >
+        Previous
+      </button>
+      <button
+        type="button"
+        class="rounded-lg border border-slate-500/35 bg-slate-950/50 px-3 py-1.5 text-sm font-medium text-slate-200 transition hover:border-slate-400/50 hover:bg-slate-900/70 disabled:cursor-not-allowed disabled:opacity-40"
+        [disabled]="disabled() || !canGoNext()"
+        (click)="goNext()"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+</div>

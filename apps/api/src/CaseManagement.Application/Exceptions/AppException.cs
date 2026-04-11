@@ -8,6 +8,7 @@ public static class AppErrorCodes
     public const string PasswordPolicy = "password_policy";
     public const string MembershipNotFound = "membership_not_found";
     public const string NoActiveOrganization = "no_active_organization";
+    public const string OrganizationNotFound = "organization_not_found";
 }
 
 public abstract class AppException : Exception

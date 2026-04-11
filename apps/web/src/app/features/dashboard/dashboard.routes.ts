@@ -28,12 +28,20 @@ export const DASHBOARD_ROUTES: Routes = [
         title: 'Cases',
       },
       {
-        path: 'organizations/new',
+        path: 'organizations/manage',
         loadComponent: () =>
-          import('./pages/dashboard-organization-new/dashboard-organization-new.component').then(
-            (m) => m.DashboardOrganizationNewComponent,
+          import('./pages/dashboard-organization-manage/dashboard-organization-manage.component').then(
+            (m) => m.DashboardOrganizationManageComponent,
           ),
-        title: 'Add organization',
+        title: 'Manage organizations',
+      },
+      {
+        path: 'organizations/:organizationId',
+        loadComponent: () =>
+          import('../organizations/pages/organization-detail-page/organization-detail-page.component').then(
+            (m) => m.OrganizationDetailPageComponent,
+          ),
+        title: 'Organization details',
       },
     ],
   },

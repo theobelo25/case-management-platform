@@ -37,7 +37,9 @@ public static class DependencyInjection
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<CaseManagementDbContext>());
         services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+        
         services.AddScoped<IUserOrganizationMembershipsQuery, UserOrganizationMembershipsQuery>();
+        services.AddScoped<IOrganizationDetailQuery, OrganizationDetailQuery>();
         
         return services;
     }

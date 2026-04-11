@@ -11,11 +11,11 @@
 
   <app-protected-sidebar />
 
-  <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+  <div class="protected-shell-bg flex min-h-0 min-w-0 flex-1 flex-col">
     <app-protected-header />
 
     <main
-      class="scrollbar-chrome-dark min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-6 max-[720px]:p-4"
+      class="protected-shell-bg scrollbar-chrome-dark min-h-0 flex-1 overflow-y-scroll overflow-x-hidden p-6 max-[720px]:p-4"
     >
       <router-outlet></router-outlet>
     </main>
