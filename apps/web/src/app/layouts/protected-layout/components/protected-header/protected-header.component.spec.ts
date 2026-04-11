@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import type { AuthResponseDto } from '@app/core/auth/auth-api.service';
 import { AuthService } from '@app/core/auth/auth.service';
-import { EMPTY } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { ProtectedLayoutService } from '../../protected-layout.service';
 import { ProtectedHeaderComponent } from './protected-header.component';
 
@@ -31,7 +31,9 @@ describe('ProtectedHeaderComponent', () => {
           provide: AuthService,
           useValue: {
             session: signal(sessionDto).asReadonly(),
+            userProfile: signal(null).asReadonly(),
             signOut: signOutMock,
+            switchActiveOrganization: vi.fn().mockReturnValue(of(void 0)),
           },
         },
         {

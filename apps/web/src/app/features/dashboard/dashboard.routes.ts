@@ -27,6 +27,22 @@ export const DASHBOARD_ROUTES: Routes = [
         loadChildren: () => import('../cases/cases.routes').then((m) => m.CASES_ROUTES),
         title: 'Cases',
       },
+      {
+        path: 'organizations/manage',
+        loadComponent: () =>
+          import('./pages/dashboard-organization-manage/dashboard-organization-manage.component').then(
+            (m) => m.DashboardOrganizationManageComponent,
+          ),
+        title: 'Manage organizations',
+      },
+      {
+        path: 'organizations/:organizationId',
+        loadComponent: () =>
+          import('../organizations/pages/organization-detail-page/organization-detail-page.component').then(
+            (m) => m.OrganizationDetailPageComponent,
+          ),
+        title: 'Organization details',
+      },
     ],
   },
 ];

@@ -30,6 +30,17 @@ describe('auth401Interceptor', () => {
     exp: 4102444900,
   });
 
+  const meBody = {
+    id: '11111111-1111-1111-1111-111111111111',
+    email: 'u@test.com',
+    firstName: 'U',
+    lastName: '',
+    activeOrganizationId: '22222222-2222-2222-2222-222222222222',
+    organizations: [
+      { id: '22222222-2222-2222-2222-222222222222', name: 'Test Org', role: 'Administrator' },
+    ],
+  };
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
@@ -52,6 +63,7 @@ describe('auth401Interceptor', () => {
   function signInSession(): void {
     auth.signIn({ email: 'u@test.com', password: 'p' }).subscribe();
     httpMock.expectOne(`${baseUrl}/auth/login`).flush({ accessToken: token1 });
+    httpMock.expectOne(`${baseUrl}/auth/me`).flush(meBody);
   }
 
   it('on 401, refreshes once and retries the original request with X-Auth-Retry', () => {
@@ -71,6 +83,8 @@ describe('auth401Interceptor', () => {
     expect(refresh.request.method).toBe('POST');
     expect(refresh.request.withCredentials).toBe(true);
     refresh.flush({ accessToken: token2 });
+
+    httpMock.expectOne(`${baseUrl}/auth/me`).flush(meBody);
 
     const retry = httpMock.expectOne(`${baseUrl}/cases`);
     expect(retry.request.headers.get('Authorization')).toBe(`Bearer ${token2}`);
@@ -127,6 +141,8 @@ describe('auth401Interceptor', () => {
 
     httpMock.expectOne(`${baseUrl}/cases`).flush(null, { status: 401, statusText: 'Unauthorized' });
     httpMock.expectOne(`${baseUrl}/auth/refresh`).flush({ accessToken: token2 });
+
+    httpMock.expectOne(`${baseUrl}/auth/me`).flush(meBody);
 
     const retry = httpMock.expectOne(`${baseUrl}/cases`);
     expect(retry.request.headers.get('X-Auth-Retry')).toBe('1');

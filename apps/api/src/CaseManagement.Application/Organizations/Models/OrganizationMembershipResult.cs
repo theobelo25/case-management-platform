@@ -4,8 +4,8 @@ namespace CaseManagement.Application.Organizations;
 
 public sealed record OrganizationMembershipResult(
     Guid Id,
-    Guid userId,
-    Guid organizationId,
-    OrganizationRole role,
+    Guid UserId,
+    Guid OrganizationId,
+    OrganizationRole Role,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset UpdatedAtUtc);

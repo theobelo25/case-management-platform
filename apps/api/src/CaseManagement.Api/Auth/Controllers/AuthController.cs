@@ -1,5 +1,6 @@
 using CaseManagement.Api.Auth;
 using CaseManagement.Api.Auth.Contracts;
+using CaseManagement.Api.Organizations.Contracts;
 using CaseManagement.Application.Auth;
 using CaseManagement.Application.Exceptions;
 using CaseManagement.Application.Ports;
@@ -22,7 +23,7 @@ public sealed class AuthController(
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
     public async Task<ActionResult<AuthResponse>> RegisterAsync(
         [FromBody] RegisterRequest request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var result = await auth.RegisterAsync(
             new RegisterUserInput(
@@ -43,7 +44,7 @@ public sealed class AuthController(
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
     public async Task<ActionResult<AuthResponse>> LoginAsync(
         [FromBody] LoginRequest request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var result = await auth.LoginAsync(
             new LoginUserInput(request.Email, request.Password),
@@ -58,7 +59,7 @@ public sealed class AuthController(
     [AllowAnonymous]
     [EnableRateLimiting("auth")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<AuthResponse>> RefreshAsync(CancellationToken cancellationToken)
+    public async Task<ActionResult<AuthResponse>> RefreshAsync(CancellationToken cancellationToken = default)
     {
         if (!cookieService.TryGetRefreshToken(Request, out var refreshToken)
             || string.IsNullOrWhiteSpace(refreshToken))
@@ -76,7 +77,8 @@ public sealed class AuthController(
     [HttpPost("logout")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> LogoutAsync(CancellationToken cancellationToken = default)
+    public async Task<IActionResult> LogoutAsync(
+        CancellationToken cancellationToken = default)
     {
         cookieService.TryGetRefreshToken(Request, out var refreshToken);
         
@@ -104,7 +106,8 @@ public sealed class AuthController(
                 request.LastName,
                 request.CurrentPassword,
                 request.NewPassword,
-                request.ConfirmNewPassword),
+                request.ConfirmNewPassword,
+                request.ActiveOrganizationId),
             cancellationToken);
 
         return NoContent();
@@ -127,6 +130,10 @@ public sealed class AuthController(
             profile.Id,
             profile.Email,
             profile.FirstName,
-            profile.LastName));
+            profile.LastName,
+            profile.ActiveOrganizationId,
+            profile.Organizations
+                .Select(o => new UserOrganizationResponse(o.Id, o.Name, o.Role))
+                .ToArray()));
     }
 }

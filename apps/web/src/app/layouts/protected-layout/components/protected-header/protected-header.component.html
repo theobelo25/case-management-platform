@@ -73,33 +73,75 @@
           class="grid size-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-[0.8rem] font-bold leading-none tracking-tight text-white min-[721px]:size-[2.2rem] min-[721px]:text-[0.85rem]"
           >{{ userInitials() }}</span
         >
-        <span class="hidden min-w-0 max-w-[10rem] flex-col leading-tight min-[721px]:flex">
-          <strong class="truncate text-[0.92rem] text-slate-50">{{ userDisplayName() }}</strong>
-          <small class="text-[0.78rem] text-slate-400">Administrator</small>
+        <span class="hidden min-w-0 max-w-[12rem] leading-tight min-[721px]:block">
+          <strong class="block truncate text-[0.92rem] text-slate-50">{{ userDisplayName() }}</strong>
         </span>
       </button>
 
       @if (userMenuOpen()) {
         <div
           id="protected-header-user-menu"
-          role="menu"
-          class="absolute right-0 top-[calc(100%+0.35rem)] z-[60] w-48 max-w-[calc(100vw-1rem)] rounded-xl border border-slate-400/20 bg-slate-900/95 py-1 shadow-lg shadow-black/40 backdrop-blur-md min-[721px]:top-[calc(100%+0.45rem)] min-[721px]:w-auto min-[721px]:min-w-[12.5rem] min-[721px]:max-w-none"
+          class="absolute right-0 top-[calc(100%+0.35rem)] z-[60] w-[min(18rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl border border-slate-400/20 bg-slate-900/95 shadow-lg shadow-black/40 backdrop-blur-md min-[721px]:top-[calc(100%+0.45rem)] min-[721px]:w-64"
+          (click)="$event.stopPropagation()"
         >
-          <a
-            routerLink="/app/settings"
-            role="menuitem"
-            class="block px-3 py-2 text-[0.88rem] text-slate-200 no-underline transition-colors hover:bg-white/[0.06] hover:text-slate-50 min-[721px]:px-4 min-[721px]:py-2.5 min-[721px]:text-[0.92rem]"
-            (click)="closeUserMenu()"
-            >Settings</a
-          >
-          <button
-            type="button"
-            role="menuitem"
-            class="block w-full px-3 py-2 text-left text-[0.88rem] text-slate-200 transition-colors hover:bg-white/[0.06] hover:text-slate-50 min-[721px]:px-4 min-[721px]:py-2.5 min-[721px]:text-[0.92rem]"
-            (click)="logout()"
-          >
-            Log out
-          </button>
+          <div class="border-b border-slate-400/15 px-3 py-2.5 min-[721px]:px-4 min-[721px]:py-3">
+            <p class="m-0 truncate text-[0.9rem] font-semibold text-slate-50">{{ userDisplayName() }}</p>
+            @if (activeOrgSummary(); as org) {
+              <p class="m-0 mt-1.5 text-[0.8rem] text-slate-400">{{ org.role }}</p>
+              <div class="mt-2">
+                <label
+                  class="m-0 block text-[0.68rem] font-medium uppercase tracking-[0.06em] text-slate-500"
+                  for="protected-header-org-select"
+                  >Organization</label
+                >
+                <select
+                  id="protected-header-org-select"
+                  class="mt-0.5 w-full max-w-full cursor-pointer truncate rounded-md border border-slate-400/25 bg-slate-950/85 px-2 py-1.5 text-[0.88rem] text-slate-200 shadow-inner outline-none transition-colors hover:border-slate-400/35 focus-visible:border-blue-500/60 focus-visible:ring-2 focus-visible:ring-blue-500/35 disabled:cursor-not-allowed disabled:opacity-70"
+                  [attr.aria-busy]="orgSwitchPending()"
+                  [attr.title]="
+                    canSwitchOrganization()
+                      ? 'Switch active organization'
+                      : 'Your current organization (add another membership to switch)'
+                  "
+                  [disabled]="orgSwitchPending()"
+                  [value]="selectedOrganizationId()"
+                  (change)="onOrganizationChange($event)"
+                  aria-label="Active organization"
+                >
+                  @for (o of organizationOptions(); track o.id) {
+                    <option [value]="o.id">{{ o.name }}</option>
+                  }
+                </select>
+                @if (orgSwitchError(); as err) {
+                  <p class="m-0 mt-1 text-[0.72rem] text-red-400" role="alert">{{ err }}</p>
+                }
+              </div>
+            }
+          </div>
+          <div role="menu" class="py-1">
+            <a
+              routerLink="/app/settings"
+              role="menuitem"
+              class="block px-3 py-2 text-[0.88rem] text-slate-200 no-underline transition-colors hover:bg-white/[0.06] hover:text-slate-50 min-[721px]:px-4 min-[721px]:py-2.5 min-[721px]:text-[0.92rem]"
+              (click)="closeUserMenu()"
+              >Settings</a
+            >
+            <a
+              routerLink="/app/organizations/manage"
+              role="menuitem"
+              class="block border-t border-slate-400/15 px-3 py-2 text-[0.88rem] text-slate-200 no-underline transition-colors hover:bg-white/[0.06] hover:text-slate-50 min-[721px]:px-4 min-[721px]:py-2.5 min-[721px]:text-[0.92rem]"
+              (click)="closeUserMenu()"
+              >Manage organizations</a
+            >
+            <button
+              type="button"
+              role="menuitem"
+              class="block w-full border-t border-slate-400/15 px-3 py-2 text-left text-[0.88rem] text-slate-200 transition-colors hover:bg-white/[0.06] hover:text-slate-50 min-[721px]:px-4 min-[721px]:py-2.5 min-[721px]:text-[0.92rem]"
+              (click)="logout()"
+            >
+              Log out
+            </button>
+          </div>
         </div>
       }
     </div>

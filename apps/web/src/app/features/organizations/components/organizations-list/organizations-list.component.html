@@ -1,0 +1,47 @@
+<section class="grid gap-6">
+  <div
+    class="rounded-3xl border border-slate-400/14 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
+  >
+    <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-300">Memberships</p>
+
+    @if (loading()) {
+      <p class="m-0 text-sm text-slate-400">Loading organizations…</p>
+    } @else if (organizations.loadError(); as err) {
+      <p class="m-0 text-sm leading-relaxed text-red-400" role="alert">{{ err }}</p>
+    } @else if (organizations.organizations(); as list) {
+      @if (list.length === 0) {
+        <p class="m-0 text-sm leading-relaxed text-slate-400">
+          You are not a member of any organization yet. Create one from the manage page.
+        </p>
+      } @else {
+        <ul class="m-0 flex list-none flex-col gap-2.5 p-0">
+          @for (org of list; track org.id) {
+            <li
+              class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-500/20 bg-slate-950/40 px-4 py-3.5"
+            >
+              <a
+                class="m-0 flex-1 text-sm font-medium text-slate-100 no-underline transition hover:text-white"
+                [routerLink]="['/app/organizations', org.id]"
+                >{{ org.name }}</a
+              >
+              <span
+                class="shrink-0 rounded-lg bg-blue-500/15 px-2.5 py-1 text-xs font-medium text-blue-300"
+                >{{ org.role }}</span
+              >
+            </li>
+          }
+        </ul>
+        @if (organizations.organizationListMeta(); as meta) {
+          <app-pagination-controls
+            [totalCount]="meta.totalCount"
+            [skip]="meta.skip"
+            [limit]="meta.limit"
+            [disabled]="loading()"
+            (skipChange)="onSkipChange($event)"
+            (limitChange)="onLimitChange($event)"
+          />
+        }
+      }
+    }
+  </div>
+</section>

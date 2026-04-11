@@ -1,18 +1,22 @@
 
-using CaseManagement.Application.Organizations;
 using CaseManagement.Domain.Entities;
 
 namespace CaseManagement.Application.Ports;
 
 public interface IOrganizationRepository
 {
-    Task<OrganizationResult> Create(
+    Task<Organization> Create(
         string name, 
         CancellationToken cancellationToken = default);
 
-    Task<OrganizationMembershipResult> IssueMembership(
+    Task<OrganizationMembership> IssueMembership(
         Guid userId,
         Guid organizationId,
         OrganizationRole role,
+        CancellationToken cancellationToken = default);
+
+    Task<OrganizationRole?> CheckUserMembership(
+        Guid userId,
+        Guid organizationId,
         CancellationToken cancellationToken = default);
 }

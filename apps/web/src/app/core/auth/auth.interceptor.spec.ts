@@ -12,6 +12,21 @@ describe('authInterceptor', () => {
   let httpMock: HttpTestingController;
   let auth: AuthService;
 
+  const meBody = {
+    id: 'u',
+    email: 'u@test.com',
+    firstName: 'U',
+    lastName: '',
+    activeOrganizationId: '22222222-2222-2222-2222-222222222222',
+    organizations: [
+      {
+        id: '22222222-2222-2222-2222-222222222222',
+        name: 'Test Org',
+        role: 'Administrator',
+      },
+    ],
+  };
+
   const testToken = encodeTestAccessToken({
     sub: 'u',
     email: 'u@test.com',
@@ -41,21 +56,19 @@ describe('authInterceptor', () => {
     auth.signIn({ email: 'u@test.com', password: 'p' }).subscribe();
     httpMock.expectOne(`${baseUrl}/auth/login`).flush({ accessToken: testToken });
 
+    httpMock.expectOne(`${baseUrl}/auth/me`).flush(meBody);
+
     http.get(`${baseUrl}/auth/me`).subscribe();
 
     const req = httpMock.expectOne(`${baseUrl}/auth/me`);
     expect(req.request.headers.get('Authorization')).toBe(`Bearer ${testToken}`);
-    req.flush({
-      id: 'u',
-      email: 'u@test.com',
-      firstName: 'U',
-      lastName: '',
-    });
+    req.flush(meBody);
   });
 
   it('does not attach Bearer to login, register, or refresh', () => {
     auth.signIn({ email: 'u@test.com', password: 'p' }).subscribe();
     httpMock.expectOne(`${baseUrl}/auth/login`).flush({ accessToken: testToken });
+    httpMock.expectOne(`${baseUrl}/auth/me`).flush(meBody);
 
     http.post(`${baseUrl}/auth/refresh`, {}).subscribe();
 
@@ -67,6 +80,7 @@ describe('authInterceptor', () => {
   it('does not attach Bearer to requests outside the API base URL', () => {
     auth.signIn({ email: 'u@test.com', password: 'p' }).subscribe();
     httpMock.expectOne(`${baseUrl}/auth/login`).flush({ accessToken: testToken });
+    httpMock.expectOne(`${baseUrl}/auth/me`).flush(meBody);
 
     http.get('https://other.example/data').subscribe();
 
@@ -80,11 +94,6 @@ describe('authInterceptor', () => {
 
     const req = httpMock.expectOne(`${baseUrl}/auth/me`);
     expect(req.request.headers.has('Authorization')).toBe(false);
-    req.flush({
-      id: 'u',
-      email: 'u@test.com',
-      firstName: 'U',
-      lastName: '',
-    });
+    req.flush(meBody);
   });
 });

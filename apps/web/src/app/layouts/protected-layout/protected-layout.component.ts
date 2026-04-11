@@ -17,8 +17,7 @@ const PROTECTED_LAYOUT_HTML_CLASS = 'protected-layout-active';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ProtectedLayoutService],
   host: {
-    class:
-      'block h-dvh max-h-dvh overflow-hidden text-gray-200 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.16),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(99,102,241,0.12),transparent_26%),linear-gradient(180deg,#0f172a_0%,#111827_100%)]',
+    class: 'protected-shell-bg block h-dvh max-h-dvh overflow-hidden text-gray-200',
   },
 })
 export class ProtectedLayoutComponent {

@@ -16,7 +16,7 @@ public sealed class AuthService : IAuthService
     private readonly IRefreshTokenPersistence _refreshTokenPersistence;
     private readonly IRefreshTokenHasher _refreshTokenHasher;
     private readonly TimeProvider _time;
-    private readonly IUserRegistration _userRegistration;
+    private readonly IUserRegistrationService _userRegistration;
 
     public AuthService(
         IUserRepository users,
@@ -27,7 +27,7 @@ public sealed class AuthService : IAuthService
         IRefreshTokenPersistence refreshTokenPersistence,
         IRefreshTokenHasher refreshTokenHasher,
         TimeProvider time,
-        IUserRegistration userRegistration)
+        IUserRegistrationService userRegistration)
     {
         _users = users;
         _refreshTokens = refreshTokens;
@@ -40,67 +40,67 @@ public sealed class AuthService : IAuthService
         _userRegistration = userRegistration;
     }
     public async Task<AuthResult> RegisterAsync(
-        RegisterUserInput input, 
-        CancellationToken ct = default)
+        RegisterUserInput input,
+        CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(input.Password))
             throw new BadRequestArgumentException("Password is required.");
 
         var normalized = input.Email.Trim().ToLowerInvariant();
 
-        if (await _users.GetByEmailNormalizedAsync(normalized, ct) is not null)
+        if (await _users.GetByEmailNormalizedAsync(normalized, cancellationToken) is not null)
             throw new ConflictException("Email already registered.", code: AppErrorCodes.DuplicateEmail);
-        
-        var user = await _userRegistration.Register(input, ct);
 
-        return await IssueForUserAsync(user, ct);
+        var user = await _userRegistration.Register(input, cancellationToken);
+
+        return await IssueForUserAsync(user, cancellationToken);
     }
 
     public async Task<AuthResult> LoginAsync(
-        LoginUserInput input, 
-        CancellationToken ct = default)
+        LoginUserInput input,
+        CancellationToken cancellationToken = default)
     {
         var normalized = input.Email.Trim().ToLowerInvariant();
-        var user = await _users.GetByEmailNormalizedAsync(normalized, ct)
+        var user = await _users.GetByEmailNormalizedAsync(normalized, cancellationToken)
             ?? throw new AuthenticationFailedException();
-        
+
         if (!_passwordHasher.Verify(input.Password, user.PasswordHash))
             throw new AuthenticationFailedException();
-        
-        return await IssueForUserAsync(user, ct);
+
+        return await IssueForUserAsync(user, cancellationToken);
     }
 
     public async Task<AuthResult> RefreshAsync(
-        string refreshToken, 
-        CancellationToken ct = default)
+        string refreshToken,
+        CancellationToken cancellationToken = default)
     {
-        var (user, existing) = await GetActiveRefreshSessionAsync(refreshToken, ct);
+        var (user, existing) = await GetActiveRefreshSessionAsync(refreshToken, cancellationToken);
 
         var now = _time.GetUtcNow();
-        
-        var revokedCount = await _refreshTokens.TryRevokeIfActiveAsync(existing.Id, now, ct);
-        
+
+        var revokedCount = await _refreshTokens.TryRevokeIfActiveAsync(existing.Id, now, cancellationToken);
+
         if (revokedCount != 1)
             throw new AuthenticationFailedException();
-            
-        return await IssueForUserAsync(user, ct);
+
+        return await IssueForUserAsync(user, cancellationToken);
     }
 
     public async Task LogoutAsync(
-        string? refreshToken, 
-        CancellationToken ct)
+        string? refreshToken,
+        CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(refreshToken))
             return;
 
-        var (_, existing) = await GetActiveRefreshSessionAsync(refreshToken, ct);
-        
+        var (_, existing) = await GetActiveRefreshSessionAsync(refreshToken, cancellationToken);
+
         var now = _time.GetUtcNow();
-        
-        await _refreshTokens.TryRevokeIfActiveAsync(existing.Id, now, ct);
+
+        await _refreshTokens.TryRevokeIfActiveAsync(existing.Id, now, cancellationToken);
     }
 
-    private async Task<AuthResult> IssueForUserAsync(User user, CancellationToken ct)
+    private async Task<AuthResult> IssueForUserAsync(User user, CancellationToken ct = default)
     {
         var access = _accessTokenIssuer.CreateAccessToken(
             user.Id,
@@ -122,7 +122,7 @@ public sealed class AuthService : IAuthService
 
     private async Task<(User User, RefreshToken Token)> GetActiveRefreshSessionAsync(
         string refreshToken,
-        CancellationToken ct)
+        CancellationToken ct = default)
     {
         if (!TrySplitRefreshToken(refreshToken, out var tokenPrefix, out _))
             throw new AuthenticationFailedException();

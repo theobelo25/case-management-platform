@@ -83,12 +83,7 @@ public static class ServiceCollectionExtensions
                         QueueLimit = 0
                     });
             });
-            options.OnRejected = async (ctx, ct) =>
-            {
-                if (ctx.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
-                    ctx.HttpContext.Response.Headers.RetryAfter = ((int)retryAfter.TotalSeconds).ToString();
-                await ctx.HttpContext.Response.WriteAsync("Too many requests. Try again later.", ct);
-            };
+            options.OnRejected = OnAuthRateLimitRejected;
         });
 
         var jwt = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()
@@ -132,6 +127,15 @@ public static class ServiceCollectionExtensions
                     .AllowCredentials()));
 
         return services;
+    }
+
+    private static async ValueTask OnAuthRateLimitRejected(
+        OnRejectedContext context,
+        CancellationToken ct = default)
+    {
+        if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+            context.HttpContext.Response.Headers.RetryAfter = ((int)retryAfter.TotalSeconds).ToString();
+        await context.HttpContext.Response.WriteAsync("Too many requests. Try again later.", ct);
     }
 }
 

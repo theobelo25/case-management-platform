@@ -1,0 +1,18 @@
+<div
+  class="rounded-3xl border border-slate-400/14 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
+>
+  <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-300">Organization</p>
+  <h2 class="m-0 text-xl font-semibold text-slate-50">{{ organization().name }}</h2>
+  <dl class="mt-6 grid gap-4 sm:grid-cols-2">
+    <div>
+      <dt class="m-0 text-[0.72rem] font-medium uppercase tracking-[0.08em] text-slate-500">Organization ID</dt>
+      <dd class="mt-1.5 m-0 break-all font-mono text-sm text-slate-200">{{ organization().id }}</dd>
+    </div>
+    <div>
+      <dt class="m-0 text-[0.72rem] font-medium uppercase tracking-[0.08em] text-slate-500">Created</dt>
+      <dd class="mt-1.5 m-0 text-sm text-slate-200">
+        {{ organization().createdAtUtc | date: 'medium' }}
+      </dd>
+    </div>
+  </dl>
+</div>

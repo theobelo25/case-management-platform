@@ -15,26 +15,49 @@
    */
   html {
     overflow-y: auto;
+    scrollbar-gutter: stable;
     background-color: rgb(248 250 252);
     scrollbar-color: rgb(148 163 184) rgb(248 250 252);
   }
 
   html.auth-layout-active,
   html.protected-layout-active {
-    background-color: #0f172a;
+    /* Match protected shell base so no bright strip at the viewport edge beside the app. */
+    background-color: #111827;
     scrollbar-color: rgb(71 85 105) rgb(15 23 42);
   }
 
-  /* Protected app scrolls inside <main>; suppress the document scrollbar to avoid double bars. */
+  /*
+   * Protected app scrolls inside <main>; suppress the document scrollbar to avoid double bars.
+   * Do not use scrollbar-gutter: stable on html here — combined with overflow:hidden it can leave
+   * an extra strip at the viewport edge (beside <main>’s scrollbar) that won’t match the shell.
+   */
   html.protected-layout-active {
     overflow: hidden;
+    scrollbar-gutter: auto;
+  }
+
+  html.protected-layout-active body,
+  html.protected-layout-active app-root {
+    margin: 0;
+    min-height: 100%;
+    height: 100%;
+    /* Solid edge match for any sub-pixel gap; routed layout paints the gradient on top. */
+    background-color: #111827;
+  }
+
+  html.protected-layout-active app-root {
+    display: block;
   }
 }
 
-/* Scroll regions on dark UIs — avoid default light scrollbar track next to content */
+/* Scroll regions on dark UIs — track blends with shell so the gutter isn’t a flat “bar”. */
 @layer utilities {
+  /* Reserve vertical scrollbar width so content doesn’t shift when scrollability toggles (e.g. manage org page). */
   .scrollbar-chrome-dark {
-    scrollbar-color: rgb(100 116 139) rgb(15 23 42);
+    scrollbar-gutter: stable;
+    /* Firefox: thumb, then track — track matches shell base so it doesn’t read as a separate strip. */
+    scrollbar-color: rgb(100 116 139 / 0.55) #111827;
   }
 
   .scrollbar-chrome-dark::-webkit-scrollbar {
@@ -42,18 +65,35 @@
   }
 
   .scrollbar-chrome-dark::-webkit-scrollbar-track {
-    background: rgb(15 23 42);
+    background: transparent;
   }
 
   .scrollbar-chrome-dark::-webkit-scrollbar-thumb {
-    background-color: rgb(71 85 105);
+    background-color: rgb(100 116 139 / 0.45);
     border-radius: 9999px;
-    border: 2px solid rgb(15 23 42);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .scrollbar-chrome-dark::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(148 163 184 / 0.45);
   }
 }
 
 /* Shared with app-public-header, app-public-footer, and routed pages — shell content width */
 @layer components {
+  /*
+   * Same painted background as app-protected-layout host so <main> (scroll + gutter)
+   * doesn’t show a different tone or “blue bar” at the right edge.
+   */
+  .protected-shell-bg {
+    background-color: #0f172a;
+    background-image:
+      radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 28%),
+      radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.12), transparent 26%),
+      linear-gradient(180deg, #0f172a 0%, #111827 100%);
+  }
+
   .layout-container {
     @apply mx-auto box-border;
     width: min(1120px, calc(100% - 2rem));

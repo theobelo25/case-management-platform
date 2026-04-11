@@ -1,0 +1,43 @@
+<div
+  class="rounded-3xl border border-slate-400/14 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
+>
+  <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-300">Members</p>
+      <h2 class="m-0 text-lg font-semibold text-slate-50">People in this organization</h2>
+    </div>
+    <p class="m-0 text-sm text-slate-400">{{ members().length }} total</p>
+  </div>
+
+  @if (members().length === 0) {
+    <p class="m-0 text-sm leading-relaxed text-slate-400">No members to show yet.</p>
+  } @else {
+    <div class="-mx-6 overflow-x-auto px-6">
+      <table class="w-full min-w-[640px] border-collapse text-left text-sm">
+        <thead>
+          <tr class="border-b border-slate-500/25 text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-slate-500">
+            <th class="py-3 pr-4 font-medium">Name</th>
+            <th class="py-3 pr-4 font-medium">Email</th>
+            <th class="py-3 pr-4 font-medium">Role</th>
+            <th class="py-3 font-medium">Joined</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (m of members(); track m.id) {
+            <tr class="border-b border-slate-500/15 last:border-b-0">
+              <td class="py-3.5 pr-4 font-medium text-slate-100">{{ m.name }}</td>
+              <td class="py-3.5 pr-4 text-slate-300">{{ m.email }}</td>
+              <td class="py-3.5 pr-4">
+                <span
+                  class="inline-flex rounded-lg bg-blue-500/15 px-2.5 py-1 text-xs font-medium text-blue-300"
+                  >{{ m.role }}</span
+                >
+              </td>
+              <td class="py-3.5 text-slate-400">{{ m.joinedAtUtc | date: 'mediumDate' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,0 +1,41 @@
+<form class="flex flex-col gap-2.5" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="flex flex-col gap-1">
+    <label class="text-xs font-medium text-slate-300 sm:text-sm" for="organizationName"
+      >Organization name</label
+    >
+
+    <input
+      id="organizationName"
+      type="text"
+      formControlName="name"
+      autocomplete="organization"
+      (focus)="onNameInteraction()"
+      (input)="onNameInteraction()"
+      class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+    />
+
+    <div class="mt-0.5 min-h-4.5">
+      @if (showNameErrorAfterSubmit() && name.invalid) {
+        <p class="text-xs leading-tight text-red-400 sm:text-sm">
+          Please enter an organization name.
+        </p>
+      }
+    </div>
+  </div>
+
+  @if (organizations.createError(); as err) {
+    <p class="text-xs leading-tight text-red-400 sm:text-sm" role="alert">{{ err }}</p>
+  }
+
+  <button
+    class="mt-1 w-full rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
+    type="submit"
+    [disabled]="organizations.isCreating()"
+  >
+    @if (organizations.isCreating()) {
+      <span>Creating…</span>
+    } @else {
+      <span>Create organization</span>
+    }
+  </button>
+</form>
