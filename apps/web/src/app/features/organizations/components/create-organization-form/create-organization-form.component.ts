@@ -6,7 +6,7 @@ import { OrganizationsService } from '@app/core/organizations/organizations.serv
   selector: 'app-create-organization-form',
   standalone: true,
   imports: [ReactiveFormsModule],
-  templateUrl: './create-organization-form.html',
+  templateUrl: './create-organization-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateOrganizationFormComponent {

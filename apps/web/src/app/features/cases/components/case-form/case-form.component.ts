@@ -12,7 +12,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CasesService } from '@app/core/cases/cases.service';
 import { CASE_PRIORITIES, CASE_STATUSES, CasePriority, CaseStatus } from '../../models/cases.types';
-import { oneOfValidator } from '@app/shared/validators/oneOf.validator';
+import { oneOfValidator } from '@app/shared/validators/one-of.validator';
 import { finalize } from 'rxjs';
 
 type CaseFormMode = 'create' | 'update';

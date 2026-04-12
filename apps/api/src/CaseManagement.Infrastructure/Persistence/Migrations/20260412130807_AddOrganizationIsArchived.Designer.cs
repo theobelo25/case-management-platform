@@ -3,6 +3,7 @@ using System;
 using CaseManagement.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CaseManagement.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(CaseManagementDbContext))]
-    partial class CaseManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260412130807_AddOrganizationIsArchived")]
+    partial class AddOrganizationIsArchived
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,7 +164,7 @@ namespace CaseManagement.Infrastructure.Persistence.Migrations
                     b.HasOne("CaseManagement.Domain.Entities.Organization", null)
                         .WithMany()
                         .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CaseManagement.Domain.Entities.User", null)

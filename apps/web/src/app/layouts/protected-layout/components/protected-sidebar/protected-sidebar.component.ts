@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ProtectedLayoutService } from '../../protected-layout.service';
@@ -5,9 +6,8 @@ import { ProtectedLayoutService } from '../../protected-layout.service';
 @Component({
   selector: 'app-protected-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [NgClass, RouterLink, RouterLinkActive],
   templateUrl: './protected-sidebar.component.html',
-  styleUrl: './protected-sidebar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'contents',

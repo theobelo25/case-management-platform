@@ -3,5 +3,6 @@ namespace CaseManagement.Application.Organizations;
 public sealed record OrganizationResult(
     Guid Id,
     string Name,
-    DateTimeOffset CreatedAtUtc
+    DateTimeOffset CreatedAtUtc,
+    bool IsArchived
 );

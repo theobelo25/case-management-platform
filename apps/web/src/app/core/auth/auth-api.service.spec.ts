@@ -34,7 +34,7 @@ describe('AuthApiService', () => {
         lastName: 'User',
         activeOrganizationId: '22222222-2222-2222-2222-222222222222',
         organizations: [
-          { id: '22222222-2222-2222-2222-222222222222', name: 'Org', role: 'Member' },
+          { id: '22222222-2222-2222-2222-222222222222', name: 'Org', role: 'Member', isArchived: false },
         ],
       };
 
@@ -44,6 +44,8 @@ describe('AuthApiService', () => {
 
       const req = httpMock.expectOne(`${baseUrl}/auth/me`);
       expect(req.request.method).toBe('GET');
+      expect(req.request.headers.get('Cache-Control')).toBe('no-cache');
+      expect(req.request.headers.get('Pragma')).toBe('no-cache');
       req.flush(body);
     });
   });

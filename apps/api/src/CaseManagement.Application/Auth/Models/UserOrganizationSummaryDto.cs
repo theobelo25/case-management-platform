@@ -4,4 +4,5 @@ public sealed record UserOrganizationSummaryDto(
     Guid Id,
     string Name,
     string Role,
-    DateTimeOffset CreatedAtUtc);
+    DateTimeOffset CreatedAtUtc,
+    bool IsArchived);

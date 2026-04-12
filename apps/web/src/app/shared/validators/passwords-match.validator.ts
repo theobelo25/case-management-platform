@@ -5,7 +5,6 @@ export interface PasswordsMatchValidatorOptions {
   confirmKey?: string;
 }
 
-/** Cross-field validator: password and confirm fields must match when both are set. */
 export function passwordsMatchValidator(options?: PasswordsMatchValidatorOptions): ValidatorFn {
   const passwordKey = options?.passwordKey ?? 'password';
   const confirmKey = options?.confirmKey ?? 'confirmPassword';
@@ -22,7 +21,6 @@ export function passwordsMatchValidator(options?: PasswordsMatchValidatorOptions
   };
 }
 
-/** When a new password is entered, current password must be provided. */
 export function updateProfilePasswordGroupValidator(options?: {
   oldKey?: string;
   newKey?: string;
@@ -45,7 +43,6 @@ export function updateProfilePasswordGroupValidator(options?: {
   };
 }
 
-/** Applies `minLength` only when the value is non-empty (optional password fields). */
 export function optionalMinLength(min: number): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const v = ((control.value as string) ?? '').trim();

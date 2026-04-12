@@ -1,3 +1,4 @@
+using CaseManagement.Application.Exceptions;
 using CaseManagement.Application.Ports;
 using CaseManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +7,7 @@ namespace CaseManagement.Infrastructure.Persistence.Repositories;
 
 public sealed class OrganizationRepository(
     CaseManagementDbContext db,
-    IUnitOfWork unitOfWork) : IOrganizationRepository
+    IUnitOfWork unitOfWork) : IOrganizationsRepository
 {
     public Task<Organization> Create(
         string name,
@@ -46,5 +47,46 @@ public sealed class OrganizationRepository(
                 cancellationToken);
 
         return membership?.Role;
+    }
+
+    public async Task<Organization> Archive(
+        Guid organizationId,
+        CancellationToken cancellationToken = default)
+    {
+        var organization = await db.Organizations
+            .FirstOrDefaultAsync(o => o.Id == organizationId, cancellationToken)
+            ?? throw new NotFoundException("Organization not found.");
+        
+        organization.Archive();
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return organization;
+    }
+
+    public async Task<Organization> Unarchive(
+        Guid organizationId,
+        CancellationToken cancellationToken = default)
+    {
+        var organization = await db.Organizations
+            .FirstOrDefaultAsync(o => o.Id == organizationId, cancellationToken)
+            ?? throw new NotFoundException("Organization not found.");
+        
+        organization.Unarchive();
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return organization;
+    }
+
+    public async Task<bool> Delete(
+        Guid organizationId,
+        CancellationToken cancellationToken = default)
+    {
+        var deleted = await db.Organizations
+            .Where(o => o.Id == organizationId)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        return deleted > 0;
     }
 }

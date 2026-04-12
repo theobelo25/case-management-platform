@@ -1,8 +1,8 @@
 <aside
   id="protected-app-sidebar"
   aria-label="Workspace navigation"
-  class="sidebar-drawer flex min-h-0 flex-col border-b border-slate-400/12 border-r-0 bg-[rgba(2,6,23,0.92)] p-5 backdrop-blur-[18px] max-[980px]:fixed max-[980px]:left-0 max-[980px]:top-0 max-[980px]:z-50 max-[980px]:h-dvh max-[980px]:w-[min(280px,88vw)] max-[980px]:border-b-0 max-[980px]:border-r max-[980px]:shadow-[8px_0_32px_rgba(2,6,23,0.45)] max-[980px]:transition-transform max-[980px]:duration-200 max-[980px]:ease-out min-[981px]:static min-[981px]:h-full min-[981px]:w-[280px] min-[981px]:shrink-0 min-[981px]:border-b-0 min-[981px]:border-r min-[981px]:bg-[rgba(2,6,23,0.45)] min-[981px]:shadow-none"
-  [class.sidebar-drawer--open]="layout.mobileNavOpen()"
+  class="flex min-h-0 flex-col border-b border-slate-400/12 border-r-0 bg-[rgba(2,6,23,0.92)] p-5 backdrop-blur-[18px] max-[980px]:fixed max-[980px]:left-0 max-[980px]:top-0 max-[980px]:z-50 max-[980px]:h-dvh max-[980px]:w-[min(280px,88vw)] max-[980px]:border-b-0 max-[980px]:border-r max-[980px]:shadow-[8px_0_32px_rgba(2,6,23,0.45)] max-[980px]:transition-transform max-[980px]:duration-200 max-[980px]:ease-out min-[981px]:static min-[981px]:h-full min-[981px]:w-[280px] min-[981px]:shrink-0 min-[981px]:border-b-0 min-[981px]:border-r min-[981px]:bg-[rgba(2,6,23,0.45)] min-[981px]:shadow-none"
+  [ngClass]="layout.mobileNavOpen() ? 'max-[980px]:translate-x-0' : 'max-[980px]:-translate-x-full'"
 >
   <div class="mb-7">
     <a routerLink="/" class="inline-flex items-center gap-3 font-bold text-gray-50 no-underline">

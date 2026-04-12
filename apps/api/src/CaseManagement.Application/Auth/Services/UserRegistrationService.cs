@@ -8,14 +8,14 @@ public sealed class UserRegistrationService : IUserRegistrationService
     private readonly IPasswordHasher _passwordHasher;
     private readonly IUserRepository _users;
     private readonly TimeProvider _time;
-    private readonly IOrganizationRepository _organizations;
+    private readonly IOrganizationsRepository _organizations;
     private readonly IUnitOfWork _unitOfWork;
 
     public UserRegistrationService(
         IPasswordHasher passwordHasher,
         IUserRepository users,
         TimeProvider time,
-        IOrganizationRepository organizations,
+        IOrganizationsRepository organizations,
         IUnitOfWork unitOfWork)
     {
         _passwordHasher = passwordHasher;

@@ -68,6 +68,16 @@ public sealed class GlobalExceptionHandler(
                     badRequest.Message,
                     cancellationToken);
                 return true;
+            case ForbiddenException forbidden:
+                logger.LogWarning(forbidden, "Forbidden");
+                await WriteAppProblemAsync(
+                    httpContext,
+                    StatusCodes.Status403Forbidden,
+                    "Forbidden",
+                    forbidden.Code,
+                    forbidden.Message,
+                    cancellationToken);
+                return true;
             default:
                 logger.LogError(exception, "Unhandled exception");
                 var fallback = new ProblemDetails

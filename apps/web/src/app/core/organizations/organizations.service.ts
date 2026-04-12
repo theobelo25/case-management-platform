@@ -108,6 +108,39 @@ export class OrganizationsService {
     return this.api.getOrganizationDetails(id);
   }
 
+  archiveOrganization(id: string): Observable<OrganizationResponseDto> {
+    return this.api.archiveOrganization(id).pipe(
+      switchMap((org) =>
+        this.api.listUserOrganizations(0, 10).pipe(
+          tap((page) => this.organizations.set(page.items)),
+          map(() => org),
+        ),
+      ),
+    );
+  }
+
+  unarchiveOrganization(id: string): Observable<OrganizationResponseDto> {
+    return this.api.unarchiveOrganization(id).pipe(
+      switchMap((org) =>
+        this.api.listUserOrganizations(0, 10).pipe(
+          tap((page) => this.organizations.set(page.items)),
+          map(() => org),
+        ),
+      ),
+    );
+  }
+
+  deleteOrganization(id: string): Observable<void> {
+    return this.api.deleteOrganization(id).pipe(
+      switchMap((org) =>
+        this.api.listUserOrganizations(0, 10).pipe(
+          tap((page) => this.organizations.set(page.items)),
+          map(() => org),
+        ),
+      ),
+    );
+  }
+
   private messageFromHttp(err: unknown): string {
     if (!(err instanceof HttpErrorResponse)) {
       return 'Something went wrong. Please try again.';

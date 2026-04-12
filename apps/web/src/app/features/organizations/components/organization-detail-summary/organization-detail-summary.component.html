@@ -2,7 +2,16 @@
   class="rounded-3xl border border-slate-400/14 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
 >
   <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-300">Organization</p>
-  <h2 class="m-0 text-xl font-semibold text-slate-50">{{ organization().name }}</h2>
+  <div class="flex flex-wrap items-center gap-2.5">
+    <h2 class="m-0 text-xl font-semibold text-slate-50">{{ organization().name }}</h2>
+    @if (organization().isArchived) {
+      <span
+        class="inline-flex shrink-0 rounded-lg bg-amber-500/15 px-2.5 py-1 text-xs font-medium text-amber-200 ring-1 ring-amber-400/25"
+        role="status"
+        >Archived</span
+      >
+    }
+  </div>
   <dl class="mt-6 grid gap-4 sm:grid-cols-2">
     <div>
       <dt class="m-0 text-[0.72rem] font-medium uppercase tracking-[0.08em] text-slate-500">Organization ID</dt>

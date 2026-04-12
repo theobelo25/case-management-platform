@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { OrganizationMemberViewModel } from '../../models/organization-detail.view-model';
+import { OrganizationMemberViewModel } from '../../models/organization-detail-view-model';
 
 @Component({
   selector: 'app-organization-members-table',

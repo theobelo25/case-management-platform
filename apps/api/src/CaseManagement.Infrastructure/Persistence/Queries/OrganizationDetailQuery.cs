@@ -7,7 +7,7 @@ namespace CaseManagement.Infrastructure.Persistence.Queries;
 
 public sealed class OrganizationDetailQuery(
     CaseManagementDbContext db,
-    IOrganizationRepository organizations
+    IOrganizationsRepository organizations
 ) : IOrganizationDetailQuery
 {
     public async Task<OrganizationDetailDto?> GetDetailForMemberAsync(
@@ -47,6 +47,7 @@ public sealed class OrganizationDetailQuery(
             org.Id,
             org.Name,
             org.CreatedAtUtc,
+            org.IsArchived,
             members);
     }
 }

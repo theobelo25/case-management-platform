@@ -9,12 +9,12 @@ namespace CaseManagement.Infrastructure.Persistence.Queries;
 public sealed class UserOrganizationMembershipsQuery : IUserOrganizationMembershipsQuery
 {
     private readonly IUserRepository _users;
-    private readonly IOrganizationRepository _organizations;
+    private readonly IOrganizationsRepository _organizations;
     private readonly CaseManagementDbContext _db;
 
     public UserOrganizationMembershipsQuery(
         IUserRepository users,
-        IOrganizationRepository organizations,
+        IOrganizationsRepository organizations,
         CaseManagementDbContext db)
     {
         _users = users;
@@ -22,7 +22,12 @@ public sealed class UserOrganizationMembershipsQuery : IUserOrganizationMembersh
         _db = db;
     }
 
-    private sealed record OrgMembershipRow(Guid Id, string Name, OrganizationRole Role, DateTimeOffset CreatedAtUtc);
+    private sealed record OrgMembershipRow(
+        Guid Id,
+        string Name,
+        OrganizationRole Role,
+        DateTimeOffset CreatedAtUtc,
+        bool IsArchived);
 
     public async Task<bool> IsUserMemberOfAsync(Guid userId, Guid organizationId, CancellationToken cancellationToken = default)
     {
@@ -44,7 +49,12 @@ public sealed class UserOrganizationMembershipsQuery : IUserOrganizationMembersh
         var rows = await BaseMembershipRowsForUser(userId).ToListAsync(cancellationToken);
 
         return rows
-            .Select(x => new UserOrganizationSummaryDto(x.Id, x.Name, x.Role.ToString(), x.CreatedAtUtc))
+            .Select(x => new UserOrganizationSummaryDto(
+                x.Id,
+                x.Name,
+                x.Role.ToString(),
+                x.CreatedAtUtc,
+                x.IsArchived))
             .ToArray();
     }
 
@@ -64,7 +74,12 @@ public sealed class UserOrganizationMembershipsQuery : IUserOrganizationMembersh
             .ToListAsync(cancellationToken);
         
         var items = rows
-            .Select(x => new UserOrganizationSummaryDto(x.Id, x.Name, x.Role.ToString(), x.CreatedAtUtc))
+            .Select(x => new UserOrganizationSummaryDto(
+                x.Id,
+                x.Name,
+                x.Role.ToString(),
+                x.CreatedAtUtc,
+                x.IsArchived))
             .ToArray();
         
         var hasMore = skip + items.Length < totalCount;
@@ -88,6 +103,6 @@ public sealed class UserOrganizationMembershipsQuery : IUserOrganizationMembersh
                 o => o.Id,
                 (m, o) => new { m, o })
             .OrderBy(x => x.o.Name)
-            .Select(x => new OrgMembershipRow(x.o.Id, x.o.Name, x.m.Role, x.o.CreatedAtUtc));
+            .Select(x => new OrgMembershipRow(x.o.Id, x.o.Name, x.m.Role, x.o.CreatedAtUtc, x.o.IsArchived));
     }
 }

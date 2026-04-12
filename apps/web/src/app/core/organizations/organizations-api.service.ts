@@ -11,12 +11,14 @@ export interface OrganizationResponseDto {
   id: string;
   name: string;
   createdAtUtc: string;
+  isArchived: boolean;
 }
 
 export interface UserMembershipResponseDto {
   id: string;
   name: string;
   role: string;
+  isArchived: boolean;
 }
 
 export interface PagedUserMembershipsResponseDto {
@@ -51,5 +53,23 @@ export class OrganizationsApiService {
 
   getOrganizationDetails(id: string): Observable<OrganizationDetailsResponseDto> {
     return this.http.get<OrganizationDetailsResponseDto>(`${this.baseUrl}/organizations/${id}`);
+  }
+
+  archiveOrganization(id: string): Observable<OrganizationResponseDto> {
+    return this.http.patch<OrganizationResponseDto>(
+      `${this.baseUrl}/organizations/${id}/archive`,
+      {},
+    );
+  }
+
+  unarchiveOrganization(id: string): Observable<OrganizationResponseDto> {
+    return this.http.patch<OrganizationResponseDto>(
+      `${this.baseUrl}/organizations/${id}/unarchive`,
+      {},
+    );
+  }
+
+  deleteOrganization(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/organizations/${id}`);
   }
 }

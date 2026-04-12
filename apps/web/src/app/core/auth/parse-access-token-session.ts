@@ -16,7 +16,6 @@ function base64UrlToJson(segment: string): Record<string, unknown> | null {
   }
 }
 
-/** Reads standard name/email claims from a JWT access token (no signature verification). */
 export function parseSessionFromAccessToken(accessToken: string): SessionClaims | null {
   const parts = accessToken.split('.');
   if (parts.length < 2) {

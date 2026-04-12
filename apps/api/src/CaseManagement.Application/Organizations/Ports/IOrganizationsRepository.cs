@@ -3,7 +3,7 @@ using CaseManagement.Domain.Entities;
 
 namespace CaseManagement.Application.Ports;
 
-public interface IOrganizationRepository
+public interface IOrganizationsRepository
 {
     Task<Organization> Create(
         string name, 
@@ -17,6 +17,18 @@ public interface IOrganizationRepository
 
     Task<OrganizationRole?> CheckUserMembership(
         Guid userId,
+        Guid organizationId,
+        CancellationToken cancellationToken = default);
+
+    Task<Organization> Archive(
+        Guid organizationId,
+        CancellationToken cancellationToken = default);
+
+    Task<Organization> Unarchive(
+        Guid organizationId,
+        CancellationToken cancellationToken = default);
+    
+    Task<bool> Delete(
         Guid organizationId,
         CancellationToken cancellationToken = default);
 }

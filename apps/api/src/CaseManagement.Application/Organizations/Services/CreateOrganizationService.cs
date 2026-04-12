@@ -6,7 +6,7 @@ namespace CaseManagement.Application.Organizations;
 
 public sealed class CreateOrganizationService(
     IUserRepository users,
-    IOrganizationRepository organizations,
+    IOrganizationsRepository organizations,
     IUnitOfWork unitOfWork
 ) : ICreateOrganizationService
 {
@@ -35,7 +35,7 @@ public sealed class CreateOrganizationService(
             return new OrganizationResult(
                 organization.Id,
                 organization.Name,
-                organization.CreatedAtUtc
-            );
+                organization.CreatedAtUtc,
+                organization.IsArchived);
     } 
 }
