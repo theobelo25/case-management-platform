@@ -32,14 +32,22 @@ public sealed class OrganizationDetailQuery(
                 db.Users.AsNoTracking(),
                 m => m.UserId,
                 u => u.Id,
-                (m, u) => new {m.UserId, u.FirstName, u.LastName, m.Role})
+                (m, u) => new {
+                    m.UserId, 
+                    u.FirstName, 
+                    u.LastName, 
+                    m.Role,
+                    u.EmailNormalized,
+                    m.CreatedAtUtc})
             .ToListAsync(cancellationToken);
         
         var members = rows
             .Select(x => new OrganizationMemberDto(
                 x.UserId,
                 $"{x.FirstName} {x.LastName}".Trim(),
-                x.Role.ToString()))
+                x.Role.ToString(),
+                x.EmailNormalized,
+                x.CreatedAtUtc))
             .OrderBy(m => m.Name)
             .ToArray();
         

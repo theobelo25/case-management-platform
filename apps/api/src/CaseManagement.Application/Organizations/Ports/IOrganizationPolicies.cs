@@ -7,6 +7,11 @@ public interface IOrganizationPolicies
         Guid organizationId,
         CancellationToken cancellationToken = default);
 
+    Task EnsureUserCanTransfer(
+        Guid userId,
+        Guid organizationId,
+        CancellationToken cancellationToken = default);
+
     Task EnsureUserCanArchive(
         Guid userId,
         Guid organizationId,
@@ -14,6 +19,17 @@ public interface IOrganizationPolicies
 
     Task EnsureUserCanUnarchive(
         Guid userId,
+        Guid organizationId,
+        CancellationToken cancellationToken = default);
+
+    Task EnsureUserCanAddMember(
+        Guid userId,
+        Guid organizationId,
+        CancellationToken cancellationToken = default);
+    
+    Task EnsureRemoveMemberAllowed(
+        Guid actorUserId,
+        Guid memberIdToRemove,
         Guid organizationId,
         CancellationToken cancellationToken = default);
 }

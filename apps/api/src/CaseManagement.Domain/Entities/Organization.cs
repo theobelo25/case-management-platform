@@ -17,7 +17,7 @@ public sealed class Organization
         return new Organization
         {
             Id = Guid.NewGuid(),
-            CreatedAtUtc = DateTime.UtcNow,
+            CreatedAtUtc = DateTimeOffset.UtcNow,
             Name = name
         };
         

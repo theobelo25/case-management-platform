@@ -1,7 +1,6 @@
 using CaseManagement.Api.Common.Contracts;
 using CaseManagement.Api.Organizations.Contracts;
 using CaseManagement.Application.Auth;
-using CaseManagement.Application.Exceptions;
 using CaseManagement.Application.Organizations.Ports;
 using CaseManagement.Application.Ports;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +34,11 @@ public sealed class OrganizationsController(
             cancellationToken);
 
         var items = paged.Items
-            .Select(o => new UserOrganizationResponse(o.Id, o.Name, o.Role, o.IsArchived))
+            .Select(o => new UserOrganizationResponse(
+                o.Id, 
+                o.Name, 
+                o.Role, 
+                o.IsArchived))
             .ToArray();
         
         return new PagedResult<UserOrganizationResponse>(
@@ -70,7 +73,14 @@ public sealed class OrganizationsController(
                 dto.OrganizationName,
                 dto.OrganizationCreatedAtUtc,
                 dto.OrganizationIsArchived),
-            dto.Members.Select(m => new OrganizationMemberResponse(m.UserId, m.Name, m.Role)).ToArray());
+            dto.Members.Select(
+                m => new OrganizationMemberResponse(
+                    m.UserId, 
+                    m.Name, 
+                    m.Role, 
+                    m.Email, 
+                    m.JoinedAtUtc))
+                .ToArray());
     }
 
     [HttpPost]
@@ -142,13 +152,79 @@ public sealed class OrganizationsController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAsync(
         Guid organizationId,
-        CancellationToken cancellationToken = default
-    )
+        CancellationToken cancellationToken = default)
     {
         if (User.GetUserIdOrNull() is not Guid userId)
             return Unauthorized();
 
         await organizations.Delete(userId, organizationId, cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPost("{organizationId:guid}/members/{memberId:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> AddMember(
+        Guid organizationId,
+        Guid memberId,
+        CancellationToken cancellationToken = default)
+    {
+        if (User.GetUserIdOrNull() is not Guid userId)
+            return Unauthorized();
+
+        await organizations.AddMember(
+            userId, 
+            memberId, 
+            organizationId, 
+            cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{organizationId:guid}/members/{memberId:guid}")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> RemoveMember(
+        Guid organizationId,
+        Guid memberId,
+        CancellationToken cancellationToken = default)
+    {
+        if (User.GetUserIdOrNull() is not Guid userId)
+            return Unauthorized();
+
+        await organizations.RemoveMember(
+            userId, 
+            memberId, 
+            organizationId, 
+            cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPost("{organizationId:guid}/transfer-ownership")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> TransferOwnershipAsync(
+        Guid organizationId,
+        [FromBody] TransferOwnershipRequest body,
+        CancellationToken cancellationToken = default)
+    {
+        if (User.GetUserIdOrNull() is not Guid userId)
+            return Unauthorized();
+
+        await organizations.TransferOwnership(
+            userId,
+            body.NewOwnerUserId,
+            organizationId,
+            cancellationToken);
 
         return NoContent();
     }

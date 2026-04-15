@@ -103,6 +103,11 @@ export class AuthService {
     );
   }
 
+  /** Reloads `userProfile` from `GET /auth/me` when membership or org metadata changes outside `AuthService`. */
+  refreshUserProfile(): void {
+    this.loadUserProfile();
+  }
+
   updateProfile(payload: UpdateProfileRequestDto): Observable<AuthResponseDto> {
     return this.api.updateProfile(payload).pipe(switchMap(() => this.refreshSession()));
   }

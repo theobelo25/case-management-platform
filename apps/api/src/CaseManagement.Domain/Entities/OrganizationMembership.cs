@@ -27,8 +27,8 @@ public sealed class OrganizationMembership
         OrganizationId = organizationId;
         UserId = userId;
         Role = role;
-        CreatedAtUtc = DateTime.UtcNow;
-        UpdatedAtUtc = DateTime.UtcNow;
+        CreatedAtUtc = DateTimeOffset.UtcNow;
+        UpdatedAtUtc = DateTimeOffset.UtcNow;
     }
 
     public void ChangeRole(OrganizationRole role)
@@ -40,6 +40,6 @@ public sealed class OrganizationMembership
 
     private void Touched()
     {
-        UpdatedAtUtc = DateTime.UtcNow;
+        UpdatedAtUtc = DateTimeOffset.UtcNow;
     }
 }

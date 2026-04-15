@@ -17,6 +17,10 @@ public sealed class CaseManagementDbContext : DbContext, IUnitOfWork
     public DbSet<Organization> Organizations => Set<Organization>();
     public DbSet<OrganizationMembership> OrganizationMemberships => Set<OrganizationMembership>();
 
+    public DbSet<Case> Cases => Set<Case>();
+    public DbSet<CaseMessage> CaseMessages => Set<CaseMessage>();
+    public DbSet<CaseEvent> CaseEvents => Set<CaseEvent>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

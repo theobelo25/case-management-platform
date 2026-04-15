@@ -16,7 +16,7 @@ public sealed class JwtAccessTokenIssuer(IOptions<JwtOptions> options) : IAccess
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_opt.SigningKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var now = DateTime.UtcNow;
+        var now = DateTimeOffset.UtcNow;
         var expires = now.AddMinutes(_opt.AccessTokenLifetimeMinutes);
 
         var fullName = $"{firstName} {lastName}".Trim();
@@ -37,8 +37,8 @@ public sealed class JwtAccessTokenIssuer(IOptions<JwtOptions> options) : IAccess
             issuer: _opt.Issuer,
             audience: _opt.Audience,
             claims: claims,
-            notBefore: now,
-            expires: expires,
+            notBefore: now.UtcDateTime,
+            expires: expires.UtcDateTime,
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

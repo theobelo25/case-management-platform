@@ -78,6 +78,16 @@ public sealed class GlobalExceptionHandler(
                     forbidden.Message,
                     cancellationToken);
                 return true;
+            case ArgumentException argEx:
+                logger.LogWarning(argEx, "Bad request (argument)");
+                await WriteAppProblemAsync(
+                    httpContext,
+                    StatusCodes.Status400BadRequest,
+                    "Bad Request",
+                    code: null,
+                    detail: argEx.Message,
+                    cancellationToken);
+                return true;
             default:
                 logger.LogError(exception, "Unhandled exception");
                 var fallback = new ProblemDetails

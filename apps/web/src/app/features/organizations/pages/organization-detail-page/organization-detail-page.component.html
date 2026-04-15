@@ -32,13 +32,150 @@
       @case ('success') {
         @if (organization(); as org) {
           <app-organization-detail-summary [organization]="org" />
-          <app-organization-members-table [members]="members()" />
+          <app-organization-members-table
+            [members]="members()"
+            [currentUserId]="currentUserId()"
+            (addMembersRequested)="onAddMembers()"
+            (removeMemberRequested)="openRemoveMember($event)"
+            (memberSettingsRequested)="onMemberSettings($event)"
+          />
           <app-organization-detail-lifecycle
+            [members]="members()"
             [isArchived]="org.isArchived"
             (deleteRequested)="openDeleteConfirm()"
             (archiveRequested)="onArchiveRequested()"
             (unarchiveRequested)="onUnarchiveRequested()"
+            (transferOwnershipRequested)="openTransferOwnership()"
           />
+
+          @if (removeMemberTarget(); as rm) {
+            <div
+              class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="remove-member-title"
+            >
+              <button
+                type="button"
+                class="absolute inset-0 border-0 bg-slate-950/75 p-0 backdrop-blur-[2px]"
+                (click)="closeRemoveMember()"
+                aria-label="Close dialog"
+              ></button>
+              <div class="relative z-10 w-full max-w-lg" (click)="$event.stopPropagation()">
+                @if (removeMemberError(); as rerr) {
+                  <p
+                    class="mb-3 rounded-xl border border-rose-500/30 bg-rose-950/40 px-3 py-2.5 text-sm text-rose-200"
+                    role="alert"
+                  >
+                    {{ rerr }}
+                  </p>
+                }
+                <div
+                  class="rounded-3xl border border-rose-500/20 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
+                >
+                  <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-rose-300">
+                    Remove member
+                  </p>
+                  <h2 id="remove-member-title" class="m-0 text-lg font-semibold text-slate-50">
+                    Remove from organization?
+                  </h2>
+                  <p class="mb-0 mt-3 max-w-2xl leading-[1.7] text-slate-400">
+                    <span class="font-medium text-slate-200">{{ rm.name }}</span> will lose access to this
+                    organization. This can be undone later by inviting them again.
+                  </p>
+                  <div class="mt-6 flex flex-wrap justify-end gap-3 border-t border-slate-500/20 pt-6">
+                    <button
+                      type="button"
+                      class="rounded-xl border border-slate-400/25 bg-white/5 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-400/40 hover:bg-white/[0.07] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400/50 disabled:cursor-not-allowed disabled:opacity-45"
+                      [disabled]="removeMemberSubmitting()"
+                      (click)="closeRemoveMember()"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      class="rounded-xl border border-rose-500/40 bg-rose-950/35 px-4 py-2.5 text-sm font-medium text-rose-100 transition hover:border-rose-400/55 hover:bg-rose-950/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400/60 disabled:cursor-not-allowed disabled:opacity-45"
+                      [disabled]="removeMemberSubmitting()"
+                      (click)="confirmRemoveMember()"
+                    >
+                      @if (removeMemberSubmitting()) {
+                        Removing…
+                      } @else {
+                        Remove member
+                      }
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (confirmingAddMember()) {
+            <div
+              class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="add-member-title"
+            >
+              <button
+                type="button"
+                class="absolute inset-0 border-0 bg-slate-950/75 p-0 backdrop-blur-[2px]"
+                (click)="closeAddMember()"
+                aria-label="Close dialog"
+              ></button>
+              <div class="relative z-10 w-full max-w-lg" (click)="$event.stopPropagation()">
+                @if (addMemberError(); as aerr) {
+                  <p
+                    class="mb-3 rounded-xl border border-rose-500/30 bg-rose-950/40 px-3 py-2.5 text-sm text-rose-200"
+                    role="alert"
+                  >
+                    {{ aerr }}
+                  </p>
+                }
+                <app-organization-add-member
+                  [existingMemberIds]="members().map((m) => m.id)"
+                  [isSubmitting]="addMemberSubmitting()"
+                  (cancelled)="closeAddMember()"
+                  (confirmed)="onAddMemberConfirmed($event)"
+                />
+              </div>
+            </div>
+          }
+
+          @if (confirmingTransfer()) {
+            <div
+              class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="transfer-ownership-title"
+            >
+              <button
+                type="button"
+                class="absolute inset-0 border-0 bg-slate-950/75 p-0 backdrop-blur-[2px]"
+                (click)="closeTransferOwnership()"
+                aria-label="Close dialog"
+              ></button>
+              <div class="relative z-10 w-full max-w-lg" (click)="$event.stopPropagation()">
+                @if (transferError(); as terr) {
+                  <p
+                    class="mb-3 rounded-xl border border-rose-500/30 bg-rose-950/40 px-3 py-2.5 text-sm text-rose-200"
+                    role="alert"
+                  >
+                    {{ terr }}
+                  </p>
+                }
+                @if (currentUserId(); as uid) {
+                  <app-organization-transfer-ownership
+                    [members]="members()"
+                    [currentUserId]="uid"
+                    [isSubmitting]="transferSubmitting()"
+                    (cancelled)="closeTransferOwnership()"
+                    (confirmed)="onTransferOwnershipConfirmed($event)"
+                  />
+                }
+              </div>
+            </div>
+          }
 
           @if (confirmingDelete()) {
             <div

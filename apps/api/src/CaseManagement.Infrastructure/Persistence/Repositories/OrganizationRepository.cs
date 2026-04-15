@@ -9,6 +9,16 @@ public sealed class OrganizationRepository(
     CaseManagementDbContext db,
     IUnitOfWork unitOfWork) : IOrganizationsRepository
 {
+    public Task<Organization?> GetById(
+        Guid organizationId, 
+        CancellationToken cancellationToken = default)
+    {
+        var organization = db.Organizations
+            .AsNoTracking()
+            .FirstOrDefaultAsync(o => o.Id == organizationId);
+
+        return organization;
+    }
     public Task<Organization> Create(
         string name,
         CancellationToken cancellationToken = default)
@@ -33,6 +43,41 @@ public sealed class OrganizationRepository(
         db.OrganizationMemberships.Add(membership);
 
         return Task.FromResult(membership);
+    }
+
+    public async Task<int> RevokeMembership(
+        Guid userId,
+        Guid organizationId,
+        CancellationToken cancellationToken = default)
+    {
+        return await db.OrganizationMemberships
+            .Where(om => om.OrganizationId == organizationId && om.UserId == userId)
+            .ExecuteDeleteAsync(cancellationToken);
+    }
+
+    public async Task TransferOwnership(
+        Guid userId,
+        Guid memberId,
+        Guid organizationId,
+        CancellationToken cancellationToken = default)
+    {
+        var currentOwnerMembership = await db.OrganizationMemberships
+            .FirstOrDefaultAsync(
+                cm => cm.OrganizationId == organizationId
+                    && cm.UserId == userId 
+                    && cm.Role == OrganizationRole.Owner,
+                cancellationToken)
+            ?? throw new NotFoundException("Current owner membership not found.");
+
+        var newOwnerMembership = await db.OrganizationMemberships
+            .FirstOrDefaultAsync(
+                nm => nm.OrganizationId == organizationId
+                    && nm.UserId == memberId,
+                cancellationToken)
+            ?? throw new NotFoundException("User is not a member of this organization.");
+
+        currentOwnerMembership.ChangeRole(OrganizationRole.Member);
+        newOwnerMembership.ChangeRole(OrganizationRole.Owner);
     }
 
     public async Task<OrganizationRole?> CheckUserMembership(

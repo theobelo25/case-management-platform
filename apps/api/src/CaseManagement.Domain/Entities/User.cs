@@ -95,6 +95,6 @@ public sealed class User
 
     private void Touched()
     {
-        UpdatedAtUtc = DateTime.UtcNow;
+        UpdatedAtUtc = DateTimeOffset.UtcNow;
     }
 }

@@ -19,21 +19,11 @@ const STATUS_TO_CODE: Record<CaseStatus, CaseStatusCode> = {
   'In Progress': CaseStatusCode.InProgress,
   Closed: CaseStatusCode.Closed,
 };
-const CODE_TO_STATUS: Record<CaseStatusCode, CaseStatus> = {
-  OPEN: 'Open',
-  IN_PROGRESS: 'In Progress',
-  CLOSED: 'Closed',
-};
 
 const PRIORITY_TO_CODE: Record<CasePriority, CasePriorityCode> = {
   Low: CasePriorityCode.Low,
   Medium: CasePriorityCode.Medium,
   High: CasePriorityCode.High,
-};
-const CODE_TO_PRIORITY: Record<CasePriorityCode, CasePriority> = {
-  LOW: 'Low',
-  MEDIUM: 'Medium',
-  HIGH: 'High',
 };
 
 export function statusToApiCode(status: CaseStatus): CaseStatusCode {
@@ -41,7 +31,21 @@ export function statusToApiCode(status: CaseStatus): CaseStatusCode {
 }
 
 export function statusFromApiCode(code: string): CaseStatus {
-  return CODE_TO_STATUS[code as CaseStatusCode];
+  const normalized = code.trim().toUpperCase();
+
+  switch (normalized) {
+    case 'OPEN':
+    case 'NEW':
+      return 'Open';
+    case 'IN_PROGRESS':
+    case 'PENDING':
+      return 'In Progress';
+    case 'CLOSED':
+    case 'RESOLVED':
+      return 'Closed';
+    default:
+      return 'Open';
+  }
 }
 
 export function priorityToApiCode(priority: CasePriority): CasePriorityCode {
@@ -49,5 +53,16 @@ export function priorityToApiCode(priority: CasePriority): CasePriorityCode {
 }
 
 export function priorityFromApiCode(code: string): CasePriority {
-  return CODE_TO_PRIORITY[code as CasePriorityCode];
+  const normalized = code.trim().toUpperCase();
+
+  switch (normalized) {
+    case 'LOW':
+      return 'Low';
+    case 'MEDIUM':
+      return 'Medium';
+    case 'HIGH':
+      return 'High';
+    default:
+      return 'Medium';
+  }
 }

@@ -19,6 +19,8 @@ export interface UserMembershipResponseDto {
   name: string;
   role: string;
   isArchived: boolean;
+  email: string;
+  joinedAtUtc: string;
 }
 
 export interface PagedUserMembershipsResponseDto {
@@ -32,6 +34,10 @@ export interface PagedUserMembershipsResponseDto {
 export interface OrganizationDetailsResponseDto {
   organization: OrganizationResponseDto;
   members: UserMembershipResponseDto[];
+}
+
+export interface TransferOwnershipRequestDto {
+  newOwnerUserId: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -71,5 +77,28 @@ export class OrganizationsApiService {
 
   deleteOrganization(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/organizations/${id}`);
+  }
+
+  transferOrganizationOwnership(
+    organizationId: string,
+    body: TransferOwnershipRequestDto,
+  ): Observable<void> {
+    return this.http.post<void>(
+      `${this.baseUrl}/organizations/${organizationId}/transfer-ownership`,
+      body,
+    );
+  }
+
+  addOrganizationMember(organizationId: string, memberUserId: string): Observable<void> {
+    return this.http.post<void>(
+      `${this.baseUrl}/organizations/${organizationId}/members/${memberUserId}`,
+      {},
+    );
+  }
+
+  removeOrganizationMember(organizationId: string, memberUserId: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.baseUrl}/organizations/${organizationId}/members/${memberUserId}`,
+    );
   }
 }

@@ -5,6 +5,10 @@ namespace CaseManagement.Application.Ports;
 
 public interface IOrganizationsRepository
 {
+    Task<Organization?> GetById(
+        Guid organizationId,
+        CancellationToken cancellationToken = default);
+
     Task<Organization> Create(
         string name, 
         CancellationToken cancellationToken = default);
@@ -13,6 +17,17 @@ public interface IOrganizationsRepository
         Guid userId,
         Guid organizationId,
         OrganizationRole role,
+        CancellationToken cancellationToken = default);
+    
+    Task<int> RevokeMembership(
+        Guid userId,
+        Guid organizationId,
+        CancellationToken cancellationToken = default);
+
+    Task TransferOwnership(
+        Guid userId,
+        Guid memberId,
+        Guid organizationId,
         CancellationToken cancellationToken = default);
 
     Task<OrganizationRole?> CheckUserMembership(
