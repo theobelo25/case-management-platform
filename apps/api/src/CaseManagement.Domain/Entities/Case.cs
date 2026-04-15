@@ -26,6 +26,7 @@ public sealed class Case
     public Guid Id { get; private set; }
     public string Title { get; private set; } = string.Empty;
     
+    public Guid OrganizationId { get; private set; }
     public CaseStatus Status { get; private set; }
     public CasePriority Priority { get; private set; }
 
@@ -42,6 +43,7 @@ public sealed class Case
     public IReadOnlyCollection<CaseEvent> Events => _events;
 
     public static Case Create(
+        Guid organizationId,
         string title,
         Guid createdByUserId,
         string initialMessageBody,
@@ -49,6 +51,9 @@ public sealed class Case
         Guid? requesterUserId = null,
         string? requesterName = null)
     {
+        if (organizationId == Guid.Empty)
+            throw new ArgumentException("Organization id is required.", nameof(organizationId));
+
         if (string.IsNullOrWhiteSpace(title))
             throw new ArgumentException("Title is required.", nameof(title));
 
@@ -60,6 +65,7 @@ public sealed class Case
         var @case = new Case
         {
             Id = Guid.NewGuid(),
+            OrganizationId = organizationId,
             Title = title.Trim(),
             Status = CaseStatus.New,
             Priority = priority,

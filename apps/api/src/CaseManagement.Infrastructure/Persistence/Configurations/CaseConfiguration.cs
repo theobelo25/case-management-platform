@@ -12,6 +12,9 @@ public class CaseConfiguration : IEntityTypeConfiguration<Case>
 
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.OrganizationId)
+            .IsRequired();
+
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
         

@@ -43,6 +43,7 @@ public static class DependencyInjection
         services.AddScoped<IUserOrganizationMembershipsQuery, UserOrganizationMembershipsQuery>();
         services.AddScoped<IOrganizationDetailQuery, OrganizationDetailQuery>();
         services.AddScoped<IUsersSearchQuery, UsersSearchQuery>();
+        services.AddScoped<ICaseListQuery, CaseListQuery>();
 
 
         return services;

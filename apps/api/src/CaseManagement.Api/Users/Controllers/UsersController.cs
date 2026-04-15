@@ -29,6 +29,6 @@ public sealed class UsersController(UsersService users) : ControllerBase
             .Select(u => new UserSearchResponse(u.UserId, u.FullName, u.Email))
             .ToArray();
 
-        return new CursorPageResponse<UserSearchResponse>(items, page.NextCursor, page.Limit);
+        return new CursorPageResponse<UserSearchResponse>(items, page.NextCursor, null, page.Limit);
     }
 }

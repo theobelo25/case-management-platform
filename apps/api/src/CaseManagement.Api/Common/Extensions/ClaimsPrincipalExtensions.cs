@@ -10,4 +10,11 @@ public static class ClaimsPrincipalExtensions
         
         return Guid.TryParse(idString, out var id) ? id : null;
     }
+
+    public static Guid? GetActiveOrganizationIdOrNull(this ClaimsPrincipal? user)
+    {
+        var orgIdString = user?.FindFirstValue("active_organization_id")
+            ?? user?.FindFirstValue("activeOrganizationId");
+        return Guid.TryParse(orgIdString, out var orgId) ? orgId : null;
+    }
 }
