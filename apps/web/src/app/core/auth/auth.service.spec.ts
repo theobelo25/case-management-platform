@@ -47,6 +47,7 @@ describe('AuthService', () => {
         id: '22222222-2222-2222-2222-222222222222',
         name: 'Acme Legal',
         role: 'Administrator',
+        isArchived: false,
       },
     ],
   };

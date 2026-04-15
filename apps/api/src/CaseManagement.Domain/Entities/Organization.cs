@@ -6,6 +6,8 @@ public sealed class Organization
     public string Name { get; private set; } = string.Empty;
     public DateTimeOffset CreatedAtUtc { get; private set;}
 
+    public bool IsArchived { get; private set; } = false;
+
     private Organization() { }
 
     public static Organization Create(string name)
@@ -15,7 +17,7 @@ public sealed class Organization
         return new Organization
         {
             Id = Guid.NewGuid(),
-            CreatedAtUtc = DateTime.UtcNow,
+            CreatedAtUtc = DateTimeOffset.UtcNow,
             Name = name
         };
         
@@ -26,5 +28,15 @@ public sealed class Organization
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
         Name = name;
+    }
+
+    public void Archive()
+    {
+        IsArchived = true;
+    }
+
+    public void Unarchive()
+    {
+        IsArchived = false;
     }
 }

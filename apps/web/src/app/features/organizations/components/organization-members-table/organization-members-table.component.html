@@ -6,20 +6,30 @@
       <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-300">Members</p>
       <h2 class="m-0 text-lg font-semibold text-slate-50">People in this organization</h2>
     </div>
-    <p class="m-0 text-sm text-slate-400">{{ members().length }} total</p>
+    <div class="flex flex-wrap items-center gap-3">
+      <button
+        type="button"
+        class="shrink-0 rounded-xl border border-blue-500/35 bg-blue-500/10 px-4 py-2.5 text-sm font-medium text-blue-100 transition hover:border-blue-400/50 hover:bg-blue-500/[0.14] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400/60"
+        (click)="addMembersRequested.emit()"
+      >
+        Add members
+      </button>
+      <p class="m-0 shrink-0 text-sm text-slate-400">{{ members().length }} total</p>
+    </div>
   </div>
 
   @if (members().length === 0) {
     <p class="m-0 text-sm leading-relaxed text-slate-400">No members to show yet.</p>
   } @else {
     <div class="-mx-6 overflow-x-auto px-6">
-      <table class="w-full min-w-[640px] border-collapse text-left text-sm">
+      <table class="w-full min-w-[760px] border-collapse text-left text-sm">
         <thead>
           <tr class="border-b border-slate-500/25 text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-slate-500">
             <th class="py-3 pr-4 font-medium">Name</th>
             <th class="py-3 pr-4 font-medium">Email</th>
             <th class="py-3 pr-4 font-medium">Role</th>
-            <th class="py-3 font-medium">Joined</th>
+            <th class="py-3 pr-4 font-medium">Joined</th>
+            <th class="py-3 pl-2 text-right font-medium">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -33,7 +43,56 @@
                   >{{ m.role }}</span
                 >
               </td>
-              <td class="py-3.5 text-slate-400">{{ m.joinedAtUtc | date: 'mediumDate' }}</td>
+              <td class="py-3.5 pr-4 text-slate-400">{{ m.joinedAtUtc | date: 'mediumDate' }}</td>
+              <td class="py-3.5 pl-2 text-right">
+                <div class="inline-flex items-center justify-end gap-1">
+                  <button
+                    type="button"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-500/25 bg-slate-950/40 text-slate-300 transition hover:border-slate-400/35 hover:bg-slate-950/60 hover:text-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400/50"
+                    aria-label="Member settings"
+                    (click)="memberSettingsRequested.emit(m)"
+                  >
+                    <svg
+                      class="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <circle cx="12" cy="12" r="3" />
+                      <path
+                        d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m20 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+                      />
+                    </svg>
+                  </button>
+                  @if (canOfferRemove(m)) {
+                    <button
+                      type="button"
+                      class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-rose-500/25 bg-rose-950/20 text-rose-200/90 transition hover:border-rose-400/40 hover:bg-rose-950/35 hover:text-rose-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400/50"
+                      [attr.aria-label]="'Remove ' + m.name + ' from organization'"
+                      (click)="removeMemberRequested.emit({ id: m.id, name: m.name })"
+                    >
+                      <svg
+                        class="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  }
+                </div>
+              </td>
             </tr>
           }
         </tbody>

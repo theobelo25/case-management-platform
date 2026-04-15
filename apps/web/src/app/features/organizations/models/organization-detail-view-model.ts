@@ -1,8 +1,8 @@
-/** Client-only view models for the organization detail page (API wiring comes later). */
 export interface OrganizationDetailViewModel {
   id: string;
   name: string;
   createdAtUtc: string;
+  isArchived: boolean;
 }
 
 export interface OrganizationMemberViewModel {

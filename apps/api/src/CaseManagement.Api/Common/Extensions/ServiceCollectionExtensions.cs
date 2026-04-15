@@ -14,6 +14,8 @@ using CaseManagement.Infrastructure.Persistence;
 using Microsoft.OpenApi;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace CaseManagement.Api.Extensions;
 
@@ -25,7 +27,13 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddControllers();
+        services.AddControllers()
+            .AddJsonOptions(o =>
+            {
+                o.JsonSerializerOptions.Converters.Add(
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            });
+            
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining<AuthRequestMarker>();
         
@@ -79,6 +87,23 @@ public static class ServiceCollectionExtensions
                         AutoReplenishment = true,
                         PermitLimit = rateLimiting.AuthPermitLimit,
                         Window = TimeSpan.FromSeconds(rateLimiting.AuthWindowSeconds),
+                        QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                        QueueLimit = 0
+                    });
+            });
+            options.AddPolicy("cases", httpContext =>
+            {
+                var partitionKey = httpContext.User.GetUserIdOrNull() is Guid userId
+                    ? $"user:{userId:N}"
+                    : httpContext.Connection.RemoteIpAddress?.ToString()
+                      ?? httpContext.Connection.Id;
+                return RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey,
+                    _ => new FixedWindowRateLimiterOptions
+                    {
+                        AutoReplenishment = true,
+                        PermitLimit = rateLimiting.CasesPermitLimit,
+                        Window = TimeSpan.FromSeconds(rateLimiting.CasesWindowSeconds),
                         QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                         QueueLimit = 0
                     });

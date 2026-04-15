@@ -1,0 +1,93 @@
+<div
+  class="rounded-3xl border border-blue-500/20 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
+>
+  <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-300">Members</p>
+  <h2 id="add-member-title" class="m-0 text-lg font-semibold text-slate-50">Add a member</h2>
+  <p class="mb-0 mt-3 max-w-2xl leading-[1.7] text-slate-400">
+    Search by name or email, select someone who is not already in this organization, then add them as a
+    member.
+  </p>
+
+  <div class="mt-5 flex flex-col gap-1">
+    <label class="text-xs font-medium text-slate-300 sm:text-sm" for="addMemberSearch">Search users</label>
+    <input
+      id="addMemberSearch"
+      type="search"
+      autocomplete="off"
+      placeholder="Name or email…"
+      class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/40"
+      [value]="searchDraft()"
+      (input)="searchDraft.set($any($event.target).value)"
+    />
+  </div>
+
+  @if (searchError(); as sErr) {
+    <p class="mb-0 mt-3 text-sm text-rose-300/90" role="alert">{{ sErr }}</p>
+  }
+
+  @if (searchLoading()) {
+    <p class="mb-0 mt-4 text-sm text-slate-400">Searching…</p>
+  } @else if (emptyHint(); as hint) {
+    <p class="mb-0 mt-4 text-sm text-slate-400">{{ hint }}</p>
+  } @else if (visibleHits().length > 0) {
+    <ul class="mt-4 max-h-60 list-none space-y-1 overflow-y-auto p-0">
+      @for (u of visibleHits(); track u.userId) {
+        <li>
+          <button
+            type="button"
+            class="flex w-full flex-col items-start rounded-lg border px-3 py-2.5 text-left text-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400/60"
+            [class.border-blue-500/45]="selectedUserId() === u.userId"
+            [class.bg-blue-500/[0.08]]="selectedUserId() === u.userId"
+            [class.border-slate-500/25]="selectedUserId() !== u.userId"
+            [class.bg-slate-950/30]="selectedUserId() !== u.userId"
+            [class.hover:border-slate-400/35]="selectedUserId() !== u.userId"
+            (click)="selectUser(u.userId)"
+          >
+            <span class="font-medium text-slate-100">{{ u.fullName }}</span>
+            <span class="mt-0.5 text-xs text-slate-400">{{ u.email }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (nextCursor() && lastQuery().trim().length > 0) {
+    <div class="mt-3">
+      <button
+        type="button"
+        class="rounded-lg border border-slate-500/30 bg-slate-950/40 px-3 py-2 text-xs font-medium text-slate-200 transition hover:border-slate-400/40 hover:bg-slate-950/60 disabled:cursor-not-allowed disabled:opacity-45"
+        [disabled]="loadMoreLoading() || searchLoading()"
+        (click)="loadMore()"
+      >
+        @if (loadMoreLoading()) {
+          Loading…
+        } @else {
+          Load more results
+        }
+      </button>
+    </div>
+  }
+
+  <div class="mt-6 flex flex-wrap justify-end gap-3 border-t border-slate-500/20 pt-6">
+    <button
+      type="button"
+      class="rounded-xl border border-slate-400/25 bg-white/5 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-400/40 hover:bg-white/[0.07] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400/50 disabled:cursor-not-allowed disabled:opacity-45"
+      [disabled]="isSubmitting()"
+      (click)="cancelled.emit()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="rounded-xl border border-blue-500/40 bg-blue-950/35 px-4 py-2.5 text-sm font-medium text-blue-100 transition hover:border-blue-400/55 hover:bg-blue-950/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400/60 disabled:cursor-not-allowed disabled:opacity-45"
+      [disabled]="selectedUserId() == null || isSubmitting()"
+      (click)="submit()"
+    >
+      @if (isSubmitting()) {
+        Adding…
+      } @else {
+        Add member
+      }
+    </button>
+  </div>
+</div>

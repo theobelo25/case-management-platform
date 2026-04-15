@@ -1,4 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { AuthService } from '@app/core/auth/auth.service';
 import {
   CreateOrganizationRequestDto,
   OrganizationDetailsResponseDto,
@@ -12,6 +13,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 @Injectable({ providedIn: 'root' })
 export class OrganizationsService {
   private readonly api = inject(OrganizationsApiService);
+  private readonly auth = inject(AuthService);
 
   readonly organizations = signal<UserMembershipResponseDto[] | null>(null);
   readonly activeOrganization = signal<OrganizationResponseDto | null>(null);
@@ -75,6 +77,7 @@ export class OrganizationsService {
           tap((page) => {
             this.organizations.set(page.items);
             this.clearLoadError();
+            this.auth.refreshUserProfile();
           }),
           map(() => organization),
           catchError((err: unknown) => {
@@ -106,6 +109,95 @@ export class OrganizationsService {
 
   getOrganizationDetailsReadonly(id: string): Observable<OrganizationDetailsResponseDto> {
     return this.api.getOrganizationDetails(id);
+  }
+
+  archiveOrganization(id: string): Observable<OrganizationResponseDto> {
+    return this.api.archiveOrganization(id).pipe(
+      switchMap((org) =>
+        this.api.listUserOrganizations(0, 10).pipe(
+          tap((page) => {
+            this.organizations.set(page.items);
+            this.auth.refreshUserProfile();
+          }),
+          map(() => org),
+        ),
+      ),
+    );
+  }
+
+  unarchiveOrganization(id: string): Observable<OrganizationResponseDto> {
+    return this.api.unarchiveOrganization(id).pipe(
+      switchMap((org) =>
+        this.api.listUserOrganizations(0, 10).pipe(
+          tap((page) => {
+            this.organizations.set(page.items);
+            this.auth.refreshUserProfile();
+          }),
+          map(() => org),
+        ),
+      ),
+    );
+  }
+
+  deleteOrganization(id: string): Observable<void> {
+    return this.api.deleteOrganization(id).pipe(
+      switchMap((org) =>
+        this.api.listUserOrganizations(0, 10).pipe(
+          tap((page) => {
+            this.organizations.set(page.items);
+            this.auth.refreshUserProfile();
+          }),
+          map(() => org),
+        ),
+      ),
+    );
+  }
+
+  transferOrganizationOwnership(
+    organizationId: string,
+    newOwnerUserId: string,
+  ): Observable<void> {
+    return this.api
+      .transferOrganizationOwnership(organizationId, { newOwnerUserId })
+      .pipe(
+        switchMap(() =>
+          this.api.listUserOrganizations(0, 10).pipe(
+            tap((page) => {
+              this.organizations.set(page.items);
+              this.auth.refreshUserProfile();
+            }),
+            map(() => undefined),
+          ),
+        ),
+      );
+  }
+
+  addOrganizationMember(organizationId: string, memberUserId: string): Observable<void> {
+    return this.api.addOrganizationMember(organizationId, memberUserId).pipe(
+      switchMap(() =>
+        this.api.listUserOrganizations(0, 10).pipe(
+          tap((page) => {
+            this.organizations.set(page.items);
+            this.auth.refreshUserProfile();
+          }),
+          map(() => undefined),
+        ),
+      ),
+    );
+  }
+
+  removeOrganizationMember(organizationId: string, memberUserId: string): Observable<void> {
+    return this.api.removeOrganizationMember(organizationId, memberUserId).pipe(
+      switchMap(() =>
+        this.api.listUserOrganizations(0, 10).pipe(
+          tap((page) => {
+            this.organizations.set(page.items);
+            this.auth.refreshUserProfile();
+          }),
+          map(() => undefined),
+        ),
+      ),
+    );
   }
 
   private messageFromHttp(err: unknown): string {

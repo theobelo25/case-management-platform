@@ -14,13 +14,28 @@ export interface CaseCreatorResponseDto {
 export interface CaseResponseDto {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   status: string;
   priority: string;
+  requesterName?: string | null;
+  assigneeUserId?: string | null;
   createdAtUtc: string;
   updatedAtUtc: string;
   createdByUserId: string;
-  createdBy: CaseCreatorResponseDto;
+  createdBy?: CaseCreatorResponseDto;
+  timeline?: CaseTimelineItemResponseDto[];
+}
+
+export interface CaseTimelineItemResponseDto {
+  type: string;
+  id: string;
+  createdAtUtc: string;
+  authorUserId: string | null;
+  body: string | null;
+  isInternal: boolean;
+  isInitial: boolean;
+  eventType: string | null;
+  metadata: string | null;
 }
 
 /** Response shape for GET /cases (cursor pagination). */
@@ -55,7 +70,7 @@ export class CasesApiService {
   addCase(body: addCaseRequestDto): Observable<CaseResponseDto> {
     return this.http.post<CaseResponseDto>(`${this.baseUrl}/cases`, {
       title: body.title,
-      description: body.description,
+      initialMessage: body.description,
       priority: priorityToApiCode(body.priority),
     });
   }

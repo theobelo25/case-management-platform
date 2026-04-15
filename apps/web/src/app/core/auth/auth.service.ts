@@ -20,6 +20,10 @@ import {
   tap,
 } from 'rxjs';
 
+function sameIdentity(a: string | undefined, b: string | undefined): boolean {
+  return !!a && !!b && a.trim().toLowerCase() === b.trim().toLowerCase();
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly api = inject(AuthApiService);
@@ -34,6 +38,11 @@ export class AuthService {
 
   private readonly sessionRestorePhase = signal<'idle' | 'pending' | 'done'>('idle');
   private readonly sessionRestoreFinished$ = new ReplaySubject<void>(1);
+
+  /** Latest-only for `loadUserProfile` GET /auth/me (invalidated when a newer load or org switch starts). */
+  private lastProfileLoadId = 0;
+  /** Latest-only for `switchActiveOrganization` follow-up GET /auth/me. */
+  private lastOrgSwitchId = 0;
 
   private applyAccessToken(accessToken: string): void {
     const parsed = parseSessionFromAccessToken(accessToken);
@@ -53,15 +62,16 @@ export class AuthService {
       return;
     }
 
+    const loadId = ++this.lastProfileLoadId;
     this.api
       .getMe()
       .pipe(take(1), catchError(() => of(null)))
       .subscribe((profile) => {
-        if (!profile) {
+        if (!profile || loadId !== this.lastProfileLoadId) {
           return;
         }
         const currentUserId = this.session()?.userId;
-        if (currentUserId && currentUserId === profile.id) {
+        if (sameIdentity(currentUserId, profile.id)) {
           this.userProfile.set(profile);
         }
       });
@@ -93,20 +103,28 @@ export class AuthService {
     );
   }
 
+  /** Reloads `userProfile` from `GET /auth/me` when membership or org metadata changes outside `AuthService`. */
+  refreshUserProfile(): void {
+    this.loadUserProfile();
+  }
+
   updateProfile(payload: UpdateProfileRequestDto): Observable<AuthResponseDto> {
     return this.api.updateProfile(payload).pipe(switchMap(() => this.refreshSession()));
   }
 
   /** Updates active organization via `PATCH /auth/me` and reloads `userProfile` from `GET /auth/me`. */
   switchActiveOrganization(organizationId: string): Observable<void> {
+    const switchId = ++this.lastOrgSwitchId;
+    this.lastProfileLoadId++;
+
     return this.api.patchProfile({ activeOrganizationId: organizationId }).pipe(
       switchMap(() => this.api.getMe().pipe(take(1))),
       tap((profile) => {
-        if (!profile) {
+        if (!profile || switchId !== this.lastOrgSwitchId) {
           return;
         }
         const currentUserId = this.session()?.userId;
-        if (currentUserId && currentUserId === profile.id) {
+        if (sameIdentity(currentUserId, profile.id)) {
           this.userProfile.set(profile);
         }
       }),

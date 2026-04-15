@@ -1,0 +1,55 @@
+<div
+  class="rounded-3xl border border-blue-500/20 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
+>
+  <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-300">
+    Transfer ownership
+  </p>
+  <h2 id="transfer-ownership-title" class="m-0 text-lg font-semibold text-slate-50">
+    Choose the new owner
+  </h2>
+  <p class="mb-0 mt-3 max-w-2xl leading-[1.7] text-slate-400">
+    You will become a member after this transfer. Only existing members can receive ownership.
+  </p>
+  @if (candidates().length === 0) {
+    <p class="mb-0 mt-4 text-sm text-amber-300/90">Add another member to the organization first.</p>
+  } @else {
+    <div class="mt-5 flex flex-col gap-1">
+      <label class="text-xs font-medium text-slate-300 sm:text-sm" for="newOwnerSelect">
+        New owner
+      </label>
+      <select
+        id="newOwnerSelect"
+        name="newOwner"
+        class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/40"
+        [value]="selectedUserId() ?? ''"
+        (change)="selectedUserId.set($any($event.target).value)"
+      >
+        @for (m of candidates(); track m.id) {
+          <option [value]="m.id">{{ m.name }} ({{ m.role }})</option>
+        }
+      </select>
+    </div>
+  }
+  <div class="mt-6 flex flex-wrap justify-end gap-3 border-t border-slate-500/20 pt-6">
+    <button
+      type="button"
+      class="rounded-xl border border-slate-400/25 bg-white/5 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-400/40 hover:bg-white/[0.07] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400/50 disabled:cursor-not-allowed disabled:opacity-45"
+      [disabled]="isSubmitting()"
+      (click)="cancelled.emit()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="rounded-xl border border-blue-500/40 bg-blue-950/35 px-4 py-2.5 text-sm font-medium text-blue-100 transition hover:border-blue-400/55 hover:bg-blue-950/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400/60 disabled:cursor-not-allowed disabled:opacity-45"
+      [disabled]="candidates().length === 0 || selectedUserId() == null || isSubmitting()"
+      (click)="confirmed.emit(selectedUserId()!)"
+    >
+      @if (isSubmitting()) {
+        Transferring…
+      } @else {
+        Transfer ownership
+      }
+    </button>
+  </div>
+</div>

@@ -23,7 +23,7 @@ public sealed class OrganizationMembershipConfiguration : IEntityTypeConfigurati
         builder.HasOne<Organization>()
             .WithMany()
             .HasForeignKey(e => e.OrganizationId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne<User>()
             .WithMany()

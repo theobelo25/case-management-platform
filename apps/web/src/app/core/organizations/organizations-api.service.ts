@@ -11,12 +11,16 @@ export interface OrganizationResponseDto {
   id: string;
   name: string;
   createdAtUtc: string;
+  isArchived: boolean;
 }
 
 export interface UserMembershipResponseDto {
   id: string;
   name: string;
   role: string;
+  isArchived: boolean;
+  email: string;
+  joinedAtUtc: string;
 }
 
 export interface PagedUserMembershipsResponseDto {
@@ -30,6 +34,10 @@ export interface PagedUserMembershipsResponseDto {
 export interface OrganizationDetailsResponseDto {
   organization: OrganizationResponseDto;
   members: UserMembershipResponseDto[];
+}
+
+export interface TransferOwnershipRequestDto {
+  newOwnerUserId: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -51,5 +59,46 @@ export class OrganizationsApiService {
 
   getOrganizationDetails(id: string): Observable<OrganizationDetailsResponseDto> {
     return this.http.get<OrganizationDetailsResponseDto>(`${this.baseUrl}/organizations/${id}`);
+  }
+
+  archiveOrganization(id: string): Observable<OrganizationResponseDto> {
+    return this.http.patch<OrganizationResponseDto>(
+      `${this.baseUrl}/organizations/${id}/archive`,
+      {},
+    );
+  }
+
+  unarchiveOrganization(id: string): Observable<OrganizationResponseDto> {
+    return this.http.patch<OrganizationResponseDto>(
+      `${this.baseUrl}/organizations/${id}/unarchive`,
+      {},
+    );
+  }
+
+  deleteOrganization(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/organizations/${id}`);
+  }
+
+  transferOrganizationOwnership(
+    organizationId: string,
+    body: TransferOwnershipRequestDto,
+  ): Observable<void> {
+    return this.http.post<void>(
+      `${this.baseUrl}/organizations/${organizationId}/transfer-ownership`,
+      body,
+    );
+  }
+
+  addOrganizationMember(organizationId: string, memberUserId: string): Observable<void> {
+    return this.http.post<void>(
+      `${this.baseUrl}/organizations/${organizationId}/members/${memberUserId}`,
+      {},
+    );
+  }
+
+  removeOrganizationMember(organizationId: string, memberUserId: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.baseUrl}/organizations/${organizationId}/members/${memberUserId}`,
+    );
   }
 }

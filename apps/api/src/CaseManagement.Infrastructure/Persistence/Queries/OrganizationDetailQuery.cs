@@ -7,7 +7,7 @@ namespace CaseManagement.Infrastructure.Persistence.Queries;
 
 public sealed class OrganizationDetailQuery(
     CaseManagementDbContext db,
-    IOrganizationRepository organizations
+    IOrganizationsRepository organizations
 ) : IOrganizationDetailQuery
 {
     public async Task<OrganizationDetailDto?> GetDetailForMemberAsync(
@@ -32,14 +32,22 @@ public sealed class OrganizationDetailQuery(
                 db.Users.AsNoTracking(),
                 m => m.UserId,
                 u => u.Id,
-                (m, u) => new {m.UserId, u.FirstName, u.LastName, m.Role})
+                (m, u) => new {
+                    m.UserId, 
+                    u.FirstName, 
+                    u.LastName, 
+                    m.Role,
+                    u.EmailNormalized,
+                    m.CreatedAtUtc})
             .ToListAsync(cancellationToken);
         
         var members = rows
             .Select(x => new OrganizationMemberDto(
                 x.UserId,
                 $"{x.FirstName} {x.LastName}".Trim(),
-                x.Role.ToString()))
+                x.Role.ToString(),
+                x.EmailNormalized,
+                x.CreatedAtUtc))
             .OrderBy(m => m.Name)
             .ToArray();
         
@@ -47,6 +55,7 @@ public sealed class OrganizationDetailQuery(
             org.Id,
             org.Name,
             org.CreatedAtUtc,
+            org.IsArchived,
             members);
     }
 }

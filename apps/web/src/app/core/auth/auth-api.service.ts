@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API_BASE_URL } from '@app/core/api/api-base-url.token';
 import { Observable } from 'rxjs';
@@ -55,6 +55,7 @@ export interface MeOrganizationDto {
   id: string;
   name: string;
   role: string;
+  isArchived: boolean;
 }
 
 /** Matches `GET /auth/me` (ASP.NET camelCase JSON). */
@@ -66,6 +67,11 @@ export interface MeResponseDto {
   activeOrganizationId: string;
   organizations: MeOrganizationDto[];
 }
+
+const NO_STORE_ME_HEADERS = new HttpHeaders({
+  'Cache-Control': 'no-cache',
+  Pragma: 'no-cache',
+});
 
 @Injectable({ providedIn: 'root' })
 export class AuthApiService {
@@ -89,7 +95,9 @@ export class AuthApiService {
   }
 
   getMe(): Observable<MeResponseDto> {
-    return this.http.get<MeResponseDto>(`${this.baseUrl}/auth/me`);
+    return this.http.get<MeResponseDto>(`${this.baseUrl}/auth/me`, {
+      headers: NO_STORE_ME_HEADERS,
+    });
   }
 
   updateProfile(body: UpdateProfileRequestDto): Observable<void> {

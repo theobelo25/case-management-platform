@@ -126,6 +126,10 @@ public sealed class AuthController(
             userId,
             cancellationToken);
 
+        // User-specific; must not be served from a shared or stale HTTP cache after PATCH /auth/me, etc.
+        Response.Headers.Append("Cache-Control", "no-store, no-cache, must-revalidate");
+        Response.Headers.Append("Pragma", "no-cache");
+
         return Ok(new CurrentUserResponse(
             profile.Id,
             profile.Email,
@@ -133,7 +137,7 @@ public sealed class AuthController(
             profile.LastName,
             profile.ActiveOrganizationId,
             profile.Organizations
-                .Select(o => new UserOrganizationResponse(o.Id, o.Name, o.Role))
+                .Select(o => new UserOrganizationResponse(o.Id, o.Name, o.Role, o.IsArchived))
                 .ToArray()));
     }
 }

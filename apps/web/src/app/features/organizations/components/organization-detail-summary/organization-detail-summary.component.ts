@@ -1,7 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { OrganizationDetailViewModel } from '../../models/organization-detail.view-model';
-import { OrganizationsService } from '@app/core/organizations/organizations.service';
+import { OrganizationDetailViewModel } from '../../models/organization-detail-view-model';
 
 @Component({
   selector: 'app-organization-detail-summary',
