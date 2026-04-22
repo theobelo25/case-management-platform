@@ -26,20 +26,22 @@ export class PublicHeaderComponent {
     this.mobileNavOpen.set(false);
   }
 
-  /**
-   * When already on `/` with the same fragment, RouterLink would no-op; scroll manually.
-   * Otherwise the router handles navigation + anchor scroll (see withInMemoryScrolling).
-   */
   protected onInPageSectionClick(fragment: string, event: Event): void {
+    event.preventDefault();
     this.closeMobileNav();
 
-    const url = this.router.url;
-    const [path, currentFrag] = url.split('#');
+    const [path] = this.router.url.split('#');
     const onHome = path === '' || path === '/';
-    if (onHome && currentFrag === fragment) {
-      event.preventDefault();
+    if (onHome) {
       this.viewportScroller.scrollToAnchor(fragment);
+      return;
     }
+
+    void this.router.navigate(['/'], { fragment }).then((didNavigate) => {
+      if (didNavigate) {
+        setTimeout(() => this.viewportScroller.scrollToAnchor(fragment), 0);
+      }
+    });
   }
 
   @HostListener('document:keydown.escape')
