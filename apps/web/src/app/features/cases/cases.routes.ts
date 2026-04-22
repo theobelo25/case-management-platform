@@ -13,4 +13,10 @@ export const CASES_ROUTES: Routes = [
       import('./pages/cases-new/cases-new.component').then((m) => m.CasesNewComponent),
     title: 'New Case',
   },
+  {
+    path: ':caseId',
+    loadComponent: () =>
+      import('./pages/case-detail/case-detail.component').then((m) => m.CaseDetailComponent),
+    title: 'Case Details',
+  },
 ];

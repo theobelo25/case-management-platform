@@ -4,6 +4,7 @@ import {
   CreateOrganizationRequestDto,
   OrganizationDetailsResponseDto,
   OrganizationResponseDto,
+  OrganizationSlaPolicyDto,
   OrganizationsApiService,
   UserMembershipResponseDto,
 } from './organizations-api.service';
@@ -198,6 +199,13 @@ export class OrganizationsService {
         ),
       ),
     );
+  }
+
+  updateOrganizationSlaPolicy(
+    organizationId: string,
+    body: OrganizationSlaPolicyDto,
+  ): Observable<OrganizationSlaPolicyDto> {
+    return this.api.updateOrganizationSlaPolicy(organizationId, body);
   }
 
   private messageFromHttp(err: unknown): string {

@@ -1,3 +1,5 @@
+using CaseManagement.Application.Organizations;
+
 namespace CaseManagement.Application.Organizations.Ports;
 
 public interface IOrganizationsService
@@ -33,5 +35,13 @@ public interface IOrganizationsService
     Task Delete(
         Guid userId,
         Guid organizationId,
+        CancellationToken cancellationToken = default);
+
+    Task<OrganizationSlaPolicyDto> UpdateSlaPolicy(
+        Guid userId,
+        Guid organizationId,
+        int lowHours,
+        int mediumHours,
+        int highHours,
         CancellationToken cancellationToken = default);
 }

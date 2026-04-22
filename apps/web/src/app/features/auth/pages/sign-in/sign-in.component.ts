@@ -4,9 +4,9 @@ import { SignInFormComponent } from '../../components/sign-in-form/sign-in-form.
 
 @Component({
   selector: 'app-sign-in',
-  standalone: true,
   imports: [RouterLink, SignInFormComponent],
   templateUrl: './sign-in.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignInComponent {}
+

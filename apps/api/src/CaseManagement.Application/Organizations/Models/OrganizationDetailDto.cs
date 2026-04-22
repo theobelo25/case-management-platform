@@ -5,4 +5,7 @@ public sealed record OrganizationDetailDto(
     string OrganizationName,
     DateTimeOffset OrganizationCreatedAtUtc,
     bool OrganizationIsArchived,
+    int SlaLowHours,
+    int SlaMediumHours,
+    int SlaHighHours,
     IReadOnlyList<OrganizationMemberDto> Members);

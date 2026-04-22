@@ -6,9 +6,12 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   api:
-    name: API - build and test
+    name: API — build, test, coverage
     runs-on: ubuntu-latest
 
     steps:
@@ -22,22 +25,35 @@ jobs:
           cache: true
           cache-dependency-path: |
             **/*.csproj
-            **/packages.lock.json
             **/global.json
 
       - name: Restore
-        run: dotnet restore apps/api/src/CaseManagement.Api/CaseManagement.Api.csproj
+        run: dotnet restore apps/api/CaseManagement.slnx
 
-      - name: Build
-        run: dotnet build apps/api/src/CaseManagement.Api/CaseManagement.Api.csproj --no-restore --configuration Release
+      - name: Build (Release, warnings as errors)
+        run: dotnet build apps/api/CaseManagement.slnx --no-restore --configuration Release
 
-      - name: Test
+      - name: Test (unit, architecture, HTTP integration) + coverage
         run: |
-          dotnet test apps/api/tests/CaseManagement.Api.Tests/CaseManagement.Api.Tests.csproj --configuration Release --verbosity normal
-          dotnet test apps/api/tests/CaseManagement.ArchitectureTests/CaseManagement.ArchitectureTests.csproj --configuration Release --verbosity normal
+          dotnet test apps/api/CaseManagement.slnx \
+            --no-build \
+            --configuration Release \
+            --logger "trx;LogFilePrefix=api-tests" \
+            --results-directory "${{ github.workspace }}/artifacts/test-results" \
+            --collect:"XPlat Code Coverage" \
+            --settings apps/api/coverlet.runsettings
+
+      - name: Upload test & coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-ci-logs
+          path: |
+            artifacts/test-results/**/*
+          if-no-files-found: warn
 
   web:
-    name: Web - install and build
+    name: Web — install, lint, test, and build
     runs-on: ubuntu-latest
 
     steps:
@@ -55,6 +71,12 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Lint Angular app
+        run: pnpm --filter web lint
+
+      - name: Unit tests (Vitest, ng test)
+        run: pnpm web:test:ci
 
       - name: Build Angular app
         run: pnpm --filter web build

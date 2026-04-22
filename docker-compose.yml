@@ -1,0 +1,84 @@
+# Development stack for Case Management Platform.
+#
+# Database only (typical: run API + web on the host):
+#   docker compose up -d
+#
+# API + Postgres for quick demos (migrations + seeded demo user on API start):
+#   docker compose -f docker-compose.yml -f docker-compose.demo.yml --profile demo up --build
+#   (see README "Demo: API + database")
+#
+# Full stack (API + Angular + Postgres in containers):
+#   copy .env.example to .env, then:
+#   docker compose --profile full up --build
+#
+# First-time DB: apply EF migrations while Postgres is up, from repo root:
+#   dotnet ef database update --project apps/api/src/CaseManagement.Infrastructure/CaseManagement.Infrastructure.csproj --startup-project apps/api/src/CaseManagement.Api/CaseManagement.Api.csproj
+# (Set ConnectionStrings__DefaultConnection to match POSTGRES_* in .env, or use user-secrets.)
+
+name: case-management-platform
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-casemgmt}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-casemgmt_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-casemanagement}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-casemgmt} -d ${POSTGRES_DB:-casemanagement}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    profiles: [full, demo]
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile.dev
+    ports:
+      - "5202:5202"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      ConnectionStrings__DefaultConnection: >-
+        Host=postgres;Port=5432;Database=${POSTGRES_DB:-casemanagement};Username=${POSTGRES_USER:-casemgmt};Password=${POSTGRES_PASSWORD:-casemgmt_dev}
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:-dev-only-change-me-use-at-least-64-characters-for-hmac-signing-key-xxxxxxxx}
+    volumes:
+      - ./apps/api:/workspace/apps/api
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    profiles: [full]
+    build:
+      context: .
+      dockerfile: docker/web/Dockerfile.dev
+    ports:
+      - "4200:4200"
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ./apps/web:/app
+      - web_node_modules:/app/node_modules
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        cd /app
+        if [ ! -d node_modules/@angular ]; then
+          echo "Installing dependencies (first run / empty node_modules volume)..."
+          pnpm install --frozen-lockfile=false
+        fi
+        exec pnpm exec ng serve --host 0.0.0.0 --port 4200 --proxy-config proxy.conf.docker.json
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  web_node_modules:

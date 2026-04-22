@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <!--
+    Focus coverage on behavior-heavy layers (application rules + HTTP surface), not DTOs or generated code.
+    See README "Tests & coverage".
+  -->
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <Include>[CaseManagement.Application]*,[CaseManagement.Api]*</Include>
+          <Exclude>[*.Tests]*,[*Tests]*</Exclude>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

@@ -1,0 +1,12 @@
+.git
+**/.angular
+**/bin
+**/obj
+**/node_modules
+**/dist
+**/coverage
+**/.pnpm-store
+**/*.user
+**/.vs
+**/Thumbs.db
+**/.DS_Store

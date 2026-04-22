@@ -5,9 +5,9 @@ import { HowItWorksComponent } from '@app/features/landing/components/how-it-wor
 
 @Component({
   selector: 'app-landing',
-  standalone: true,
   imports: [HeroComponent, FeaturesComponent, HowItWorksComponent],
   templateUrl: './home.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent {}
+

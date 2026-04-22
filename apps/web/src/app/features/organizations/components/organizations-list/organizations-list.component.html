@@ -1,16 +1,12 @@
 <section class="grid gap-6">
-  <div
-    class="rounded-3xl border border-slate-400/14 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
-  >
-    <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-300">Memberships</p>
-
+  <app-section-card [title]="'Memberships'">
     @if (loading()) {
-      <p class="m-0 text-sm text-slate-400">Loading organizations…</p>
+      <p class="m-0 text-sm text-muted-foreground">Loading organizations…</p>
     } @else if (organizations.loadError(); as err) {
-      <p class="m-0 text-sm leading-relaxed text-red-400" role="alert">{{ err }}</p>
+      <p class="m-0 text-sm leading-relaxed text-red-600" role="alert">{{ err }}</p>
     } @else if (organizations.organizations(); as list) {
       @if (list.length === 0) {
-        <p class="m-0 text-sm leading-relaxed text-slate-400">
+        <p class="m-0 text-sm leading-relaxed text-muted-foreground">
           You are not a member of any organization yet. Create one from the manage page.
         </p>
       } @else {
@@ -18,24 +14,24 @@
           @for (org of list; track org.id) {
             <li class="m-0 p-0">
               <a
-                class="group flex w-full flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-500/20 bg-slate-950/40 px-4 py-3.5 no-underline outline-none transition hover:border-slate-400/35 hover:bg-slate-950/55 focus-visible:ring-2 focus-visible:ring-blue-400/55"
+                class="group flex w-full flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3.5 no-underline outline-none transition hover:border-gray-300 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-500/40"
                 [routerLink]="['/app/organizations', org.id]"
               >
                 <div class="flex min-w-0 flex-1 flex-wrap items-center gap-2">
                   <span
-                    class="m-0 min-w-0 truncate text-sm font-medium text-slate-100 transition group-hover:text-white"
+                    class="m-0 min-w-0 truncate text-sm font-medium text-foreground transition group-hover:text-gray-950"
                     >{{ org.name }}</span
                   >
                   @if (org.isArchived) {
                     <span
-                      class="inline-flex shrink-0 rounded-lg bg-amber-500/15 px-2.5 py-1 text-xs font-medium text-amber-200 ring-1 ring-amber-400/25"
+                      class="inline-flex shrink-0 rounded-lg bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-900 ring-1 ring-amber-200/80"
                       role="status"
                       >Archived</span
                     >
                   }
                 </div>
                 <span
-                  class="shrink-0 rounded-lg bg-blue-500/15 px-2.5 py-1 text-xs font-medium text-blue-300"
+                  class="shrink-0 rounded-lg bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800"
                   >{{ org.role }}</span
                 >
               </a>
@@ -54,5 +50,5 @@
         }
       }
     }
-  </div>
+  </app-section-card>
 </section>

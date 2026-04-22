@@ -6,6 +6,8 @@ builder.Services.AddApiServices(builder.Configuration);
 
 var app = builder.Build();
 
+await app.ApplyDatabaseMigrationAndDemoSeedAsync();
+
 app.UseApiPipeline();
 
 app.Run();

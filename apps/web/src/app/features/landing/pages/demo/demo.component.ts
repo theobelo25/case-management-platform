@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-demo',
-  standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -12,3 +11,4 @@ import { RouterLink } from '@angular/router';
 export class DemoComponent {
   protected loomEmbedUrl: string | null = null;
 }
+

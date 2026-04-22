@@ -1,0 +1,88 @@
+<div class="rounded-3xl border border-border bg-card p-6 shadow-sm">
+  <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-600">Case SLA</p>
+  <h2 class="m-0 text-xl font-semibold text-foreground">Response time targets</h2>
+  <p class="mb-0 mt-3 max-w-2xl leading-[1.7] text-muted-foreground">
+    First-response SLA windows by priority for new and reprioritized cases. Values are in hours
+    (wall-clock).
+  </p>
+
+  <dl class="mt-6 grid gap-4 sm:grid-cols-3">
+    <div>
+      <dt class="m-0 text-[0.72rem] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+        Low priority
+      </dt>
+      <dd class="mt-1.5 m-0">
+        @if (canEdit()) {
+          <input
+            type="number"
+            min="1"
+            max="8760"
+            class="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground shadow-inner"
+            [ngModel]="lowHours()"
+            (ngModelChange)="setLowHours($event)"
+            [disabled]="isSubmitting()"
+          />
+        } @else {
+          <span class="text-sm font-medium text-foreground">{{ policy().lowHours }} h</span>
+        }
+      </dd>
+    </div>
+    <div>
+      <dt class="m-0 text-[0.72rem] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+        Medium priority
+      </dt>
+      <dd class="mt-1.5 m-0">
+        @if (canEdit()) {
+          <input
+            type="number"
+            min="1"
+            max="8760"
+            class="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground shadow-inner"
+            [ngModel]="mediumHours()"
+            (ngModelChange)="setMediumHours($event)"
+            [disabled]="isSubmitting()"
+          />
+        } @else {
+          <span class="text-sm font-medium text-foreground">{{ policy().mediumHours }} h</span>
+        }
+      </dd>
+    </div>
+    <div>
+      <dt class="m-0 text-[0.72rem] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+        High priority
+      </dt>
+      <dd class="mt-1.5 m-0">
+        @if (canEdit()) {
+          <input
+            type="number"
+            min="1"
+            max="8760"
+            class="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground shadow-inner"
+            [ngModel]="highHours()"
+            (ngModelChange)="setHighHours($event)"
+            [disabled]="isSubmitting()"
+          />
+        } @else {
+          <span class="text-sm font-medium text-foreground">{{ policy().highHours }} h</span>
+        }
+      </dd>
+    </div>
+  </dl>
+
+  @if (canEdit()) {
+    <div class="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-border pt-6">
+      <button
+        type="button"
+        class="rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-800 shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-45"
+        [disabled]="isSubmitting()"
+        (click)="save()"
+      >
+        @if (isSubmitting()) {
+          Saving…
+        } @else {
+          Save SLA policy
+        }
+      </button>
+    </div>
+  }
+</div>

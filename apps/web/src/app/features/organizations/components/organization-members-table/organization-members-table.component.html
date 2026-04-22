@@ -1,30 +1,28 @@
-<div
-  class="rounded-3xl border border-slate-400/14 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
->
+<div class="rounded-3xl border border-border bg-card p-6 shadow-sm">
   <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
     <div>
-      <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-300">Members</p>
-      <h2 class="m-0 text-lg font-semibold text-slate-50">People in this organization</h2>
+      <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-600">Members</p>
+      <h2 class="m-0 text-lg font-semibold text-foreground">People in this organization</h2>
     </div>
     <div class="flex flex-wrap items-center gap-3">
       <button
         type="button"
-        class="shrink-0 rounded-xl border border-blue-500/35 bg-blue-500/10 px-4 py-2.5 text-sm font-medium text-blue-100 transition hover:border-blue-400/50 hover:bg-blue-500/[0.14] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400/60"
+        class="shrink-0 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-medium text-blue-900 transition hover:border-blue-300 hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500/50"
         (click)="addMembersRequested.emit()"
       >
         Add members
       </button>
-      <p class="m-0 shrink-0 text-sm text-slate-400">{{ members().length }} total</p>
+      <p class="m-0 shrink-0 text-sm text-muted-foreground">{{ members().length }} total</p>
     </div>
   </div>
 
   @if (members().length === 0) {
-    <p class="m-0 text-sm leading-relaxed text-slate-400">No members to show yet.</p>
+    <p class="m-0 text-sm leading-relaxed text-muted-foreground">No members to show yet.</p>
   } @else {
     <div class="-mx-6 overflow-x-auto px-6">
       <table class="w-full min-w-[760px] border-collapse text-left text-sm">
         <thead>
-          <tr class="border-b border-slate-500/25 text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-slate-500">
+          <tr class="border-b border-border text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
             <th class="py-3 pr-4 font-medium">Name</th>
             <th class="py-3 pr-4 font-medium">Email</th>
             <th class="py-3 pr-4 font-medium">Role</th>
@@ -34,21 +32,21 @@
         </thead>
         <tbody>
           @for (m of members(); track m.id) {
-            <tr class="border-b border-slate-500/15 last:border-b-0">
-              <td class="py-3.5 pr-4 font-medium text-slate-100">{{ m.name }}</td>
-              <td class="py-3.5 pr-4 text-slate-300">{{ m.email }}</td>
+            <tr class="border-b border-border/80 last:border-b-0">
+              <td class="py-3.5 pr-4 font-medium text-foreground">{{ m.name }}</td>
+              <td class="py-3.5 pr-4 text-muted-foreground">{{ m.email }}</td>
               <td class="py-3.5 pr-4">
                 <span
-                  class="inline-flex rounded-lg bg-blue-500/15 px-2.5 py-1 text-xs font-medium text-blue-300"
+                  class="inline-flex rounded-lg bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-800"
                   >{{ m.role }}</span
                 >
               </td>
-              <td class="py-3.5 pr-4 text-slate-400">{{ m.joinedAtUtc | date: 'mediumDate' }}</td>
+              <td class="py-3.5 pr-4 text-muted-foreground">{{ m.joinedAtUtc | date: 'mediumDate' }}</td>
               <td class="py-3.5 pl-2 text-right">
                 <div class="inline-flex items-center justify-end gap-1">
                   <button
                     type="button"
-                    class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-500/25 bg-slate-950/40 text-slate-300 transition hover:border-slate-400/35 hover:bg-slate-950/60 hover:text-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400/50"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 shadow-sm transition hover:border-gray-400 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500/50"
                     aria-label="Member settings"
                     (click)="memberSettingsRequested.emit(m)"
                   >
@@ -71,7 +69,7 @@
                   @if (canOfferRemove(m)) {
                     <button
                       type="button"
-                      class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-rose-500/25 bg-rose-950/20 text-rose-200/90 transition hover:border-rose-400/40 hover:bg-rose-950/35 hover:text-rose-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400/50"
+                      class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-rose-200 bg-rose-50 text-rose-700 transition hover:border-rose-300 hover:bg-rose-100 hover:text-rose-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500/50"
                       [attr.aria-label]="'Remove ' + m.name + ' from organization'"
                       (click)="removeMemberRequested.emit({ id: m.id, name: m.name })"
                     >

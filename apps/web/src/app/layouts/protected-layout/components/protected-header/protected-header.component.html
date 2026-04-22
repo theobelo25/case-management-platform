@@ -1,10 +1,10 @@
 <header
-  class="flex shrink-0 flex-row items-center justify-between gap-2 border-b border-slate-400/12 bg-slate-900/40 px-3 py-3 backdrop-blur-md min-[721px]:gap-4 min-[721px]:px-6 min-[721px]:py-5"
+  class="relative z-[120] flex shrink-0 flex-row items-center justify-between gap-2 border-b border-gray-200 bg-[rgba(248,250,252,0.92)] px-3 py-3 backdrop-blur-[10px] min-[721px]:gap-4 min-[721px]:px-6 min-[721px]:py-5"
 >
   <div class="flex min-w-0 flex-1 items-center gap-2 min-[721px]:gap-3">
     <button
       type="button"
-      class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-400/14 bg-white/5 text-slate-200 transition-colors hover:bg-white/[0.07] min-[721px]:h-10 min-[721px]:w-10 min-[721px]:rounded-xl min-[981px]:hidden"
+      class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-800 shadow-sm transition-colors hover:bg-gray-50 min-[721px]:h-10 min-[721px]:w-10 min-[721px]:rounded-xl min-[981px]:hidden"
       (click)="layout.toggleMobileNav()"
       [attr.aria-expanded]="layout.mobileNavOpen()"
       aria-controls="protected-app-sidebar"
@@ -39,12 +39,12 @@
 
     <div class="min-w-0 flex-1">
       <p
-        class="mb-0 mt-0 hidden text-[0.72rem] font-bold uppercase tracking-[0.14em] text-blue-300 min-[721px]:mb-1 min-[721px]:block"
+        class="mb-0 mt-0 hidden text-[0.72rem] font-bold uppercase tracking-[0.14em] text-blue-600 min-[721px]:mb-1 min-[721px]:block"
       >
         Signed in
       </p>
       <h1
-        class="m-0 truncate text-base font-semibold leading-tight text-slate-50 min-[480px]:text-lg min-[721px]:text-xl min-[981px]:text-2xl min-[981px]:font-normal"
+        class="m-0 truncate text-base font-semibold leading-tight text-gray-900 min-[480px]:text-lg min-[721px]:text-xl min-[981px]:text-2xl min-[981px]:font-normal"
       >
         Case Management Platform
       </h1>
@@ -52,15 +52,113 @@
   </div>
 
   <div class="flex shrink-0 items-center gap-2 min-[721px]:gap-[0.85rem]">
-    <a
-      routerLink="/demo"
-      class="hidden items-center rounded-full border border-slate-400/14 bg-white/5 px-3 py-2 text-sm text-slate-300 no-underline transition-colors hover:bg-white/[0.07] hover:text-slate-50 min-[981px]:inline-flex min-[981px]:px-[0.95rem] min-[981px]:py-[0.7rem] min-[981px]:text-base"
-      >View Demo</a
-    >
     <div class="relative shrink-0">
       <button
         type="button"
-        class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-400/14 bg-white/5 p-0 text-left text-gray-200 transition-colors hover:bg-white/[0.07] max-[720px]:aspect-square max-[720px]:size-9 max-[720px]:justify-center min-[721px]:gap-3 min-[721px]:py-[0.45rem] min-[721px]:pl-[0.45rem] min-[721px]:pr-3"
+        class="inline-flex aspect-square size-9 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-700 shadow-sm transition-colors hover:bg-gray-50 min-[721px]:size-[3.1rem]"
+        (click)="toggleNotifications($event)"
+        [attr.aria-expanded]="notificationsOpen()"
+        aria-haspopup="dialog"
+        aria-controls="protected-header-notifications"
+        aria-label="Notifications"
+      >
+        <span class="relative inline-flex">
+          <svg
+            class="size-[1.15rem] min-[721px]:size-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+          </svg>
+          @if (inAppNotifications.unreadCount() > 0) {
+            <span
+              class="absolute -right-1.5 -top-1 flex h-[1.1rem] min-w-[1.1rem] items-center justify-center rounded-full bg-red-600 px-1 text-[0.62rem] font-bold leading-none text-white shadow-sm"
+              aria-hidden="true"
+              >{{ inAppNotifications.unreadCount() > 9 ? '9+' : inAppNotifications.unreadCount() }}</span>
+          }
+        </span>
+      </button>
+
+      @if (notificationsOpen()) {
+        <div
+          id="protected-header-notifications"
+          role="dialog"
+          aria-label="Notifications"
+          class="absolute right-0 top-[calc(100%+0.35rem)] z-[200] w-[min(20rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg min-[721px]:top-[calc(100%+0.45rem)] min-[721px]:w-80"
+          tabindex="-1"
+          (click)="$event.stopPropagation()"
+          (keydown)="$event.stopPropagation()"
+        >
+          <div
+            class="flex flex-row items-center justify-between gap-2 border-b border-gray-100 px-3 py-2.5 min-[721px]:px-4 min-[721px]:py-3"
+          >
+            <h2 class="m-0 text-[0.95rem] font-semibold text-gray-900">Notifications</h2>
+            @if (inAppNotifications.items().length > 0) {
+              <button
+                type="button"
+                class="m-0 shrink-0 rounded-md px-2 py-1 text-[0.78rem] font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                (click)="inAppNotifications.clearAll()"
+              >
+                Clear all
+              </button>
+            }
+          </div>
+          <div class="max-h-[min(20rem,50vh)] overflow-y-auto px-0 py-2 min-[721px]:py-3">
+            @if (inAppNotifications.items().length === 0) {
+              <div class="px-3 py-6 text-center min-[721px]:px-4">
+                <p class="m-0 text-[0.88rem] leading-relaxed text-gray-500">
+                  You have no notifications yet.
+                </p>
+              </div>
+            } @else {
+              <ul class="m-0 list-none space-y-0 p-0">
+                @for (item of inAppNotifications.items(); track item.id) {
+                  <li class="border-b border-gray-50 last:border-b-0">
+                    <div
+                      class="flex flex-row items-start gap-2 px-3 py-2.5 min-[721px]:px-4 min-[721px]:py-3"
+                    >
+                      @if (item.payload.type === 'case_assignment' || item.payload.type === 'case_event') {
+                        <a
+                          class="min-w-0 flex-1 text-left text-[0.88rem] leading-snug text-gray-800 no-underline hover:text-blue-700"
+                          [routerLink]="['/app/cases', item.payload.caseId]"
+                          (click)="notificationsOpen.set(false)"
+                          >{{ item.payload.message }}</a
+                        >
+                      } @else {
+                        <a
+                          class="min-w-0 flex-1 text-left text-[0.88rem] leading-snug text-gray-800 no-underline hover:text-blue-700"
+                          [routerLink]="['/app/organizations', item.payload.organizationId]"
+                          (click)="notificationsOpen.set(false)"
+                          >{{ item.payload.message }}</a
+                        >
+                      }
+                      <button
+                        type="button"
+                        class="shrink-0 rounded-md px-1.5 py-0.5 text-[0.72rem] font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                        [attr.aria-label]="'Dismiss notification'"
+                        (click)="dismissNotification($event, item.id)"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+      }
+    </div>
+    <div class="relative shrink-0">
+      <button
+        type="button"
+        class="inline-flex cursor-pointer items-center gap-2 rounded-full border border-gray-300 bg-white p-0 text-left text-gray-800 shadow-sm transition-colors hover:bg-gray-50 max-[720px]:aspect-square max-[720px]:size-9 max-[720px]:justify-center min-[721px]:gap-3 min-[721px]:py-[0.45rem] min-[721px]:pl-[0.45rem] min-[721px]:pr-3"
         (click)="toggleUserMenu($event)"
         [attr.aria-expanded]="userMenuOpen()"
         aria-haspopup="menu"
@@ -74,37 +172,39 @@
           >{{ userInitials() }}</span
         >
         <span class="hidden min-w-0 max-w-[12rem] leading-tight min-[721px]:block">
-          <strong class="block truncate text-[0.92rem] text-slate-50">{{ userDisplayName() }}</strong>
+          <strong class="block truncate text-[0.92rem] text-gray-900">{{ userDisplayName() }}</strong>
         </span>
       </button>
 
       @if (userMenuOpen()) {
         <div
           id="protected-header-user-menu"
-          class="absolute right-0 top-[calc(100%+0.35rem)] z-[60] w-[min(18rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl border border-slate-400/20 bg-slate-900/95 shadow-lg shadow-black/40 backdrop-blur-md min-[721px]:top-[calc(100%+0.45rem)] min-[721px]:w-64"
+          class="absolute right-0 top-[calc(100%+0.35rem)] z-[200] w-[min(18rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg min-[721px]:top-[calc(100%+0.45rem)] min-[721px]:w-64"
+          tabindex="-1"
           (click)="$event.stopPropagation()"
+          (keydown)="$event.stopPropagation()"
         >
-          <div class="border-b border-slate-400/15 px-3 py-2.5 min-[721px]:px-4 min-[721px]:py-3">
-            <p class="m-0 truncate text-[0.9rem] font-semibold text-slate-50">{{ userDisplayName() }}</p>
+          <div class="border-b border-gray-100 px-3 py-2.5 min-[721px]:px-4 min-[721px]:py-3">
+            <p class="m-0 truncate text-[0.9rem] font-semibold text-gray-900">{{ userDisplayName() }}</p>
             @if (activeOrgSummary(); as org) {
-              <p class="m-0 mt-1.5 text-[0.8rem] text-slate-400">{{ org.role }}</p>
+              <p class="m-0 mt-1.5 text-[0.8rem] text-gray-500">{{ org.role }}</p>
               @if (org.isArchived) {
                 <p class="m-0 mt-1.5" role="status">
                   <span
-                    class="inline-flex rounded-md bg-amber-500/15 px-2 py-0.5 text-[0.72rem] font-medium text-amber-200 ring-1 ring-amber-400/25"
+                    class="inline-flex rounded-md bg-amber-100 px-2 py-0.5 text-[0.72rem] font-medium text-amber-900 ring-1 ring-amber-200/80"
                     >Archived</span
                   >
                 </p>
               }
               <div class="mt-2">
                 <label
-                  class="m-0 block text-[0.68rem] font-medium uppercase tracking-[0.06em] text-slate-500"
+                  class="m-0 block text-[0.68rem] font-medium uppercase tracking-[0.06em] text-gray-500"
                   for="protected-header-org-select"
                   >Organization</label
                 >
                 <select
                   id="protected-header-org-select"
-                  class="mt-0.5 w-full max-w-full cursor-pointer truncate rounded-md border border-slate-400/25 bg-slate-950/85 px-2 py-1.5 text-[0.88rem] text-slate-200 shadow-inner outline-none transition-colors hover:border-slate-400/35 focus-visible:border-blue-500/60 focus-visible:ring-2 focus-visible:ring-blue-500/35 disabled:cursor-not-allowed disabled:opacity-70"
+                  class="mt-0.5 w-full max-w-full cursor-pointer truncate rounded-md border border-gray-300 bg-white px-2 py-1.5 text-[0.88rem] text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-400 focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500/30 disabled:cursor-not-allowed disabled:opacity-70"
                   [attr.aria-busy]="orgSwitchPending()"
                   [attr.title]="
                     canSwitchOrganization()
@@ -122,7 +222,7 @@
                   }
                 </select>
                 @if (orgSwitchError(); as err) {
-                  <p class="m-0 mt-1 text-[0.72rem] text-red-400" role="alert">{{ err }}</p>
+                  <p class="m-0 mt-1 text-[0.72rem] text-red-600" role="alert">{{ err }}</p>
                 }
               </div>
             }
@@ -131,21 +231,21 @@
             <a
               routerLink="/app/settings"
               role="menuitem"
-              class="block px-3 py-2 text-[0.88rem] text-slate-200 no-underline transition-colors hover:bg-white/[0.06] hover:text-slate-50 min-[721px]:px-4 min-[721px]:py-2.5 min-[721px]:text-[0.92rem]"
+              class="block px-3 py-2 text-[0.88rem] text-gray-700 no-underline transition-colors hover:bg-gray-50 hover:text-gray-900 min-[721px]:px-4 min-[721px]:py-2.5 min-[721px]:text-[0.92rem]"
               (click)="closeUserMenu()"
               >Settings</a
             >
             <a
               routerLink="/app/organizations/manage"
               role="menuitem"
-              class="block border-t border-slate-400/15 px-3 py-2 text-[0.88rem] text-slate-200 no-underline transition-colors hover:bg-white/[0.06] hover:text-slate-50 min-[721px]:px-4 min-[721px]:py-2.5 min-[721px]:text-[0.92rem]"
+              class="block border-t border-gray-100 px-3 py-2 text-[0.88rem] text-gray-700 no-underline transition-colors hover:bg-gray-50 hover:text-gray-900 min-[721px]:px-4 min-[721px]:py-2.5 min-[721px]:text-[0.92rem]"
               (click)="closeUserMenu()"
               >Manage organizations</a
             >
             <button
               type="button"
               role="menuitem"
-              class="block w-full border-t border-slate-400/15 px-3 py-2 text-left text-[0.88rem] text-slate-200 transition-colors hover:bg-white/[0.06] hover:text-slate-50 min-[721px]:px-4 min-[721px]:py-2.5 min-[721px]:text-[0.92rem]"
+              class="block w-full border-t border-gray-100 px-3 py-2 text-left text-[0.88rem] text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 min-[721px]:px-4 min-[721px]:py-2.5 min-[721px]:text-[0.92rem]"
               (click)="logout()"
             >
               Log out

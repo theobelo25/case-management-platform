@@ -41,7 +41,7 @@ public sealed class User
         ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
         if (activeOrganizationId == Guid.Empty)
             throw new ArgumentException(
-                "Organization id cannot be empty.", 
+                "Organization ID cannot be empty.", 
                 nameof(activeOrganizationId));
 
         return new User
@@ -85,7 +85,7 @@ public sealed class User
     {
         if (organizationId == Guid.Empty)
             throw new ArgumentException(
-                "Organization id cannot be empty.", 
+                "Organization ID cannot be empty.", 
                 nameof(organizationId));
 
         ActiveOrganizationId = organizationId;

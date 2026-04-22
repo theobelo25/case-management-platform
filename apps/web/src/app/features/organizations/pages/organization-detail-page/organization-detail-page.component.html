@@ -1,18 +1,18 @@
 <section class="grid gap-6">
   <div
-    class="rounded-3xl border border-slate-400/14 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
+    class="rounded-3xl border border-border bg-card p-6 shadow-sm"
   >
-    <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-300">Workspace</p>
+    <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-600">Workspace</p>
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div>
-        <h1 class="m-0 text-[1.65rem] font-semibold text-slate-50">Organization details</h1>
-        <p class="mb-0 mt-3 max-w-2xl leading-[1.7] text-slate-300">
+        <h1 class="m-0 text-[1.65rem] font-semibold text-foreground">Organization details</h1>
+        <p class="mb-0 mt-3 max-w-2xl leading-[1.7] text-muted-foreground">
           Overview and membership for this organization.
         </p>
       </div>
       <a
         routerLink="/app/organizations/manage"
-        class="shrink-0 rounded-xl border border-slate-400/25 bg-white/5 px-4 py-2.5 text-sm font-medium text-slate-200 no-underline transition hover:border-slate-400/40 hover:bg-white/[0.07]"
+        class="shrink-0 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-800 shadow-sm no-underline transition hover:border-gray-400 hover:bg-gray-50"
         >Back to organizations</a
       >
     </div>
@@ -21,17 +21,33 @@
   @if (detail(); as vm) {
     @switch (vm.status) {
       @case ('idle') {
-        <p class="m-0 text-sm text-slate-400">Select an organization.</p>
+        <p class="m-0 text-sm text-muted-foreground">Select an organization.</p>
       }
       @case ('loading') {
-        <p class="m-0 text-sm text-slate-400">Loading…</p>
+        <p class="m-0 text-sm text-muted-foreground">Loading…</p>
       }
       @case ('error') {
-        <p class="m-0 text-sm text-red-300">{{ vm.message }}</p>
+        <p class="m-0 text-sm text-red-600">{{ vm.message }}</p>
       }
       @case ('success') {
         @if (organization(); as org) {
           <app-organization-detail-summary [organization]="org" />
+          @if (slaPolicy(); as sla) {
+            @if (slaError(); as serr) {
+              <p
+                class="m-0 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm text-rose-800"
+                role="alert"
+              >
+                {{ serr }}
+              </p>
+            }
+            <app-organization-sla-policy
+              [policy]="sla"
+              [canEdit]="canManageSla()"
+              [isSubmitting]="slaSubmitting()"
+              (saveRequested)="onSlaPolicySave($event)"
+            />
+          }
           <app-organization-members-table
             [members]="members()"
             [currentUserId]="currentUserId()"
@@ -57,36 +73,41 @@
             >
               <button
                 type="button"
-                class="absolute inset-0 border-0 bg-slate-950/75 p-0 backdrop-blur-[2px]"
+                class="absolute inset-0 border-0 bg-slate-900/40 p-0 backdrop-blur-[2px]"
                 (click)="closeRemoveMember()"
                 aria-label="Close dialog"
               ></button>
-              <div class="relative z-10 w-full max-w-lg" (click)="$event.stopPropagation()">
+              <div
+                class="relative z-10 w-full max-w-lg"
+                tabindex="-1"
+                (click)="$event.stopPropagation()"
+                (keydown)="$event.stopPropagation()"
+              >
                 @if (removeMemberError(); as rerr) {
                   <p
-                    class="mb-3 rounded-xl border border-rose-500/30 bg-rose-950/40 px-3 py-2.5 text-sm text-rose-200"
+                    class="mb-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm text-rose-800"
                     role="alert"
                   >
                     {{ rerr }}
                   </p>
                 }
                 <div
-                  class="rounded-3xl border border-rose-500/20 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
+                  class="rounded-3xl border border-rose-200 bg-white p-6 shadow-md"
                 >
-                  <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-rose-300">
+                  <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-rose-700">
                     Remove member
                   </p>
-                  <h2 id="remove-member-title" class="m-0 text-lg font-semibold text-slate-50">
+                  <h2 id="remove-member-title" class="m-0 text-lg font-semibold text-foreground">
                     Remove from organization?
                   </h2>
-                  <p class="mb-0 mt-3 max-w-2xl leading-[1.7] text-slate-400">
-                    <span class="font-medium text-slate-200">{{ rm.name }}</span> will lose access to this
+                  <p class="mb-0 mt-3 max-w-2xl leading-[1.7] text-muted-foreground">
+                    <span class="font-medium text-foreground">{{ rm.name }}</span> will lose access to this
                     organization. This can be undone later by inviting them again.
                   </p>
-                  <div class="mt-6 flex flex-wrap justify-end gap-3 border-t border-slate-500/20 pt-6">
+                  <div class="mt-6 flex flex-wrap justify-end gap-3 border-t border-border pt-6">
                     <button
                       type="button"
-                      class="rounded-xl border border-slate-400/25 bg-white/5 px-4 py-2.5 text-sm font-medium text-slate-200 transition hover:border-slate-400/40 hover:bg-white/[0.07] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400/50 disabled:cursor-not-allowed disabled:opacity-45"
+                      class="rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-800 shadow-sm transition hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400 disabled:cursor-not-allowed disabled:opacity-45"
                       [disabled]="removeMemberSubmitting()"
                       (click)="closeRemoveMember()"
                     >
@@ -94,7 +115,7 @@
                     </button>
                     <button
                       type="button"
-                      class="rounded-xl border border-rose-500/40 bg-rose-950/35 px-4 py-2.5 text-sm font-medium text-rose-100 transition hover:border-rose-400/55 hover:bg-rose-950/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400/60 disabled:cursor-not-allowed disabled:opacity-45"
+                      class="rounded-xl border border-rose-300 bg-rose-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:border-rose-400 hover:bg-rose-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500 disabled:cursor-not-allowed disabled:opacity-45"
                       [disabled]="removeMemberSubmitting()"
                       (click)="confirmRemoveMember()"
                     >
@@ -119,14 +140,19 @@
             >
               <button
                 type="button"
-                class="absolute inset-0 border-0 bg-slate-950/75 p-0 backdrop-blur-[2px]"
+                class="absolute inset-0 border-0 bg-slate-900/40 p-0 backdrop-blur-[2px]"
                 (click)="closeAddMember()"
                 aria-label="Close dialog"
               ></button>
-              <div class="relative z-10 w-full max-w-lg" (click)="$event.stopPropagation()">
+              <div
+                class="relative z-10 w-full max-w-lg"
+                tabindex="-1"
+                (click)="$event.stopPropagation()"
+                (keydown)="$event.stopPropagation()"
+              >
                 @if (addMemberError(); as aerr) {
                   <p
-                    class="mb-3 rounded-xl border border-rose-500/30 bg-rose-950/40 px-3 py-2.5 text-sm text-rose-200"
+                    class="mb-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm text-rose-800"
                     role="alert"
                   >
                     {{ aerr }}
@@ -151,14 +177,19 @@
             >
               <button
                 type="button"
-                class="absolute inset-0 border-0 bg-slate-950/75 p-0 backdrop-blur-[2px]"
+                class="absolute inset-0 border-0 bg-slate-900/40 p-0 backdrop-blur-[2px]"
                 (click)="closeTransferOwnership()"
                 aria-label="Close dialog"
               ></button>
-              <div class="relative z-10 w-full max-w-lg" (click)="$event.stopPropagation()">
+              <div
+                class="relative z-10 w-full max-w-lg"
+                tabindex="-1"
+                (click)="$event.stopPropagation()"
+                (keydown)="$event.stopPropagation()"
+              >
                 @if (transferError(); as terr) {
                   <p
-                    class="mb-3 rounded-xl border border-rose-500/30 bg-rose-950/40 px-3 py-2.5 text-sm text-rose-200"
+                    class="mb-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm text-rose-800"
                     role="alert"
                   >
                     {{ terr }}
@@ -186,21 +217,27 @@
             >
               <button
                 type="button"
-                class="absolute inset-0 border-0 bg-slate-950/75 p-0 backdrop-blur-[2px]"
+                class="absolute inset-0 border-0 bg-slate-900/40 p-0 backdrop-blur-[2px]"
                 (click)="closeDeleteConfirm()"
                 aria-label="Close dialog"
               ></button>
-              <div class="relative z-10 w-full max-w-lg" (click)="$event.stopPropagation()">
+              <div
+                class="relative z-10 w-full max-w-lg"
+                tabindex="-1"
+                (click)="$event.stopPropagation()"
+                (keydown)="$event.stopPropagation()"
+              >
                 @if (deleteError(); as err) {
                   <p
-                    class="mb-3 rounded-xl border border-rose-500/30 bg-rose-950/40 px-3 py-2.5 text-sm text-rose-200"
+                    class="mb-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm text-rose-800"
                     role="alert"
                   >
                     {{ err }}
                   </p>
                 }
-                <app-organization-confirm-delete
-                  [organizationName]="org.name"
+                <app-confirm-guid-prefix-delete
+                  headline="Delete organization"
+                  [resourceId]="org.id"
                   [isSubmitting]="deleteSubmitting()"
                   (cancelled)="closeDeleteConfirm()"
                   (confirmed)="onDeleteConfirmed()"

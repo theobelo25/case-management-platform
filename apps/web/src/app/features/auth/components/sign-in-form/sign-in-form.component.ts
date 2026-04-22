@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { AuthService } from '@app/core/auth/auth.service';
@@ -10,13 +11,13 @@ const REMEMBERED_LOGIN_EMAIL_KEY = 'case-mgmt.remembered-login-email';
 
 @Component({
   selector: 'app-sign-in-form',
-  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './sign-in-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignInFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -53,7 +54,10 @@ export class SignInFormComponent implements OnInit {
 
     this.auth
       .signIn({ email, password })
-      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isSubmitting.set(false)),
+      )
       .subscribe({
         next: () => {
           if (typeof localStorage !== 'undefined') {
@@ -93,3 +97,4 @@ export class SignInFormComponent implements OnInit {
     return this.form.controls.password;
   }
 }
+

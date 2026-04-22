@@ -1,0 +1,109 @@
+<div class="flex flex-col gap-4">
+  <div class="flex flex-wrap items-center gap-2">
+    <span class="text-xs font-medium text-muted-foreground">Current list</span>
+    <div class="inline-flex rounded-lg border border-border bg-muted/30 p-0.5 text-xs">
+      <button
+        type="button"
+        class="rounded-md px-2 py-1 font-medium transition"
+        [class.bg-background]="mixMode() === 'status'"
+        [class.text-foreground]="mixMode() === 'status'"
+        [class.shadow-sm]="mixMode() === 'status'"
+        [class.text-muted-foreground]="mixMode() !== 'status'"
+        (click)="setMixMode('status')"
+      >
+        Status mix
+      </button>
+      <button
+        type="button"
+        class="rounded-md px-2 py-1 font-medium transition"
+        [class.bg-background]="mixMode() === 'priority'"
+        [class.text-foreground]="mixMode() === 'priority'"
+        [class.shadow-sm]="mixMode() === 'priority'"
+        [class.text-muted-foreground]="mixMode() !== 'priority'"
+        (click)="setMixMode('priority')"
+      >
+        Priority mix
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-4 xl:gap-6">
+    <app-chart-container
+      class="min-w-0"
+      [chartTitle]="mixMode() === 'status' ? 'Status mix' : 'Priority mix'"
+      chartSummary="Doughnut chart of the same cases shown in the table below for the active filters."
+      [heightPx]="220"
+      [loading]="loading()"
+      [empty]="chartEmpty()"
+      [emptyMessage]="emptyMessage()"
+      loadingMessage="Loading cases"
+    >
+      @if (!loading() && !chartEmpty() && doughnutChartData(); as chartData) {
+        <canvas
+          baseChart
+          type="doughnut"
+          [data]="chartData"
+          [options]="doughnutOptions()"
+          [legend]="true"
+          [attr.aria-label]="
+            mixMode() === 'status' ? 'Status mix for filtered cases' : 'Priority mix for filtered cases'
+          "
+        ></canvas>
+      }
+    </app-chart-container>
+
+    <app-chart-container
+      class="min-w-0"
+      chartTitle="SLA time to due"
+      chartSummary="Bar chart of SLA buckets from wall-clock due time (or frozen remaining when paused) for the same list."
+      [heightPx]="220"
+      [loading]="loading()"
+      [empty]="chartEmpty()"
+      [emptyMessage]="emptyMessage()"
+      loadingMessage="Loading cases"
+    >
+      @if (!loading() && !chartEmpty() && slaBarChartData(); as barData) {
+        <canvas
+          baseChart
+          type="bar"
+          [data]="barData"
+          [options]="barOptions()"
+          [legend]="false"
+          aria-label="SLA buckets for filtered cases"
+        ></canvas>
+      }
+    </app-chart-container>
+
+    <app-chart-container
+      class="min-w-0"
+      chartTitle="Assignee workload"
+      chartSummary="Horizontal bar chart of case counts per assignee for the same filtered list. Unassigned groups cases with no assignee."
+      [heightPx]="assigneeWorkloadChartHeightPx()"
+      [loading]="loading()"
+      [empty]="chartEmpty()"
+      [emptyMessage]="emptyMessage()"
+      loadingMessage="Loading cases"
+    >
+      @if (!loading() && !chartEmpty() && assigneeWorkloadChartData(); as assigneeData) {
+        <canvas
+          baseChart
+          type="bar"
+          [data]="assigneeData"
+          [options]="assigneeWorkloadBarOptions()"
+          [legend]="false"
+          aria-label="Assignee workload for filtered cases"
+        ></canvas>
+      }
+    </app-chart-container>
+  </div>
+
+  <div class="grid grid-cols-1 gap-2 text-[11px] leading-snug text-muted-foreground lg:grid-cols-3 lg:gap-4 xl:gap-6">
+    <p class="m-0">Reflects the loaded page of results (same rows as the table).</p>
+    <p class="m-0">
+      Client-side buckets: overdue, under 4 hours, 4–24 hours, over 24 hours to due, or no SLA due time.
+    </p>
+    <p class="m-0">
+      Sorted by count (highest first). Axis labels may truncate; hover a bar for the full name.
+    </p>
+  </div>
+</div>

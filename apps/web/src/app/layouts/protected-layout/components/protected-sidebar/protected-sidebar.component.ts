@@ -5,7 +5,6 @@ import { ProtectedLayoutService } from '../../protected-layout.service';
 
 @Component({
   selector: 'app-protected-sidebar',
-  standalone: true,
   imports: [NgClass, RouterLink, RouterLinkActive],
   templateUrl: './protected-sidebar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,3 +15,4 @@ import { ProtectedLayoutService } from '../../protected-layout.service';
 export class ProtectedSidebarComponent {
   protected readonly layout = inject(ProtectedLayoutService);
 }
+

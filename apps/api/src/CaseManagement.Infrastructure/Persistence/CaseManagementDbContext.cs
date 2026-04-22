@@ -1,4 +1,4 @@
-using CaseManagement.Application.Ports;
+using CaseManagement.Application.Common.Ports;
 using CaseManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +20,7 @@ public sealed class CaseManagementDbContext : DbContext, IUnitOfWork
     public DbSet<Case> Cases => Set<Case>();
     public DbSet<CaseMessage> CaseMessages => Set<CaseMessage>();
     public DbSet<CaseEvent> CaseEvents => Set<CaseEvent>();
+    public DbSet<CaseDueSoonNotification> CaseDueSoonNotifications => Set<CaseDueSoonNotification>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

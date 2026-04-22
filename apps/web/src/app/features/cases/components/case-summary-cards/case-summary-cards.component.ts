@@ -8,7 +8,6 @@ interface SummaryCard {
 
 @Component({
   selector: 'app-case-summary-cards',
-  standalone: true,
   templateUrl: './case-summary-cards.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -19,3 +18,4 @@ export class CaseSummaryCardsComponent {
     return card.label;
   }
 }
+

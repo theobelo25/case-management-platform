@@ -5,9 +5,9 @@ import { PublicFooterComponent } from './components/public-footer/public-footer.
 
 @Component({
   selector: 'app-public-layout',
-  standalone: true,
   imports: [RouterOutlet, PublicHeaderComponent, PublicFooterComponent],
   templateUrl: './public-layout.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicLayoutComponent {}
+

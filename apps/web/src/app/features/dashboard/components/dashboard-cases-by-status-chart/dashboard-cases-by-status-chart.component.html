@@ -1,0 +1,30 @@
+<div class="flex flex-col gap-2">
+  @if (error(); as err) {
+    <p class="m-0 text-sm text-destructive" role="alert">{{ err }}</p>
+  }
+
+  <app-chart-container
+    chartTitle="Cases by status"
+    chartSummary="Doughnut chart of non-archived cases in your active organization by workflow status."
+    [heightPx]="chartHeightPx()"
+    [loading]="loading()"
+    [empty]="chartEmpty()"
+    [emptyMessage]="emptyMessage()"
+    loadingMessage="Loading status breakdown"
+  >
+    @if (!loading() && !chartEmpty() && doughnutChartData(); as chartData) {
+      <canvas
+        baseChart
+        type="doughnut"
+        [data]="chartData"
+        [options]="chartOptions()"
+        [legend]="true"
+        aria-label="Cases by status"
+      ></canvas>
+    }
+  </app-chart-container>
+
+  <p class="m-0 text-[11px] leading-snug text-muted-foreground">
+    Quick health check: spot backlog in Open or Pending vs resolved throughput.
+  </p>
+</div>

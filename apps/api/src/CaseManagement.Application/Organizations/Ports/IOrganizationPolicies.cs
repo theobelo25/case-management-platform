@@ -1,6 +1,6 @@
 namespace CaseManagement.Application.Organizations.Ports;
 
-public interface IOrganizationPolicies
+public interface IOrganizationPolicies : IOrganizationCaseManagementPolicy
 {
     Task EnsureUserCanDelete(
         Guid userId,
@@ -30,6 +30,12 @@ public interface IOrganizationPolicies
     Task EnsureRemoveMemberAllowed(
         Guid actorUserId,
         Guid memberIdToRemove,
+        Guid organizationId,
+        CancellationToken cancellationToken = default);
+
+    /** Owner or Admin — configure per-priority SLA response targets. */
+    Task EnsureUserCanConfigureSlaPolicy(
+        Guid userId,
         Guid organizationId,
         CancellationToken cancellationToken = default);
 }

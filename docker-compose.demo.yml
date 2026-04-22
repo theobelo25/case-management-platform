@@ -1,0 +1,14 @@
+# Overlay for reviewer/demo: Postgres + API with automatic EF migrations and a seeded demo account.
+# Usage (from repo root):
+#   docker compose -f docker-compose.yml -f docker-compose.demo.yml --profile demo up --build
+#
+# Demo login: email demo@example.local / password DemoPass1!
+# API: http://localhost:5202  |  HTTP file: apps/api/docs/demo.http
+
+services:
+  api:
+    environment:
+      Database__ApplyMigrationsOnStart: "true"
+      Demo__Seed: "true"
+      Demo__UserEmail: "demo@example.local"
+      Demo__UserPassword: "DemoPass1!"

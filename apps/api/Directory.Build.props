@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Fail CI on nullable, async, and common analyzer warnings; keep NuGet restore honest. -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RestoreWarningsAsErrors>true</RestoreWarningsAsErrors>
+  </PropertyGroup>
+</Project>

@@ -5,11 +5,18 @@
   "scripts": {
     "web:start": "pnpm --dir apps/web start",
     "web:build": "pnpm --dir apps/web build",
+    "web:lint": "pnpm --dir apps/web lint",
     "web:test": "pnpm --dir apps/web test",
+    "web:test:ci": "pnpm --dir apps/web run test:ci",
     "api:run": "dotnet run --project apps/api/src/CaseManagement.Api",
-    "api:build": "dotnet build apps/api/src/CaseManagement.Api/CaseManagement.Api.csproj",
-    "api:test": "dotnet test",
-    "dev": "echo Run API and Web in separate terminals for now"
+    "api:build": "dotnet build apps/api/CaseManagement.slnx -c Release",
+    "api:test": "dotnet test apps/api/CaseManagement.slnx -c Release",
+    "dev": "echo Run API and Web in separate terminals for now",
+    "docker:db": "docker compose up -d",
+    "docker:db:down": "docker compose down",
+    "demo": "docker compose -f docker-compose.yml -f docker-compose.demo.yml --profile demo up --build",
+    "docker:full": "docker compose --profile full up --build",
+    "docker:dokploy": "docker compose -f docker-compose.dokploy.yml --env-file .env.dokploy.example up --build"
   },
   "devDependencies": {
     "@angular/cli": "^21.2.6"

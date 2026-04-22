@@ -1,0 +1,17 @@
+<section class="rounded-2xl border border-border bg-card shadow-sm">
+  @if (title() || subtitle()) {
+    <div class="border-b border-border p-6">
+      @if (title()) {
+        <h2 class="text-lg font-semibold text-foreground">{{ title() }}</h2>
+      }
+      @if (subtitle()) {
+        <p class="mt-1 text-sm text-muted-foreground">{{ subtitle() }}</p>
+      }
+      <ng-content select="[cardHeaderExtra]" />
+    </div>
+  }
+
+  <div class="p-6">
+    <ng-content />
+  </div>
+</section>

@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -9,13 +10,13 @@ import { passwordsMatchValidator } from '@app/shared/validators/passwords-match.
 
 @Component({
   selector: 'app-sign-up-form',
-  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './sign-up-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignUpFormComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
@@ -56,7 +57,10 @@ export class SignUpFormComponent {
         password: raw.password,
         confirmPassword: raw.confirmPassword,
       })
-      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isSubmitting.set(false)),
+      )
       .subscribe({
         next: () => {
           void this.router.navigate(['/app']);
@@ -107,3 +111,4 @@ export class SignUpFormComponent {
     return this.form.hasError('passwordsMismatch') && this.confirmPassword.touched;
   }
 }
+

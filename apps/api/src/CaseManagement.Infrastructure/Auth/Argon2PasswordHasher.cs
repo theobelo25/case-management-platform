@@ -1,4 +1,4 @@
-using CaseManagement.Application.Ports;
+using CaseManagement.Application.Auth.Ports;
 using Isopoh.Cryptography.Argon2;
 
 namespace CaseManagement.Infrastructure.Auth;

@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, combineLatest, finalize, map, of, startWith, switchMap } from 'rxjs';
 import { OrganizationDetailSummaryComponent } from '../../components/organization-detail-summary/organization-detail-summary.component';
@@ -16,9 +16,11 @@ import {
 } from '@app/core/organizations/organizations-api.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { OrganizationDetailLifecycleComponent } from '../../components/organization-detail-lifecycle/organization-detail-lifecycle.component';
-import { OrganizationConfirmDeleteComponent } from '../../components/organization-confirm-delete/organization-confirm-delete.component';
+import { ConfirmGuidPrefixDeleteComponent } from '@app/shared/components/confirm-guid-prefix-delete/confirm-guid-prefix-delete.component';
 import { OrganizationTransferOwnershipComponent } from '../../components/organization-transfer-ownership/organization-transfer-ownership.component';
 import { OrganizationAddMemberComponent } from '../../components/organization-add-member/organization-add-member.component';
+import { OrganizationSlaPolicyComponent } from '../../components/organization-sla-policy/organization-sla-policy.component';
+import type { OrganizationSlaPolicyDto } from '@app/core/organizations/organizations-api.service';
 
 type OrganizationDetailVm =
   | { status: 'idle' }
@@ -28,15 +30,15 @@ type OrganizationDetailVm =
 
 @Component({
   selector: 'app-organization-detail-page',
-  standalone: true,
   imports: [
     RouterLink,
     OrganizationDetailSummaryComponent,
     OrganizationMembersTableComponent,
     OrganizationDetailLifecycleComponent,
-    OrganizationConfirmDeleteComponent,
+    ConfirmGuidPrefixDeleteComponent,
     OrganizationTransferOwnershipComponent,
     OrganizationAddMemberComponent,
+    OrganizationSlaPolicyComponent,
   ],
   templateUrl: './organization-detail-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,6 +48,7 @@ export class OrganizationDetailPageComponent {
   private readonly router = inject(Router);
   private readonly organizations = inject(OrganizationsService);
   private readonly auth = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly confirmingDelete = signal(false);
   protected readonly deleteError = signal<string | null>(null);
@@ -60,8 +63,21 @@ export class OrganizationDetailPageComponent {
   protected readonly removeMemberError = signal<string | null>(null);
   protected readonly removeMemberSubmitting = signal(false);
   protected readonly detailVersion = signal(0);
+  protected readonly slaSubmitting = signal(false);
+  protected readonly slaError = signal<string | null>(null);
 
   protected readonly currentUserId = computed(() => this.auth.userProfile()?.id ?? null);
+
+  protected readonly canManageSla = computed((): boolean => {
+    const uid = this.currentUserId();
+    if (uid == null) return false;
+    for (const m of this.members()) {
+      if (m.id !== uid) continue;
+      const r = m.role.toLowerCase();
+      return r === 'owner' || r === 'admin';
+    }
+    return false;
+  });
 
   protected readonly organization = computed((): OrganizationDetailViewModel | null => {
     const state = this.detail();
@@ -81,6 +97,12 @@ export class OrganizationDetailPageComponent {
     const state = this.detail();
     if (state.status !== 'success') return [];
     return state.data.members.map(memberToViewModel);
+  });
+
+  protected readonly slaPolicy = computed((): OrganizationSlaPolicyDto | null => {
+    const state = this.detail();
+    if (state.status !== 'success') return null;
+    return state.data.slaPolicy;
   });
 
   protected readonly detail = toSignal(
@@ -112,17 +134,23 @@ export class OrganizationDetailPageComponent {
   protected onArchiveRequested(): void {
     const id = this.organization()?.id;
     if (id == null) return;
-    this.organizations.archiveOrganization(id).subscribe({
-      next: () => this.detailVersion.update((v) => v + 1),
-    });
+    this.organizations
+      .archiveOrganization(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.detailVersion.update((v) => v + 1),
+      });
   }
 
   protected onUnarchiveRequested(): void {
     const id = this.organization()?.id;
     if (id == null) return;
-    this.organizations.unarchiveOrganization(id).subscribe({
-      next: () => this.detailVersion.update((v) => v + 1),
-    });
+    this.organizations
+      .unarchiveOrganization(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.detailVersion.update((v) => v + 1),
+      });
   }
 
   protected onAddMembers(): void {
@@ -154,7 +182,10 @@ export class OrganizationDetailPageComponent {
     this.removeMemberSubmitting.set(true);
     this.organizations
       .removeOrganizationMember(orgId, target.id)
-      .pipe(finalize(() => this.removeMemberSubmitting.set(false)))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.removeMemberSubmitting.set(false)),
+      )
       .subscribe({
         next: () => {
           const leftSelf = target.id === this.currentUserId();
@@ -171,7 +202,9 @@ export class OrganizationDetailPageComponent {
       });
   }
 
-  protected onMemberSettings(_member: OrganizationMemberViewModel): void {}
+  protected onMemberSettings(_: OrganizationMemberViewModel): void {
+    void _;
+  }
 
   protected onAddMemberConfirmed(memberUserId: string): void {
     const id = this.organization()?.id;
@@ -181,7 +214,10 @@ export class OrganizationDetailPageComponent {
     this.addMemberSubmitting.set(true);
     this.organizations
       .addOrganizationMember(id, memberUserId)
-      .pipe(finalize(() => this.addMemberSubmitting.set(false)))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.addMemberSubmitting.set(false)),
+      )
       .subscribe({
         next: () => {
           this.closeAddMember();
@@ -211,7 +247,10 @@ export class OrganizationDetailPageComponent {
     this.transferSubmitting.set(true);
     this.organizations
       .transferOrganizationOwnership(id, newOwnerUserId)
-      .pipe(finalize(() => this.transferSubmitting.set(false)))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.transferSubmitting.set(false)),
+      )
       .subscribe({
         next: () => {
           this.closeTransferOwnership();
@@ -233,6 +272,26 @@ export class OrganizationDetailPageComponent {
     this.confirmingDelete.set(false);
   }
 
+  protected onSlaPolicySave(body: OrganizationSlaPolicyDto): void {
+    const id = this.organization()?.id;
+    if (id == null) return;
+
+    this.slaError.set(null);
+    this.slaSubmitting.set(true);
+    this.organizations
+      .updateOrganizationSlaPolicy(id, body)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.slaSubmitting.set(false)),
+      )
+      .subscribe({
+        next: () => this.detailVersion.update((v) => v + 1),
+        error: (err: unknown) => {
+          this.slaError.set(messageFromHttp(err));
+        },
+      });
+  }
+
   protected onDeleteConfirmed(): void {
     const id = this.organization()?.id;
     if (id == null) return;
@@ -241,7 +300,10 @@ export class OrganizationDetailPageComponent {
     this.deleteSubmitting.set(true);
     this.organizations
       .deleteOrganization(id)
-      .pipe(finalize(() => this.deleteSubmitting.set(false)))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.deleteSubmitting.set(false)),
+      )
       .subscribe({
         next: () => {
           this.closeDeleteConfirm();
@@ -272,3 +334,4 @@ function memberToViewModel(m: UserMembershipResponseDto): OrganizationMemberView
     joinedAtUtc: m.joinedAtUtc,
   };
 }
+

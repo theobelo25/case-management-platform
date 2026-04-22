@@ -1,0 +1,30 @@
+<div class="flex flex-col gap-2">
+  @if (error(); as err) {
+    <p class="m-0 text-sm text-destructive" role="alert">{{ err }}</p>
+  }
+
+  <app-chart-container
+    chartTitle="Case volume over time"
+    chartSummary="Line chart of cases created, resolved, and reopened per UTC day in your active organization."
+    [heightPx]="chartHeightPx()"
+    [loading]="loading()"
+    [empty]="chartEmpty()"
+    [emptyMessage]="emptyMessage()"
+    loadingMessage="Loading case volume"
+  >
+    @if (!loading() && !chartEmpty() && lineChartData(); as chartData) {
+      <canvas
+        baseChart
+        type="line"
+        [data]="chartData"
+        [options]="chartOptions()"
+        [legend]="true"
+        aria-label="Case volume over time"
+      ></canvas>
+    }
+  </app-chart-container>
+
+  <p class="m-0 text-[11px] leading-snug text-muted-foreground">
+    Last {{ windowDays }} days (UTC). Resolved / reopened from status history.
+  </p>
+</div>

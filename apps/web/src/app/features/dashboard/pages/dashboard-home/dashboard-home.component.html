@@ -1,51 +1,180 @@
 <section class="grid gap-6">
-  <div
-    class="rounded-3xl border border-slate-400/14 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
-  >
-    <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-300">Overview</p>
+  <div class="rounded-3xl border border-border bg-card p-6 shadow-sm">
+    <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-600">Overview</p>
     @if (sessionSnapshot(); as s) {
-      <h2 class="m-0 text-[1.8rem] text-slate-50">Welcome, {{ userDisplayName(s) }}</h2>
-      <p class="text-sm text-slate-400">{{ s.email }}</p>
+      <h2 class="m-0 text-[1.8rem] text-foreground">Welcome, {{ userDisplayName(s) }}</h2>
+      <p class="text-sm text-muted-foreground">{{ s.email }}</p>
     } @else {
-      <h2 class="m-0 text-[1.8rem] text-slate-50">Welcome back</h2>
+      <h2 class="m-0 text-[1.8rem] text-foreground">Welcome back</h2>
     }
-    <p class="mb-0 mt-[0.85rem] max-w-2xl leading-[1.7] text-slate-300">
+    <p class="mb-0 mt-[0.85rem] max-w-2xl leading-[1.7] text-muted-foreground">
       This is your protected application area. From here you can manage cases, tasks, and other
       internal workflows.
     </p>
   </div>
 
-  <div class="grid grid-cols-1 gap-4 min-[901px]:grid-cols-3">
-    <article
-      class="rounded-3xl border border-slate-400/14 bg-slate-900/72 p-5 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
-    >
-      <span class="mb-3 block text-[0.78rem] font-bold uppercase tracking-[0.12em] text-blue-300"
-        >Open Cases</span
-      >
-      <strong class="block text-[2rem] text-slate-50">24</strong>
-      <p class="mb-0 mt-2.5 leading-[1.55] text-slate-300">
-        Currently active across your organization.
+  @if (statsError(); as se) {
+    <p class="text-sm text-destructive">{{ se }}</p>
+  }
+
+  <div class="grid grid-cols-1 gap-3 min-[901px]:grid-cols-3">
+    <article class="flex flex-col rounded-xl border border-border bg-white p-3.5 shadow-sm">
+      <header>
+        <p class="text-[11px] font-semibold uppercase leading-tight tracking-[0.08em] text-muted-foreground">
+          Open cases
+        </p>
+      </header>
+      <p class="mt-1.5 text-2xl font-semibold tabular-nums leading-none tracking-tight text-foreground">
+        @if (statsLoading()) {
+          <span class="text-muted-foreground">…</span>
+        } @else {
+          {{ formatStatValue(openCasesStat(), openCasesHasMore()) }}
+        }
+      </p>
+      <p class="mt-1.5 text-xs leading-snug text-muted-foreground">
+        New or open cases in your active organization (first 100; a “+” means more exist).
       </p>
     </article>
 
-    <article
-      class="rounded-3xl border border-slate-400/14 bg-slate-900/72 p-5 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
-    >
-      <span class="mb-3 block text-[0.78rem] font-bold uppercase tracking-[0.12em] text-blue-300"
-        >Pending Tasks</span
-      >
-      <strong class="block text-[2rem] text-slate-50">11</strong>
-      <p class="mb-0 mt-2.5 leading-[1.55] text-slate-300">Tasks waiting on review or follow-up.</p>
+    <article class="flex flex-col rounded-xl border border-border bg-white p-3.5 shadow-sm">
+      <header>
+        <p class="text-[11px] font-semibold uppercase leading-tight tracking-[0.08em] text-muted-foreground">
+          Pending cases
+        </p>
+      </header>
+      <p class="mt-1.5 text-2xl font-semibold tabular-nums leading-none tracking-tight text-foreground">
+        @if (statsLoading()) {
+          <span class="text-muted-foreground">…</span>
+        } @else {
+          {{ formatStatValue(pendingCasesStat(), pendingCasesHasMore()) }}
+        }
+      </p>
+      <p class="mt-1.5 text-xs leading-snug text-muted-foreground">
+        Cases in pending status (first 100; “+” if more exist).
+      </p>
     </article>
 
-    <article
-      class="rounded-3xl border border-slate-400/14 bg-slate-900/72 p-5 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
-    >
-      <span class="mb-3 block text-[0.78rem] font-bold uppercase tracking-[0.12em] text-blue-300"
-        >Team Members</span
-      >
-      <strong class="block text-[2rem] text-slate-50">8</strong>
-      <p class="mb-0 mt-2.5 leading-[1.55] text-slate-300">Users with access to the workspace.</p>
+    <article class="flex flex-col rounded-xl border border-border bg-white p-3.5 shadow-sm">
+      <header>
+        <p class="text-[11px] font-semibold uppercase leading-tight tracking-[0.08em] text-muted-foreground">
+          Team members
+        </p>
+      </header>
+      <p class="mt-1.5 text-2xl font-semibold tabular-nums leading-none tracking-tight text-foreground">
+        @if (statsLoading()) {
+          <span class="text-muted-foreground">…</span>
+        } @else {
+          {{ teamMembersStat() === null ? '—' : teamMembersStat() }}
+        }
+      </p>
+      <p class="mt-1.5 text-xs leading-snug text-muted-foreground">Members in your active organization.</p>
     </article>
   </div>
+
+  @if (sessionSnapshot()) {
+    <div class="grid grid-cols-1 gap-4 min-[901px]:grid-cols-3">
+      <div class="min-w-0 rounded-2xl border border-border bg-white p-3 shadow-sm">
+        <app-dashboard-case-volume-chart />
+      </div>
+      <div class="min-w-0 rounded-2xl border border-border bg-white p-3 shadow-sm">
+        <app-dashboard-cases-by-status-chart />
+      </div>
+      <div class="min-w-0 rounded-2xl border border-border bg-white p-3 shadow-sm">
+        <app-dashboard-first-response-time-chart />
+      </div>
+    </div>
+  }
+
+  <div class="space-y-3">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <p class="m-0 text-sm text-muted-foreground">
+        Cases assigned to you in your active organization (excluding archived).
+      </p>
+      <a
+        routerLink="/app/cases"
+        class="inline-flex shrink-0 items-center justify-center rounded-xl border border-border bg-background px-4 py-2 text-sm font-medium text-foreground shadow-sm transition hover:bg-accent"
+      >
+        View all cases
+      </a>
+    </div>
+
+    @if (assignedCasesLoading()) {
+      <p class="text-sm text-muted-foreground">Loading assigned cases…</p>
+    } @else if (assignedCasesError(); as err) {
+      <p class="text-sm text-destructive">{{ err }}</p>
+    } @else {
+      <app-case-table
+        [cases]="assignedCases()"
+        [showAssigneeColumn]="false"
+        heading="My assigned cases"
+        [subheadingOverride]="assignedCasesSubheading()"
+      />
+    }
+  </div>
+
+  @if (sessionSnapshot()) {
+    <div class="rounded-2xl border border-border bg-white p-5 shadow-sm">
+      <div class="flex flex-wrap items-start justify-between gap-3 border-b border-border pb-4">
+        <div>
+          <p class="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            My organizations
+          </p>
+          <h2 class="m-0 mt-1 text-lg font-semibold text-foreground">Your memberships</h2>
+          <p class="m-0 mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            Switch the active organization from the header anytime. Open a workspace for full details.
+          </p>
+        </div>
+        <a
+          routerLink="/app/organizations/manage"
+          class="inline-flex shrink-0 items-center justify-center rounded-xl border border-border bg-background px-4 py-2 text-sm font-medium text-foreground shadow-sm transition hover:bg-accent"
+        >
+          Manage organizations
+        </a>
+      </div>
+
+      <div class="pt-4">
+        @if (meProfile() === null) {
+          <p class="m-0 text-sm text-muted-foreground">Loading organizations…</p>
+        } @else if (myOrganizations().length === 0) {
+          <p class="m-0 text-sm text-muted-foreground">
+            You are not a member of any organization yet. Create one from the manage page.
+          </p>
+        } @else {
+          <ul class="m-0 flex list-none flex-col gap-2 p-0" role="list">
+            @for (org of myOrganizations(); track org.id) {
+              <li class="m-0 p-0">
+                <a
+                  class="group flex w-full flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-slate-50/80 px-4 py-3 no-underline outline-none transition hover:border-gray-300 hover:bg-white focus-visible:ring-2 focus-visible:ring-blue-500/40"
+                  [routerLink]="['/app/organizations', org.id]"
+                >
+                  <div class="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                    <span class="m-0 min-w-0 truncate text-sm font-medium text-foreground group-hover:text-gray-950">{{
+                      org.name
+                    }}</span>
+                    @if (isActiveOrganization(org.id)) {
+                      <span
+                        class="inline-flex shrink-0 rounded-lg bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-900 ring-1 ring-emerald-200/80"
+                        >Active</span
+                      >
+                    }
+                    @if (org.isArchived) {
+                      <span
+                        class="inline-flex shrink-0 rounded-lg bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-900 ring-1 ring-amber-200/80"
+                        role="status"
+                        >Archived</span
+                      >
+                    }
+                  </div>
+                  <span
+                    class="shrink-0 rounded-lg bg-blue-100 px-2.5 py-1 text-xs font-medium capitalize text-blue-800"
+                    >{{ org.role }}</span
+                  >
+                </a>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+  }
 </section>
