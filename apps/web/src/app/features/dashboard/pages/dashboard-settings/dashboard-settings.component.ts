@@ -6,7 +6,6 @@ import { ProfileFormComponent } from '../../components/profile-form/profile-form
 
 @Component({
   selector: 'app-dashboard-settings',
-  standalone: true,
   imports: [ProfileFormComponent],
   templateUrl: './dashboard-settings.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,3 +21,4 @@ export class DashboardSettingsComponent {
     return authUserDisplayName(s);
   }
 }
+

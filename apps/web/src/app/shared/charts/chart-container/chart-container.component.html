@@ -1,0 +1,52 @@
+<section
+  class="flex min-h-0 w-full min-w-0 flex-col rounded-xl border border-border bg-white p-4 shadow-sm"
+  [attr.id]="regionId"
+  role="region"
+  [attr.aria-labelledby]="titleId()"
+  [attr.aria-label]="regionAriaLabel()"
+>
+  @if (chartTitle(); as t) {
+    <h3
+      class="m-0 mb-3 text-sm font-semibold leading-tight text-foreground"
+      [attr.id]="titleId() ?? undefined"
+    >
+      {{ t }}
+    </h3>
+  }
+
+  <div
+    class="relative min-h-0 w-full min-w-0 flex-1"
+    [style.height.px]="heightPx()"
+    [class.opacity-60]="loading()"
+  >
+    @if (loading()) {
+      <div
+        class="flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-slate-50/80 px-4 text-center"
+        role="status"
+        aria-live="polite"
+        [attr.aria-busy]="true"
+      >
+        <span
+          class="inline-block size-8 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-blue-600"
+          aria-hidden="true"
+        ></span>
+        <span class="text-sm text-muted-foreground">{{ loadingMessage() }}</span>
+      </div>
+    } @else if (empty()) {
+      <div
+        class="flex h-full w-full items-center justify-center rounded-lg border border-dashed border-border bg-slate-50/60 px-4 text-center text-sm text-muted-foreground"
+        role="status"
+      >
+        {{ emptyMessage() }}
+      </div>
+    } @else {
+      <div
+        class="h-full w-full min-h-0 min-w-0"
+        role="group"
+        [attr.aria-label]="chartGraphicLabel()"
+      >
+        <ng-content />
+      </div>
+    }
+  </div>
+</section>

@@ -1,5 +1,5 @@
 using System.Security.Cryptography;
-using CaseManagement.Application.Ports;
+using CaseManagement.Application.Auth.Ports;
 
 namespace CaseManagement.Infrastructure.Auth;
 

@@ -1,13 +1,12 @@
 using CaseManagement.Application.Organizations;
-using CaseManagement.Application.Ports;
+using CaseManagement.Application.Organizations.Ports;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace CaseManagement.Infrastructure.Persistence.Queries;
 
 public sealed class OrganizationDetailQuery(
-    CaseManagementDbContext db,
-    IOrganizationsRepository organizations
+    CaseManagementDbContext db
 ) : IOrganizationDetailQuery
 {
     public async Task<OrganizationDetailDto?> GetDetailForMemberAsync(
@@ -15,7 +14,12 @@ public sealed class OrganizationDetailQuery(
         Guid organizationId, 
         CancellationToken cancellationToken = default)
     {
-        if (await organizations.CheckUserMembership(userId, organizationId, cancellationToken) is null)
+        var isMember = await db.OrganizationMemberships
+            .AsNoTracking()
+            .AnyAsync(
+                m => m.UserId == userId && m.OrganizationId == organizationId,
+                cancellationToken);
+        if (!isMember)
             return null;
 
         var org = await db.Organizations
@@ -56,6 +60,9 @@ public sealed class OrganizationDetailQuery(
             org.Name,
             org.CreatedAtUtc,
             org.IsArchived,
+            org.SlaLowHours,
+            org.SlaMediumHours,
+            org.SlaHighHours,
             members);
     }
 }

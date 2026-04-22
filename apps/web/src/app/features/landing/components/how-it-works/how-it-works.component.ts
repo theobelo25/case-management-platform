@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-how-it-works',
-  standalone: true,
   templateUrl: './how-it-works.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -13,3 +12,4 @@ export class HowItWorksComponent {
     'Open a case to review details, timeline history, and next actions.',
   ];
 }
+

@@ -36,6 +36,9 @@ namespace CaseManagement.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid>("OrganizationId")
                         .HasColumnType("uuid");
 
@@ -50,6 +53,18 @@ namespace CaseManagement.Infrastructure.Persistence.Migrations
 
                     b.Property<Guid?>("RequesterUserId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("SlaBreachedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("SlaDueAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("SlaPausedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("SlaRemainingSeconds")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -67,6 +82,36 @@ namespace CaseManagement.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("cases", (string)null);
+                });
+
+            modelBuilder.Entity("CaseManagement.Domain.Entities.CaseDueSoonNotification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RecipientUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("SlaDueAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("WindowMinutes")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientUserId");
+
+                    b.HasIndex("CaseId", "SlaDueAtUtc", "WindowMinutes", "RecipientUserId")
+                        .IsUnique();
+
+                    b.ToTable("case_due_soon_notifications", (string)null);
                 });
 
             modelBuilder.Entity("CaseManagement.Domain.Entities.CaseEvent", b =>
@@ -153,6 +198,15 @@ namespace CaseManagement.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
+
+                    b.Property<int>("SlaHighHours")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SlaLowHours")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SlaMediumHours")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -269,6 +323,21 @@ namespace CaseManagement.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("CaseManagement.Domain.Entities.CaseDueSoonNotification", b =>
+                {
+                    b.HasOne("CaseManagement.Domain.Entities.Case", null)
+                        .WithMany()
+                        .HasForeignKey("CaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CaseManagement.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("RecipientUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CaseManagement.Domain.Entities.CaseEvent", b =>

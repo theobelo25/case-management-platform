@@ -44,6 +44,11 @@ export class AuthService {
   /** Latest-only for `switchActiveOrganization` follow-up GET /auth/me. */
   private lastOrgSwitchId = 0;
 
+  /** Current bearer token for API and SignalR (`accessTokenFactory`). */
+  getAccessToken(): string | null {
+    return this.accessToken();
+  }
+
   private applyAccessToken(accessToken: string): void {
     const parsed = parseSessionFromAccessToken(accessToken);
     this.accessToken.set(accessToken);
@@ -106,6 +111,39 @@ export class AuthService {
   /** Reloads `userProfile` from `GET /auth/me` when membership or org metadata changes outside `AuthService`. */
   refreshUserProfile(): void {
     this.loadUserProfile();
+  }
+
+  /**
+   * Organization id for org-scoped features (matches the header org selector): the membership for
+   * {@link MeResponseDto.activeOrganizationId}, or the first listed organization when unset or stale.
+   */
+  getEffectiveActiveOrganizationId(): string | null {
+    const p = this.userProfile();
+    if (!p?.organizations?.length) {
+      return null;
+    }
+    const key = p.activeOrganizationId?.trim();
+    if (key) {
+      const match = p.organizations.find(
+        (o) => o.id.trim().toLowerCase() === key.toLowerCase(),
+      );
+      if (match) {
+        return match.id;
+      }
+    }
+    return p.organizations[0]?.id ?? null;
+  }
+
+  /** Owner or Admin in the given organization (from `GET /auth/me` memberships). */
+  canManageCasesForOrganization(organizationId: string | null | undefined): boolean {
+    const id = organizationId?.trim();
+    if (!id) {
+      return false;
+    }
+    const p = this.userProfile();
+    const m = p?.organizations?.find((o) => o.id.trim().toLowerCase() === id.toLowerCase());
+    const role = m?.role?.trim().toLowerCase();
+    return role === 'owner' || role === 'admin';
   }
 
   updateProfile(payload: UpdateProfileRequestDto): Observable<AuthResponseDto> {

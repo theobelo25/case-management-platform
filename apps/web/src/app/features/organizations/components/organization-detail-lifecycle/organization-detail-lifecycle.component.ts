@@ -11,7 +11,6 @@ import { OrganizationMemberViewModel } from '../../models/organization-detail-vi
 
 @Component({
   selector: 'app-organization-detail-lifecycle',
-  standalone: true,
   templateUrl: './organization-detail-lifecycle.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -41,3 +40,4 @@ export class OrganizationDetailLifecycleComponent {
   readonly deleteRequested = output<void>();
   readonly transferOwnershipRequested = output<void>();
 }
+

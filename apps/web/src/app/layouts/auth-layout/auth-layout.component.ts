@@ -8,7 +8,6 @@ const AUTH_LAYOUT_HTML_CLASS = 'auth-layout-active';
 
 @Component({
   selector: 'app-auth-layout',
-  standalone: true,
   imports: [RouterOutlet, AuthHeaderComponent, AuthFooterComponent],
   templateUrl: './auth-layout.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,3 +25,4 @@ export class AuthLayoutComponent {
     doc.documentElement.classList.add(AUTH_LAYOUT_HTML_CLASS);
   }
 }
+

@@ -11,7 +11,6 @@ import { OrganizationMemberViewModel } from '../../models/organization-detail-vi
 
 @Component({
   selector: 'app-organization-transfer-ownership',
-  standalone: true,
   templateUrl: './organization-transfer-ownership.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -43,3 +42,4 @@ export class OrganizationTransferOwnershipComponent {
     });
   }
 }
+

@@ -1,8 +1,15 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+} from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { debounceTime, filter, fromEvent } from 'rxjs';
+import { AuthService } from '@app/core/auth/auth.service';
+import { NotificationsHubService } from '@app/core/realtime/notifications-hub.service';
+import { debounceTime, distinctUntilChanged, filter, fromEvent } from 'rxjs';
 import { ProtectedHeaderComponent } from './components/protected-header/protected-header.component';
 import { ProtectedSidebarComponent } from './components/protected-sidebar/protected-sidebar.component';
 import { ProtectedLayoutService } from './protected-layout.service';
@@ -11,13 +18,12 @@ const PROTECTED_LAYOUT_HTML_CLASS = 'protected-layout-active';
 
 @Component({
   selector: 'app-protected-layout',
-  standalone: true,
   imports: [RouterOutlet, ProtectedHeaderComponent, ProtectedSidebarComponent],
   templateUrl: './protected-layout.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ProtectedLayoutService],
   host: {
-    class: 'protected-shell-bg block h-dvh max-h-dvh overflow-hidden text-gray-200',
+    class: 'protected-shell-bg block h-dvh max-h-dvh overflow-hidden text-gray-800',
   },
 })
 export class ProtectedLayoutComponent {
@@ -25,6 +31,20 @@ export class ProtectedLayoutComponent {
   private readonly router = inject(Router);
 
   constructor() {
+    const auth = inject(AuthService);
+    const notificationsHub = inject(NotificationsHubService);
+    const destroyRef = inject(DestroyRef);
+
+    toObservable(auth.accessTokenReadonly)
+      .pipe(distinctUntilChanged(), takeUntilDestroyed(destroyRef))
+      .subscribe((token) => {
+        if (token) {
+          void notificationsHub.ensureStarted();
+        } else {
+          void notificationsHub.stop();
+        }
+      });
+
     const doc = inject(DOCUMENT);
     inject(DestroyRef).onDestroy(() => {
       doc.documentElement.classList.remove(PROTECTED_LAYOUT_HTML_CLASS);
@@ -54,3 +74,4 @@ export class ProtectedLayoutComponent {
       });
   }
 }
+

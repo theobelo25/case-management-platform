@@ -1,7 +1,7 @@
 using CaseManagement.Application.Common;
 using CaseManagement.Application.Users;
 
-namespace CaseManagement.Application.Ports;
+namespace CaseManagement.Application.Users.Ports;
 
 public interface IUsersSearchQuery
 {

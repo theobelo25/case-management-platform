@@ -1,23 +1,17 @@
-<div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
   @for (card of cards(); track trackByLabel($index, card)) {
-    <article class="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-sm">
-      <header>
-        <p class="text-sm text-white/70">
-          {{ card.label }}
-        </p>
-      </header>
-
-      <div class="mt-2">
-        <p class="text-3xl font-semibold text-white">
-          {{ card.value }}
-        </p>
-      </div>
-
-      <footer class="mt-1">
-        <p class="text-xs text-white/50">
-          {{ card.helperText }}
-        </p>
-      </footer>
+    <article
+      class="flex flex-col rounded-xl border border-border bg-white p-3.5 shadow-sm"
+    >
+      <p class="text-[11px] font-semibold uppercase leading-tight tracking-[0.08em] text-muted-foreground">
+        {{ card.label }}
+      </p>
+      <p class="mt-1.5 text-2xl font-semibold tabular-nums leading-none tracking-tight text-foreground">
+        {{ card.value }}
+      </p>
+      <p class="mt-1.5 text-xs leading-snug text-muted-foreground">
+        {{ card.helperText }}
+      </p>
     </article>
   }
 </div>

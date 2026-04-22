@@ -10,7 +10,12 @@ public sealed record GetCasesInput(
 public sealed record CaseListFilters(
     string? Search,
     string? Priority,
-    string? Status);
+    string? Status,
+    Guid? AssigneeUserId,
+    bool OverdueOnly = false,
+    bool BreachedOnly = false,
+    bool UnassignedOnly = false,
+    int? DueSoonWithinHours = null);
 
 public sealed record CaseListSort(
     string? Field,

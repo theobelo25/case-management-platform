@@ -1,4 +1,4 @@
-namespace CaseManagement.Application.Ports;
+namespace CaseManagement.Application.Auth.Ports;
 
 public interface IRefreshTokenHasher
 {

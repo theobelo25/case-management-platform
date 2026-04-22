@@ -1,0 +1,60 @@
+<div class="flex flex-col gap-2">
+
+  @if (error(); as err) {
+
+    <p class="m-0 text-sm text-destructive" role="alert">{{ err }}</p>
+
+  }
+
+
+
+  <app-chart-container
+
+    chartTitle="First response time"
+
+    chartSummary="Average time from case creation to the first qualifying reply: an internal note, a reply from someone other than the requester (or initial author if no requester), or any reply from the current assignee (UTC day of case creation)."
+
+    [heightPx]="chartHeightPx()"
+
+    [loading]="loading()"
+
+    [empty]="chartEmpty()"
+
+    [emptyMessage]="emptyMessage()"
+
+    loadingMessage="Loading first response times"
+
+  >
+
+    @if (!loading() && !chartEmpty() && lineChartData(); as chartData) {
+
+      <canvas
+
+        baseChart
+
+        type="line"
+
+        [data]="chartData"
+
+        [options]="chartOptions()"
+
+        [legend]="true"
+
+        aria-label="First response time trend"
+
+      ></canvas>
+
+    }
+
+  </app-chart-container>
+
+
+
+  <p class="m-0 text-[11px] leading-snug text-muted-foreground">
+
+    Last {{ windowDays }} days (UTC). One point per day; only cases with a qualifying first response are averaged.
+
+  </p>
+
+</div>
+

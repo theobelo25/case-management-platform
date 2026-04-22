@@ -1,6 +1,6 @@
 using CaseManagement.Application.Auth;
 
-namespace CaseManagement.Application.Ports;
+namespace CaseManagement.Application.Auth.Ports;
 
 public interface IUserProfileService
 {

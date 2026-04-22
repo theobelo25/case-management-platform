@@ -1,12 +1,11 @@
 using CaseManagement.Application.Cases;
 using CaseManagement.Application.Common;
-using CaseManagement.Domain.Entities;
 
-namespace CaseManagement.Application.Ports;
+namespace CaseManagement.Application.Cases.Ports;
 
 public interface ICaseListQuery
 {
-    Task<CursorPage<Case>> ExecuteAsync(
+    Task<CursorPage<CaseListItemReadModel>> ExecuteAsync(
         GetCasesInput input,
         CancellationToken cancellationToken = default);
 }

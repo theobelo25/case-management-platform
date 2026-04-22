@@ -1,11 +1,11 @@
-<section class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-sm">
+<section class="rounded-3xl border border-border bg-card p-6 shadow-sm">
   <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
     <div class="grid flex-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
       <label class="flex flex-col gap-2">
-        <span class="text-sm text-white/70">Search</span>
+        <span class="text-sm text-muted-foreground">Search</span>
         <input
           type="text"
-          class="rounded-xl border border-white/10 bg-slate-950/40 px-4 py-2.5 text-sm text-white outline-none"
+          class="rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-foreground shadow-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
           [value]="searchTerm()"
           (input)="onSearchChange($event)"
           placeholder="Search cases..."
@@ -13,23 +13,25 @@
       </label>
 
       <label class="flex flex-col gap-2">
-        <span class="text-sm text-white/70">Status</span>
+        <span class="text-sm text-muted-foreground">Status</span>
         <select
-          class="rounded-xl border border-white/10 bg-slate-950/40 px-4 py-2.5 text-sm text-white outline-none"
+          class="rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-foreground shadow-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
           [value]="selectedStatus()"
           (change)="onStatusChange($event)"
         >
           <option value="All">All</option>
+          <option value="New">New</option>
           <option value="Open">Open</option>
-          <option value="In Progress">In Progress</option>
+          <option value="Pending">Pending</option>
+          <option value="Resolved">Resolved</option>
           <option value="Closed">Closed</option>
         </select>
       </label>
 
       <label class="flex flex-col gap-2">
-        <span class="text-sm text-white/70">Priority</span>
+        <span class="text-sm text-muted-foreground">Priority</span>
         <select
-          class="rounded-xl border border-white/10 bg-slate-950/40 px-4 py-2.5 text-sm text-white outline-none"
+          class="rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-foreground shadow-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
           [value]="selectedPriority()"
           (change)="onPriorityChange($event)"
         >
@@ -41,16 +43,29 @@
       </label>
 
       <label class="flex flex-col gap-2">
-        <span class="text-sm text-white/70">Sort by</span>
+        <span class="text-sm text-muted-foreground">Sort by</span>
         <select
-          class="rounded-xl border border-white/10 bg-slate-950/40 px-4 py-2.5 text-sm text-white outline-none"
+          class="rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-foreground shadow-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
           [value]="sortBy()"
           (change)="onSortChange($event)"
         >
           <option value="updatedAt">Last Updated</option>
           <option value="priority">Priority</option>
+          <option value="slaDue">SLA due (nearest first)</option>
         </select>
       </label>
     </div>
+
+    <label
+      class="mt-4 inline-flex cursor-pointer select-none items-center gap-2 rounded-xl border border-border bg-muted/30 px-4 py-2.5 text-sm text-foreground"
+    >
+      <input
+        type="checkbox"
+        class="h-4 w-4 rounded border-gray-300"
+        [checked]="overdueOnly()"
+        (change)="onOverdueOnlyChange($event)"
+      />
+      <span>Overdue only</span>
+    </label>
   </div>
 </section>

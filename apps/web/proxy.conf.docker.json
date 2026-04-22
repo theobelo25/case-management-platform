@@ -1,0 +1,13 @@
+{
+  "/api": {
+    "target": "http://api:5202",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/hubs": {
+    "target": "http://api:5202",
+    "secure": false,
+    "changeOrigin": true,
+    "ws": true
+  }
+}

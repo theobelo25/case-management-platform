@@ -4,7 +4,6 @@ import { OrganizationMemberViewModel } from '../../models/organization-detail-vi
 
 @Component({
   selector: 'app-organization-members-table',
-  standalone: true,
   imports: [DatePipe],
   templateUrl: './organization-members-table.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,3 +26,4 @@ export class OrganizationMembersTableComponent {
     return me.role === 'Owner' || me.role === 'Admin';
   }
 }
+

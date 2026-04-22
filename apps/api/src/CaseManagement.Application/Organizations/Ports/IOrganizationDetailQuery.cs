@@ -1,6 +1,6 @@
 using CaseManagement.Application.Organizations;
 
-namespace CaseManagement.Application.Ports;
+namespace CaseManagement.Application.Organizations.Ports;
 
 public interface IOrganizationDetailQuery
 {

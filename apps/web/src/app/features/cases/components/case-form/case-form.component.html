@@ -1,44 +1,62 @@
 <form class="flex flex-col gap-2.5" [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="flex flex-col gap-1">
-    <label class="text-xs font-medium text-slate-300 sm:text-sm" for="title">Case title</label>
+    <label class="text-xs font-medium text-foreground sm:text-sm" for="title">Case title</label>
     <input
       id="title"
       type="text"
       formControlName="title"
       autocomplete="off"
-      class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+      class="w-full rounded-lg border border-gray-300 bg-white px-2.5 py-2 text-sm text-foreground outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
     />
     <div class="mt-0.5 min-h-4.5">
       @if (title.touched && title.invalid) {
-        <p class="text-xs leading-tight text-red-400 sm:text-sm">Case title is required.</p>
+        <p class="text-xs leading-tight text-red-600 sm:text-sm">Case title is required.</p>
       }
     </div>
   </div>
 
   <div class="flex flex-col gap-1">
-    <label class="text-xs font-medium text-slate-300 sm:text-sm" for="description"
+    <label class="text-xs font-medium text-foreground sm:text-sm" for="description"
       >Description</label
     >
     <textarea
       id="description"
       formControlName="description"
       rows="5"
-      class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+      class="w-full rounded-lg border border-gray-300 bg-white px-2.5 py-2 text-sm text-foreground outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
     ></textarea>
     <div class="mt-0.5 min-h-4.5">
       @if (description.touched && description.invalid) {
-        <p class="text-xs leading-tight text-red-400 sm:text-sm">Description is required.</p>
+        <p class="text-xs leading-tight text-red-600 sm:text-sm">Description is required.</p>
       }
     </div>
   </div>
 
+  @if (!isUpdateMode) {
+    <div class="flex flex-col gap-1">
+      <span class="text-xs font-medium text-foreground sm:text-sm">Requester (optional)</span>
+      <p class="text-xs text-muted-foreground">
+        Pick who is requesting this case, or leave unset. Type a name or email to open the member
+        list (everyone in your active organization).
+      </p>
+      <app-case-requester-search
+        [members]="requesterSearchHits()"
+        [loading]="requesterLoading()"
+        [loadError]="requesterLoadError()"
+        [disabled]="requesterLoading() || requesterLoadError() !== null"
+        [selectedId]="form.controls.requesterUserId.value"
+        (selectionChange)="onRequesterUserIdChange($event)"
+      />
+    </div>
+  }
+
   <div class="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
     <div class="flex flex-col gap-1">
-      <label class="text-xs font-medium text-slate-300 sm:text-sm" for="priority">Priority</label>
+      <label class="text-xs font-medium text-foreground sm:text-sm" for="priority">Priority</label>
       <select
         id="priority"
         formControlName="priority"
-        class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+        class="w-full rounded-lg border border-gray-300 bg-white px-2.5 py-2 text-sm text-foreground outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
       >
         @for (option of priorityOptions; track option) {
           <option [value]="option">{{ option }}</option>
@@ -46,7 +64,7 @@
       </select>
       <div class="mt-0.5 min-h-4.5">
         @if (priority.touched && priority.invalid) {
-          <p class="text-xs leading-tight text-red-400 sm:text-sm">
+          <p class="text-xs leading-tight text-red-600 sm:text-sm">
             Please choose a valid priority.
           </p>
         }
@@ -55,11 +73,11 @@
 
     @if (isUpdateMode) {
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-medium text-slate-300 sm:text-sm" for="status">Status</label>
+        <label class="text-xs font-medium text-foreground sm:text-sm" for="status">Status</label>
         <select
           id="status"
           formControlName="status"
-          class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+          class="w-full rounded-lg border border-gray-300 bg-white px-2.5 py-2 text-sm text-foreground outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
         >
           @for (option of statusOptions; track option) {
             <option [value]="option">{{ option }}</option>
@@ -67,7 +85,7 @@
         </select>
         <div class="mt-0.5 min-h-4.5">
           @if (status.touched && status.invalid) {
-            <p class="text-xs leading-tight text-red-400 sm:text-sm">
+            <p class="text-xs leading-tight text-red-600 sm:text-sm">
               Please choose a valid status.
             </p>
           }
@@ -77,11 +95,11 @@
   </div>
 
   @if (submitError(); as err) {
-    <p class="text-xs leading-tight text-red-400 sm:text-sm" role="alert">{{ err }}</p>
+    <p class="text-xs leading-tight text-red-600 sm:text-sm" role="alert">{{ err }}</p>
   }
 
   <button
-    class="mt-1 w-full rounded-xl bg-blue-600 py-2.5 text-[0.9rem] font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50 sm:text-[0.95rem]"
+    class="mt-1 w-full rounded-xl bg-blue-600 py-2.5 text-[0.9rem] font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:text-[0.95rem]"
     type="submit"
     [disabled]="isSubmitting()"
   >

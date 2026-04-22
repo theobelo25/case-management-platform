@@ -39,6 +39,17 @@ public class CaseConfiguration : IEntityTypeConfiguration<Case>
         
         builder.Property(x => x.UpdatedAtUtc).IsRequired();
 
+        builder.Property(x => x.IsArchived)
+            .IsRequired();
+
+        builder.Property(x => x.SlaDueAtUtc);
+
+        builder.Property(x => x.SlaBreachedAtUtc);
+        
+        builder.Property(x => x.SlaPausedAtUtc);
+
+        builder.Property(x => x.SlaRemainingSeconds);
+
         builder.HasMany(c => c.Messages)
             .WithOne()
             .HasForeignKey(nameof(CaseMessage.CaseId))

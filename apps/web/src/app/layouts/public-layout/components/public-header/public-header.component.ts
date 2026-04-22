@@ -4,7 +4,6 @@ import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-public-header',
-  standalone: true,
   imports: [RouterLink],
   templateUrl: './public-header.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,3 +49,4 @@ export class PublicHeaderComponent {
     }
   }
 }
+

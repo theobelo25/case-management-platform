@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '@app/core/auth/auth.service';
 import {
@@ -11,13 +12,13 @@ import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-update-profile-form',
-  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './profile-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileFormComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly auth = inject(AuthService);
 
   /** Avoids repatching when `session()` is refreshed with the same name fields. */
@@ -90,7 +91,10 @@ export class ProfileFormComponent {
         newPassword,
         confirmNewPassword,
       })
-      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isSubmitting.set(false)),
+      )
       .subscribe({
         next: () => {
           /* session updated via tap on AuthService */
@@ -147,3 +151,4 @@ export class ProfileFormComponent {
     return this.form.hasError('currentPasswordRequired') && this.currentPassword.touched;
   }
 }
+

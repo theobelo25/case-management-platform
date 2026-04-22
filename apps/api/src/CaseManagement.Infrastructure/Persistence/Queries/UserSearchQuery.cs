@@ -1,6 +1,6 @@
 using System.Text;
 using CaseManagement.Application.Common;
-using CaseManagement.Application.Ports;
+using CaseManagement.Application.Users.Ports;
 using CaseManagement.Application.Users;
 using Microsoft.EntityFrameworkCore;
 

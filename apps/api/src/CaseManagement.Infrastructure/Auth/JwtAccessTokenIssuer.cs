@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using CaseManagement.Application.Ports;
+using CaseManagement.Application.Auth.Ports;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 

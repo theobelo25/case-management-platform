@@ -5,4 +5,4 @@ public sealed record PagedList<T>(
     int TotalCount,
     int Skip,
     int Limit,
-    bool hasMore);
+    bool HasMore);

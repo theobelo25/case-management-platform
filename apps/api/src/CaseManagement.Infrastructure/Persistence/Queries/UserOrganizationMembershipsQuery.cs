@@ -1,6 +1,6 @@
 using CaseManagement.Application.Auth;
+using CaseManagement.Application.Auth.Ports;
 using CaseManagement.Application.Common;
-using CaseManagement.Application.Ports;
 using CaseManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,17 +8,11 @@ namespace CaseManagement.Infrastructure.Persistence.Queries;
 
 public sealed class UserOrganizationMembershipsQuery : IUserOrganizationMembershipsQuery
 {
-    private readonly IUserRepository _users;
-    private readonly IOrganizationsRepository _organizations;
     private readonly CaseManagementDbContext _db;
 
     public UserOrganizationMembershipsQuery(
-        IUserRepository users,
-        IOrganizationsRepository organizations,
         CaseManagementDbContext db)
     {
-        _users = users;
-        _organizations = organizations;
         _db = db;
     }
 
@@ -31,15 +25,11 @@ public sealed class UserOrganizationMembershipsQuery : IUserOrganizationMembersh
 
     public async Task<bool> IsUserMemberOfAsync(Guid userId, Guid organizationId, CancellationToken cancellationToken = default)
     {
-        var membership = await _organizations.CheckUserMembership(
-            userId, 
-            organizationId, 
-            cancellationToken);
-            
-        if (membership is null)
-            return false;
-
-        return true;
+        return await _db.OrganizationMemberships
+            .AsNoTracking()
+            .AnyAsync(
+                m => m.UserId == userId && m.OrganizationId == organizationId,
+                cancellationToken);
     }
 
     public async Task<IReadOnlyList<UserOrganizationSummaryDto>> ListForUserAsync(

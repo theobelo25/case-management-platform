@@ -1,15 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import type { MeResponseDto } from '@app/core/auth/auth-api.service';
 import { authUserDisplayName } from '@app/core/auth/parse-access-token-session';
 import { AuthService } from '@app/core/auth/auth.service';
+import { InAppNotificationsService } from '@app/core/realtime/in-app-notifications.service';
 import { ProtectedLayoutService } from '../../protected-layout.service';
 import { filter, finalize, fromEvent } from 'rxjs';
 
 @Component({
   selector: 'app-protected-header',
-  standalone: true,
   imports: [RouterLink],
   templateUrl: './protected-header.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,9 +20,12 @@ import { filter, finalize, fromEvent } from 'rxjs';
 export class ProtectedHeaderComponent {
   protected readonly auth = inject(AuthService);
   protected readonly layout = inject(ProtectedLayoutService);
+  protected readonly inAppNotifications = inject(InAppNotificationsService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly userMenuOpen = signal(false);
+  protected readonly notificationsOpen = signal(false);
   protected readonly orgSwitchPending = signal(false);
   protected readonly orgSwitchError = signal<string | null>(null);
 
@@ -112,22 +115,48 @@ export class ProtectedHeaderComponent {
 
   constructor() {
     fromEvent(document, 'click')
-      .pipe(
-        filter(() => this.userMenuOpen()),
-        takeUntilDestroyed(),
-      )
-      .subscribe(() => this.userMenuOpen.set(false));
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        if (this.userMenuOpen()) {
+          this.userMenuOpen.set(false);
+        }
+        if (this.notificationsOpen()) {
+          this.notificationsOpen.set(false);
+        }
+      });
 
     fromEvent<KeyboardEvent>(document, 'keydown')
       .pipe(
-        filter((e) => e.key === 'Escape' && this.userMenuOpen()),
+        filter((e) => e.key === 'Escape' && (this.userMenuOpen() || this.notificationsOpen())),
         takeUntilDestroyed(),
       )
-      .subscribe(() => this.userMenuOpen.set(false));
+      .subscribe(() => {
+        this.userMenuOpen.set(false);
+        this.notificationsOpen.set(false);
+      });
+  }
+
+  protected toggleNotifications(event: MouseEvent): void {
+    event.stopPropagation();
+    this.userMenuOpen.set(false);
+    this.notificationsOpen.update((open) => {
+      const next = !open;
+      if (next) {
+        this.inAppNotifications.markAllRead();
+      }
+      return next;
+    });
+  }
+
+  protected dismissNotification(event: MouseEvent, id: string): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.inAppNotifications.dismiss(id);
   }
 
   protected toggleUserMenu(event: MouseEvent): void {
     event.stopPropagation();
+    this.notificationsOpen.set(false);
     this.userMenuOpen.update((open) => !open);
   }
 
@@ -137,9 +166,14 @@ export class ProtectedHeaderComponent {
 
   protected logout(): void {
     this.userMenuOpen.set(false);
-    this.auth.signOut().subscribe({
-      complete: () => void this.router.navigateByUrl('/auth/sign-in'),
-    });
+    this.notificationsOpen.set(false);
+    this.inAppNotifications.clearAll();
+    this.auth
+      .signOut()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        complete: () => void this.router.navigateByUrl('/auth/sign-in'),
+      });
   }
 
   protected onOrganizationChange(event: Event): void {
@@ -167,6 +201,7 @@ export class ProtectedHeaderComponent {
     this.auth
       .switchActiveOrganization(canonicalNext)
       .pipe(
+        takeUntilDestroyed(this.destroyRef),
         finalize(() => {
           this.orgSwitchPending.set(false);
           this.orgSelectionOverride.set(null);
@@ -180,3 +215,4 @@ export class ProtectedHeaderComponent {
       });
   }
 }
+

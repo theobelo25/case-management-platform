@@ -3,7 +3,6 @@ import { CasePriority, CaseSortOption, CaseStatus } from '../../models/cases.typ
 
 @Component({
   selector: 'app-case-filters',
-  standalone: true,
   templateUrl: './case-filters.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -12,11 +11,13 @@ export class CaseFiltersComponent {
   readonly selectedStatus = input.required<'All' | CaseStatus>();
   readonly selectedPriority = input.required<'All' | CasePriority>();
   readonly sortBy = input.required<CaseSortOption>();
+  readonly overdueOnly = input(false);
 
   protected readonly searchTermChange = output<string>();
   protected readonly selectedStatusChange = output<'All' | CaseStatus>();
   protected readonly selectedPriorityChange = output<'All' | CasePriority>();
   protected readonly sortByChange = output<CaseSortOption>();
+  protected readonly overdueOnlyChange = output<boolean>();
 
   protected onSearchChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
@@ -37,4 +38,10 @@ export class CaseFiltersComponent {
     const value = (event.target as HTMLSelectElement).value as CaseSortOption;
     this.sortByChange.emit(value);
   }
+
+  protected onOverdueOnlyChange(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.overdueOnlyChange.emit(checked);
+  }
 }
+

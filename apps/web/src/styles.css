@@ -11,6 +11,34 @@
 
 @layer base {
   /*
+   * Chart.js reads these via `getComputedStyle` (see `shared/charts/chart-theme.ts`).
+   * Canvas cannot use Tailwind classes; keep tokens aligned with protected shell (slate / gray).
+   */
+  :root {
+    --chart-font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+      'Segoe UI Symbol', 'Noto Color Emoji';
+    --chart-text: rgb(31 41 55);
+    --chart-text-muted: rgb(75 85 99);
+    --chart-grid: rgb(226 232 240 / 0.9);
+    --chart-border: rgb(226 232 240);
+    --chart-tooltip-bg: rgb(255 255 255);
+    --chart-tooltip-text: rgb(17 24 39);
+    --chart-tooltip-border: rgb(226 232 240);
+    --chart-series-1-border: rgb(37 99 235);
+    --chart-series-1-fill: rgb(37 99 235 / 0.12);
+    --chart-series-2-border: rgb(124 58 237);
+    --chart-series-2-fill: rgb(124 58 237 / 0.12);
+    --chart-series-3-border: rgb(5 150 105);
+    --chart-series-3-fill: rgb(5 150 105 / 0.12);
+    --chart-series-4-border: rgb(217 119 6);
+    --chart-series-4-fill: rgb(217 119 6 / 0.14);
+    --chart-series-5-border: rgb(219 39 119);
+    --chart-series-5-fill: rgb(219 39 119 / 0.12);
+    --chart-series-6-border: rgb(79 70 229);
+    --chart-series-6-fill: rgb(79 70 229 / 0.12);
+  }
+
+  /*
    * Match html background to each shell so any scrollbar gutter/track doesn’t read as a bright strip.
    */
   html {
@@ -20,19 +48,16 @@
     scrollbar-color: rgb(148 163 184) rgb(248 250 252);
   }
 
-  html.auth-layout-active,
-  html.protected-layout-active {
-    /* Match protected shell base so no bright strip at the viewport edge beside the app. */
+  html.auth-layout-active {
+    /* Auth (sign-in / sign-up): dark shell; match scrollbar track to host gradient. */
     background-color: #111827;
     scrollbar-color: rgb(71 85 105) rgb(15 23 42);
   }
 
-  /*
-   * Protected app scrolls inside <main>; suppress the document scrollbar to avoid double bars.
-   * Do not use scrollbar-gutter: stable on html here — combined with overflow:hidden it can leave
-   * an extra strip at the viewport edge (beside <main>’s scrollbar) that won’t match the shell.
-   */
   html.protected-layout-active {
+    /* Match public marketing shell (slate-50) so the signed-in app feels like the same product. */
+    background-color: rgb(248 250 252);
+    scrollbar-color: rgb(148 163 184) rgb(248 250 252);
     overflow: hidden;
     scrollbar-gutter: auto;
   }
@@ -42,8 +67,7 @@
     margin: 0;
     min-height: 100%;
     height: 100%;
-    /* Solid edge match for any sub-pixel gap; routed layout paints the gradient on top. */
-    background-color: #111827;
+    background-color: rgb(248 250 252);
   }
 
   html.protected-layout-active app-root {
@@ -51,12 +75,11 @@
   }
 }
 
-/* Scroll regions on dark UIs — track blends with shell so the gutter isn’t a flat “bar”. */
+/* Scroll regions — track blends with shell so the gutter isn’t a flat “bar”. */
 @layer utilities {
   /* Reserve vertical scrollbar width so content doesn’t shift when scrollability toggles (e.g. manage org page). */
   .scrollbar-chrome-dark {
     scrollbar-gutter: stable;
-    /* Firefox: thumb, then track — track matches shell base so it doesn’t read as a separate strip. */
     scrollbar-color: rgb(100 116 139 / 0.55) #111827;
   }
 
@@ -78,6 +101,30 @@
   .scrollbar-chrome-dark::-webkit-scrollbar-thumb:hover {
     background-color: rgb(148 163 184 / 0.45);
   }
+
+  .scrollbar-chrome-light {
+    scrollbar-gutter: stable;
+    scrollbar-color: rgb(148 163 184) rgb(248 250 252);
+  }
+
+  .scrollbar-chrome-light::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .scrollbar-chrome-light::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-chrome-light::-webkit-scrollbar-thumb {
+    background-color: rgb(148 163 184 / 0.55);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .scrollbar-chrome-light::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(100 116 139 / 0.65);
+  }
 }
 
 /* Shared with app-public-header, app-public-footer, and routed pages — shell content width */
@@ -85,13 +132,14 @@
   /*
    * Same painted background as app-protected-layout host so <main> (scroll + gutter)
    * doesn’t show a different tone or “blue bar” at the right edge.
+   * Aligned with public layout: slate-50 base + soft brand tint (same family as landing hero).
    */
   .protected-shell-bg {
-    background-color: #0f172a;
+    background-color: rgb(248 250 252);
     background-image:
-      radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 28%),
-      radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.12), transparent 26%),
-      linear-gradient(180deg, #0f172a 0%, #111827 100%);
+      radial-gradient(circle at top left, rgba(59, 130, 246, 0.07), transparent 30%),
+      radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.05), transparent 28%),
+      linear-gradient(180deg, rgb(248 250 252) 0%, rgb(241 245 249) 100%);
   }
 
   .layout-container {

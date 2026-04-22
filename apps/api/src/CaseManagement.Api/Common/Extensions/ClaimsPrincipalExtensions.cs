@@ -1,6 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
+namespace CaseManagement.Api.Extensions;
+
 public static class ClaimsPrincipalExtensions
 {
     public static Guid? GetUserIdOrNull(this ClaimsPrincipal? user)

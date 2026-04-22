@@ -1,12 +1,15 @@
 using CaseManagement.Application.Exceptions;
-using CaseManagement.Application.Ports;
+using CaseManagement.Application.Auth.Ports;
+using CaseManagement.Application.Common.Ports;
+using CaseManagement.Application.Organizations.Ports;
 using CaseManagement.Domain.Entities;
 
 namespace CaseManagement.Application.Organizations;
 
 public sealed class CreateOrganizationService(
     IUserRepository users,
-    IOrganizationsRepository organizations,
+    IOrganizationManagementRepository organizations,
+    IOrganizationMembershipRepository organizationMemberships,
     IUnitOfWork unitOfWork
 ) : ICreateOrganizationService
 {
@@ -21,7 +24,7 @@ public sealed class CreateOrganizationService(
             var orgName = !string.IsNullOrWhiteSpace(name) ? name : $"{user.FirstName}'s Organization";
 
             var organization = await organizations.Create(orgName, cancellationToken);
-            await organizations.IssueMembership(
+            await organizationMemberships.IssueMembership(
                 userId,
                 organization.Id,
                 OrganizationRole.Owner,

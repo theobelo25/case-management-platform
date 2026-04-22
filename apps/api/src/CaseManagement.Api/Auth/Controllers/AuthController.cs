@@ -1,9 +1,10 @@
 using CaseManagement.Api.Auth;
 using CaseManagement.Api.Auth.Contracts;
+using CaseManagement.Api.Extensions;
 using CaseManagement.Api.Organizations.Contracts;
 using CaseManagement.Application.Auth;
 using CaseManagement.Application.Exceptions;
-using CaseManagement.Application.Ports;
+using CaseManagement.Application.Auth.Ports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -21,6 +22,8 @@ public sealed class AuthController(
     [AllowAnonymous]
     [EnableRateLimiting("auth")]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<AuthResponse>> RegisterAsync(
         [FromBody] RegisterRequest request,
         CancellationToken cancellationToken = default)
@@ -42,6 +45,8 @@ public sealed class AuthController(
     [AllowAnonymous]
     [EnableRateLimiting("auth")]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<AuthResponse>> LoginAsync(
         [FromBody] LoginRequest request,
         CancellationToken cancellationToken = default)
@@ -58,7 +63,8 @@ public sealed class AuthController(
     [HttpPost("refresh")]
     [AllowAnonymous]
     [EnableRateLimiting("auth")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<AuthResponse>> RefreshAsync(CancellationToken cancellationToken = default)
     {
         if (!cookieService.TryGetRefreshToken(Request, out var refreshToken)
@@ -90,18 +96,19 @@ public sealed class AuthController(
     }
 
     [HttpPatch("me")]
-    [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> UpdateProfileAsync(
         [FromBody] UpdateProfileRequest request,
         CancellationToken cancellationToken = default)
     {
-        if (User.GetUserIdOrNull() is not Guid userId)
+        if (!this.TryGetUserContext(out var context))
             return Unauthorized();
 
         await userProfile.UpdateProfileAsync(
             new UpdateUserProfileInput(
-                userId,
+                context.UserId,
                 request.FirstName,
                 request.LastName,
                 request.CurrentPassword,
@@ -114,16 +121,16 @@ public sealed class AuthController(
     }
 
     [HttpGet("me")]
-    [Authorize]
     [ProducesResponseType(typeof(CurrentUserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<CurrentUserResponse>> GetProfileAsync(
         CancellationToken cancellationToken = default)
     {
-        if (User.GetUserIdOrNull() is not Guid userId)
+        if (!this.TryGetUserContext(out var context))
             return Unauthorized();
 
         var profile = await userProfile.GetMeAsync(
-            userId,
+            context.UserId,
             cancellationToken);
 
         // User-specific; must not be served from a shared or stale HTTP cache after PATCH /auth/me, etc.

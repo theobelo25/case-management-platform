@@ -1,22 +1,26 @@
 import type { CasePriority, CaseStatus } from './cases.types';
 
 export const CaseStatusCode = {
-  Open: 'OPEN',
-  InProgress: 'IN_PROGRESS',
-  Closed: 'CLOSED',
+  New: 'new',
+  Open: 'open',
+  Pending: 'pending',
+  Resolved: 'resolved',
+  Closed: 'closed',
 } as const;
 export type CaseStatusCode = (typeof CaseStatusCode)[keyof typeof CaseStatusCode];
 
 export const CasePriorityCode = {
-  Low: 'LOW',
-  Medium: 'MEDIUM',
-  High: 'HIGH',
+  Low: 'low',
+  Medium: 'medium',
+  High: 'high',
 } as const;
 export type CasePriorityCode = (typeof CasePriorityCode)[keyof typeof CasePriorityCode];
 
 const STATUS_TO_CODE: Record<CaseStatus, CaseStatusCode> = {
+  New: CaseStatusCode.New,
   Open: CaseStatusCode.Open,
-  'In Progress': CaseStatusCode.InProgress,
+  Pending: CaseStatusCode.Pending,
+  Resolved: CaseStatusCode.Resolved,
   Closed: CaseStatusCode.Closed,
 };
 
@@ -34,14 +38,15 @@ export function statusFromApiCode(code: string): CaseStatus {
   const normalized = code.trim().toUpperCase();
 
   switch (normalized) {
-    case 'OPEN':
     case 'NEW':
+      return 'New';
+    case 'OPEN':
       return 'Open';
-    case 'IN_PROGRESS':
     case 'PENDING':
-      return 'In Progress';
-    case 'CLOSED':
+      return 'Pending';
     case 'RESOLVED':
+      return 'Resolved';
+    case 'CLOSED':
       return 'Closed';
     default:
       return 'Open';

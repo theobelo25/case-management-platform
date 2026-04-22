@@ -2,18 +2,35 @@ import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
+  Injector,
+  computed,
+  DestroyRef,
   Input,
   OnChanges,
+  OnInit,
   SimpleChanges,
   inject,
   signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { CasesService } from '@app/core/cases/cases.service';
+import { AuthService } from '@app/core/auth/auth.service';
+import type { MeResponseDto } from '@app/core/auth/auth-api.service';
+import { OrganizationsApiService, UserMembershipResponseDto } from '@app/core/organizations/organizations-api.service';
 import { CASE_PRIORITIES, CASE_STATUSES, CasePriority, CaseStatus } from '../../models/cases.types';
+import { CaseRequesterSearchComponent } from '../case-requester-search/case-requester-search.component';
 import { oneOfValidator } from '@app/shared/validators/one-of.validator';
-import { finalize } from 'rxjs';
+import {
+  catchError,
+  distinctUntilChanged,
+  filter,
+  finalize,
+  map,
+  of,
+  switchMap,
+} from 'rxjs';
 
 type CaseFormMode = 'create' | 'update';
 
@@ -26,15 +43,18 @@ interface CaseFormInitialValue {
 
 @Component({
   selector: 'app-case-form',
-  standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CaseRequesterSearchComponent],
   templateUrl: './case-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CaseFormComponent implements OnChanges {
+export class CaseFormComponent implements OnChanges, OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly casesService = inject(CasesService);
   private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
+  private readonly organizationsApi = inject(OrganizationsApiService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
 
   @Input() public mode: CaseFormMode = 'create';
   @Input() public initialValue: CaseFormInitialValue | null = null;
@@ -42,10 +62,23 @@ export class CaseFormComponent implements OnChanges {
   protected readonly statusOptions = CASE_STATUSES;
   protected readonly priorityOptions = CASE_PRIORITIES;
   public submitError = signal<string | null>(null);
+  protected readonly requesterMembers = signal<UserMembershipResponseDto[]>([]);
+  protected readonly requesterLoading = signal(false);
+  protected readonly requesterLoadError = signal<string | null>(null);
+
+  /** Active organization members available as requester (same list as org details). */
+  protected readonly requesterSearchHits = computed(() =>
+    this.requesterMembers().map((m) => ({
+      userId: m.id,
+      fullName: m.name,
+      email: m.email,
+    })),
+  );
 
   protected readonly form = this.fb.nonNullable.group({
     title: ['', [Validators.required]],
     description: ['', [Validators.required]],
+    requesterUserId: [''],
     priority: this.fb.nonNullable.control<CasePriority>('Low', [
       Validators.required,
       oneOfValidator(CASE_PRIORITIES, 'invalidPriority'),
@@ -64,6 +97,57 @@ export class CaseFormComponent implements OnChanges {
     }
   }
 
+  ngOnInit(): void {
+    if (this.mode !== 'create') {
+      return;
+    }
+
+    this.auth.refreshUserProfile();
+
+    // `toObservable` must receive an injector when not called from an injection context (e.g. not
+    // in a constructor/field initializer). Otherwise the underlying effect may not run and members
+    // never load.
+    toObservable(this.auth.userProfile, { injector: this.injector })
+      .pipe(
+        filter((p): p is MeResponseDto => p != null),
+        map(() => this.auth.getEffectiveActiveOrganizationId()),
+        distinctUntilChanged(),
+        switchMap((orgId) => {
+          if (!orgId) {
+            this.requesterLoadError.set(
+              'You need to belong to an organization before you can assign a requester.',
+            );
+            this.requesterMembers.set([]);
+            return of(null);
+          }
+
+          this.requesterLoadError.set(null);
+          this.requesterLoading.set(true);
+          return this.organizationsApi.getOrganizationDetails(orgId).pipe(
+            finalize(() => this.requesterLoading.set(false)),
+            catchError(() => {
+              this.requesterLoadError.set(
+                'Could not load organization members for requester selection.',
+              );
+              return of(null);
+            }),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((detail) => {
+        if (!detail) {
+          return;
+        }
+        const members = detail.members.filter((m) => m.isArchived !== true);
+        this.requesterMembers.set(members);
+      });
+  }
+
+  protected onRequesterUserIdChange(userId: string): void {
+    this.form.controls.requesterUserId.setValue(userId);
+  }
+
   protected onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -73,13 +157,21 @@ export class CaseFormComponent implements OnChanges {
     this.isSubmitting.set(true);
     this.submitError.set(null);
 
-    const payload = this.form.getRawValue();
+    const raw = this.form.getRawValue();
     const request$ =
       this.mode === 'update'
-        ? this.casesService.updateCase(payload)
-        : this.casesService.addCase(payload);
+        ? this.casesService.updateCase(raw)
+        : this.casesService.addCase({
+            ...raw,
+            requesterUserId: raw.requesterUserId.trim() !== '' ? raw.requesterUserId.trim() : null,
+          });
 
-    request$.pipe(finalize(() => this.isSubmitting.set(false))).subscribe({
+    request$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isSubmitting.set(false)),
+      )
+      .subscribe({
       next: () => {
         const queryParams = this.mode === 'create' ? { created: '1' } : { updated: '1' };
         void this.router.navigate(['/app', 'cases'], { queryParams });
@@ -132,3 +224,4 @@ export class CaseFormComponent implements OnChanges {
     return this.mode === 'update';
   }
 }
+

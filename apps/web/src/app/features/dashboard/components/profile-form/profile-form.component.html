@@ -1,48 +1,48 @@
 <form class="flex flex-col gap-2.5" [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="grid grid-cols-1 gap-2.5 min-[480px]:grid-cols-2">
     <div class="flex flex-col gap-1">
-      <label class="text-xs font-medium text-slate-300 sm:text-sm" for="firstName">First name</label>
+      <label class="text-xs font-medium text-foreground sm:text-sm" for="firstName">First name</label>
 
       <input
         id="firstName"
         type="text"
         formControlName="firstName"
         autocomplete="given-name"
-        class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+        class="w-full rounded-lg border border-gray-300 bg-white px-2.5 py-2 text-sm text-foreground outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
       />
 
       <div class="mt-0.5 min-h-4.5">
         @if (firstName.touched && firstName.invalid) {
-          <p class="text-xs leading-tight text-red-400 sm:text-sm">Please enter your first name.</p>
+          <p class="text-xs leading-tight text-red-600 sm:text-sm">Please enter your first name.</p>
         }
       </div>
     </div>
 
     <div class="flex flex-col gap-1">
-      <label class="text-xs font-medium text-slate-300 sm:text-sm" for="lastName">Last name</label>
+      <label class="text-xs font-medium text-foreground sm:text-sm" for="lastName">Last name</label>
 
       <input
         id="lastName"
         type="text"
         formControlName="lastName"
         autocomplete="family-name"
-        class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+        class="w-full rounded-lg border border-gray-300 bg-white px-2.5 py-2 text-sm text-foreground outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
       />
 
       <div class="mt-0.5 min-h-4.5">
         @if (lastName.touched && lastName.invalid) {
-          <p class="text-xs leading-tight text-red-400 sm:text-sm">Please enter your last name.</p>
+          <p class="text-xs leading-tight text-red-600 sm:text-sm">Please enter your last name.</p>
         }
       </div>
     </div>
   </div>
 
-  <p class="text-xs text-slate-400 sm:text-sm">
+  <p class="text-xs text-muted-foreground sm:text-sm">
     Leave password fields blank to keep your current password.
   </p>
 
   <div class="flex flex-col gap-1">
-    <label class="text-xs font-medium text-slate-300 sm:text-sm" for="currentPassword"
+    <label class="text-xs font-medium text-foreground sm:text-sm" for="currentPassword"
       >Current password</label
     >
 
@@ -51,12 +51,12 @@
       type="password"
       formControlName="currentPassword"
       autocomplete="current-password"
-      class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+      class="w-full rounded-lg border border-gray-300 bg-white px-2.5 py-2 text-sm text-foreground outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
     />
 
     <div class="mt-0.5 min-h-4.5">
       @if (currentPasswordRequiredForChange) {
-        <p class="text-xs leading-tight text-red-400 sm:text-sm">
+        <p class="text-xs leading-tight text-red-600 sm:text-sm">
           Enter your current password to set a new one.
         </p>
       }
@@ -64,7 +64,7 @@
   </div>
 
   <div class="flex flex-col gap-1">
-    <label class="text-xs font-medium text-slate-300 sm:text-sm" for="newPassword"
+    <label class="text-xs font-medium text-foreground sm:text-sm" for="newPassword"
       >New password</label
     >
 
@@ -73,12 +73,12 @@
       type="password"
       formControlName="newPassword"
       autocomplete="new-password"
-      class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+      class="w-full rounded-lg border border-gray-300 bg-white px-2.5 py-2 text-sm text-foreground outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
     />
 
     <div class="mt-0.5 min-h-4.5">
       @if (newPassword.touched && newPassword.invalid) {
-        <p class="text-xs leading-tight text-red-400 sm:text-sm">
+        <p class="text-xs leading-tight text-red-600 sm:text-sm">
           Use at least 8 characters if you set a new password.
         </p>
       }
@@ -86,7 +86,7 @@
   </div>
 
   <div class="flex flex-col gap-1">
-    <label class="text-xs font-medium text-slate-300 sm:text-sm" for="confirmNewPassword"
+    <label class="text-xs font-medium text-foreground sm:text-sm" for="confirmNewPassword"
       >Confirm new password</label
     >
     <input
@@ -94,26 +94,26 @@
       type="password"
       formControlName="confirmNewPassword"
       autocomplete="new-password"
-      class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+      class="w-full rounded-lg border border-gray-300 bg-white px-2.5 py-2 text-sm text-foreground outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/25"
     />
     <div class="mt-0.5 min-h-9">
       @if (confirmNewPassword.touched && confirmNewPassword.invalid) {
-        <p class="text-xs leading-tight text-red-400 sm:text-sm">
+        <p class="text-xs leading-tight text-red-600 sm:text-sm">
           Please confirm your new password.
         </p>
       }
       @if (passwordsMismatch) {
-        <p class="text-xs leading-tight text-red-400 sm:text-sm">New passwords do not match.</p>
+        <p class="text-xs leading-tight text-red-600 sm:text-sm">New passwords do not match.</p>
       }
     </div>
   </div>
 
   @if (submitError(); as err) {
-    <p class="text-xs leading-tight text-red-400 sm:text-sm" role="alert">{{ err }}</p>
+    <p class="text-xs leading-tight text-red-600 sm:text-sm" role="alert">{{ err }}</p>
   }
 
   <button
-    class="mt-1 w-full rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
+    class="mt-1 w-full rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
     type="submit"
     [disabled]="isSubmitting()"
   >

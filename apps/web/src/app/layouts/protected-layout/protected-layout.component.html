@@ -3,7 +3,7 @@
 >
   @if (layout.mobileNavOpen()) {
     <div
-      class="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-[2px] min-[981px]:hidden"
+      class="fixed inset-0 z-40 bg-slate-900/25 backdrop-blur-[2px] min-[981px]:hidden"
       (click)="layout.closeMobileNav()"
       aria-hidden="true"
     ></div>
@@ -15,7 +15,7 @@
     <app-protected-header />
 
     <main
-      class="protected-shell-bg scrollbar-chrome-dark min-h-0 flex-1 overflow-y-scroll overflow-x-hidden p-6 max-[720px]:p-4"
+      class="protected-shell-bg scrollbar-chrome-light min-h-0 flex-1 overflow-y-scroll overflow-x-hidden p-6 max-[720px]:p-4"
     >
       <router-outlet></router-outlet>
     </main>

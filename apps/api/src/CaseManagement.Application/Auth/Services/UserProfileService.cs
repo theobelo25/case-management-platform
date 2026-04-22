@@ -1,5 +1,7 @@
 using CaseManagement.Application.Exceptions;
-using CaseManagement.Application.Ports;
+using CaseManagement.Application.Auth.Ports;
+using CaseManagement.Application.Common.Ports;
+using CaseManagement.Application.Organizations.Ports;
 
 namespace CaseManagement.Application.Auth;
 
@@ -91,7 +93,7 @@ public sealed class UserProfileService : IUserProfileService
         if (orgId is not null)
         {
             if (orgId.Value == Guid.Empty)
-                throw new BadRequestArgumentException("Organization id cannot be empty.");
+                throw new BadRequestArgumentException("Organization ID cannot be empty.");
 
             var isMember = await _membershipsQuery.IsUserMemberOfAsync(
                 user.Id,

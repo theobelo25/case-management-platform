@@ -1,23 +1,21 @@
-<div
-  class="rounded-3xl border border-slate-400/14 bg-slate-900/72 p-6 shadow-[0_16px_40px_rgba(2,6,23,0.22),inset_0_1px_0_rgba(255,255,255,0.03)]"
->
+<div class="rounded-3xl border border-border bg-card p-6 shadow-sm">
   <div class="flex flex-wrap items-start justify-between gap-4">
     <div>
-      <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-300">
+      <p class="mb-2 mt-0 text-xs font-bold uppercase tracking-[0.14em] text-blue-600">
         Workspace status
       </p>
-      <h2 class="m-0 text-lg font-semibold text-slate-50">Archive or delete this organization</h2>
-      <p class="mb-0 mt-3 max-w-2xl leading-[1.7] text-slate-400">
+      <h2 class="m-0 text-lg font-semibold text-foreground">Archive or delete this organization</h2>
+      <p class="mb-0 mt-3 max-w-2xl leading-[1.7] text-muted-foreground">
         Archiving hides the organization from normal use and can be reversed. Deleting permanently
         removes the organization and cannot be undone.
       </p>
     </div>
   </div>
-  <div class="mt-6 flex flex-wrap gap-3 border-t border-slate-500/20 pt-6">
+  <div class="mt-6 flex flex-wrap gap-3 border-t border-border pt-6">
     @if (showTransferOwnership()) {
       <button
         type="button"
-        class="rounded-xl border border-blue-500/35 bg-blue-500/10 px-4 py-2.5 text-sm font-medium text-blue-100 transition hover:border-blue-400/50 hover:bg-blue-500/[0.14] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400/60 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:border-blue-500/35 disabled:hover:bg-blue-500/10"
+        class="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-medium text-blue-900 transition hover:border-blue-300 hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500/50 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:border-blue-200 disabled:hover:bg-blue-50"
         [disabled]="transferOwnershipDisabled()"
         [attr.title]="
           transferOwnershipDisabled()
@@ -32,7 +30,7 @@
     @if (!isArchived()) {
       <button
         type="button"
-        class="rounded-xl border border-amber-500/35 bg-amber-500/10 px-4 py-2.5 text-sm font-medium text-amber-100 transition hover:border-amber-400/50 hover:bg-amber-500/[0.14] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400/60"
+        class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm font-medium text-amber-900 transition hover:border-amber-300 hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500/50"
         (click)="archiveRequested.emit()"
       >
         Archive organization
@@ -40,7 +38,7 @@
     } @else {
       <button
         type="button"
-        class="rounded-xl border border-emerald-500/35 bg-amber-500/10 px-4 py-2.5 text-sm font-medium text-amber-100 transition hover:border-amber-400/50 hover:bg-amber-500/[0.14] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400/60"
+        class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-medium text-emerald-900 transition hover:border-emerald-300 hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/50"
         (click)="unarchiveRequested.emit()"
       >
         Unarchive organization
@@ -49,7 +47,7 @@
 
     <button
       type="button"
-      class="rounded-xl border border-rose-500/40 bg-rose-950/35 px-4 py-2.5 text-sm font-medium text-rose-100 transition hover:border-rose-400/55 hover:bg-rose-950/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400/60"
+      class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-sm font-medium text-rose-900 transition hover:border-rose-300 hover:bg-rose-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500/50"
       (click)="deleteRequested.emit()"
     >
       Delete organization

@@ -1,4 +1,4 @@
-namespace CaseManagement.Application.Ports;
+namespace CaseManagement.Application.Auth.Ports;
 public sealed record RawRefreshToken(
     string Token, 
     string TokenPrefix, 

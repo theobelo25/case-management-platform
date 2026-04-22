@@ -5,6 +5,7 @@ public sealed record CaseTimelineItemResponse(
     Guid Id,
     DateTimeOffset CreatedAtUtc,
     Guid? AuthorUserId,
+    string? AuthorDisplayName,
     string? Body,
     bool? IsInternal,
     bool? IsInitial,

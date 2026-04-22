@@ -1,7 +1,7 @@
 using CaseManagement.Application.Auth;
 using CaseManagement.Domain.Entities;
 
-namespace CaseManagement.Application.Ports;
+namespace CaseManagement.Application.Auth.Ports;
 
 public interface IUserRegistrationService
 {

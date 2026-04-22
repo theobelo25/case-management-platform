@@ -1,11 +1,10 @@
 using CaseManagement.Application.Exceptions;
 using CaseManagement.Application.Organizations.Ports;
-using CaseManagement.Application.Ports;
 using CaseManagement.Domain.Entities;
 
 namespace CaseManagement.Application.Organizations;
 
-public sealed class OrganizationPolicies(IOrganizationsRepository organizations) : IOrganizationPolicies
+public sealed class OrganizationPolicies(IOrganizationReadRepository organizations) : IOrganizationPolicies
 {
     public async Task EnsureUserCanDelete(
         Guid userId,
@@ -64,6 +63,30 @@ public sealed class OrganizationPolicies(IOrganizationsRepository organizations)
             userId, 
             organizationId, 
             "Must be Owner or Admin to add user.",
+            cancellationToken);
+    }
+
+    public async Task EnsureUserCanManageCases(
+        Guid userId,
+        Guid organizationId,
+        CancellationToken cancellationToken = default)
+    {
+        await IsUserOwnerOrAdmin(
+            userId,
+            organizationId,
+            "Must be Owner or Admin to manage cases.",
+            cancellationToken);
+    }
+
+    public async Task EnsureUserCanConfigureSlaPolicy(
+        Guid userId,
+        Guid organizationId,
+        CancellationToken cancellationToken = default)
+    {
+        await IsUserOwnerOrAdmin(
+            userId,
+            organizationId,
+            "Must be Owner or Admin to configure SLA policy.",
             cancellationToken);
     }
 

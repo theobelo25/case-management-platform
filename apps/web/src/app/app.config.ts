@@ -1,6 +1,7 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 import { routes } from './app.routes';
 import { auth401Interceptor } from './core/auth/auth-401.interceptor';
@@ -16,5 +17,6 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([withCredentialsInterceptor, authInterceptor, auth401Interceptor]),
     ),
     provideAuthSessionRestore(),
+    provideCharts(withDefaultRegisterables()),
   ],
 };

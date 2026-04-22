@@ -1,16 +1,17 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OrganizationsService } from '@app/core/organizations/organizations.service';
 
 @Component({
   selector: 'app-create-organization-form',
-  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './create-organization-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateOrganizationFormComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
   protected readonly organizations = inject(OrganizationsService);
 
   protected readonly form = this.fb.nonNullable.group({
@@ -33,7 +34,10 @@ export class CreateOrganizationFormComponent {
 
     this.showNameErrorAfterSubmit.set(false);
     const { name } = this.form.getRawValue();
-    this.organizations.createOrganization({ name: name.trim() }).subscribe({
+    this.organizations
+      .createOrganization({ name: name.trim() })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: () => {
         this.showNameErrorAfterSubmit.set(false);
         this.form.reset();
@@ -48,3 +52,4 @@ export class CreateOrganizationFormComponent {
     return this.form.controls.name;
   }
 }
+

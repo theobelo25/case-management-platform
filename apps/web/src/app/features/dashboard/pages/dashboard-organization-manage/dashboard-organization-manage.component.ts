@@ -4,9 +4,9 @@ import { OrganizationsListComponent } from '@app/features/organizations/componen
 
 @Component({
   selector: 'app-dashboard-organization-manage',
-  standalone: true,
   imports: [CreateOrganizationFormComponent, OrganizationsListComponent],
   templateUrl: './dashboard-organization-manage.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardOrganizationManageComponent {}
+

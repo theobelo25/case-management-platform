@@ -1,30 +1,30 @@
 <aside
   id="protected-app-sidebar"
   aria-label="Workspace navigation"
-  class="flex min-h-0 flex-col border-b border-slate-400/12 border-r-0 bg-[rgba(2,6,23,0.92)] p-5 backdrop-blur-[18px] max-[980px]:fixed max-[980px]:left-0 max-[980px]:top-0 max-[980px]:z-50 max-[980px]:h-dvh max-[980px]:w-[min(280px,88vw)] max-[980px]:border-b-0 max-[980px]:border-r max-[980px]:shadow-[8px_0_32px_rgba(2,6,23,0.45)] max-[980px]:transition-transform max-[980px]:duration-200 max-[980px]:ease-out min-[981px]:static min-[981px]:h-full min-[981px]:w-[280px] min-[981px]:shrink-0 min-[981px]:border-b-0 min-[981px]:border-r min-[981px]:bg-[rgba(2,6,23,0.45)] min-[981px]:shadow-none"
+  class="flex min-h-0 flex-col border-b border-gray-200 border-r-0 bg-white p-5 shadow-sm max-[980px]:fixed max-[980px]:left-0 max-[980px]:top-0 max-[980px]:z-50 max-[980px]:h-dvh max-[980px]:w-[min(280px,88vw)] max-[980px]:border-b-0 max-[980px]:border-r max-[980px]:shadow-[8px_0_32px_rgba(15,23,42,0.08)] max-[980px]:transition-transform max-[980px]:duration-200 max-[980px]:ease-out min-[981px]:static min-[981px]:h-full min-[981px]:w-[280px] min-[981px]:shrink-0 min-[981px]:border-b-0 min-[981px]:border-r min-[981px]:bg-[rgba(255,255,255,0.85)] min-[981px]:shadow-none"
   [ngClass]="layout.mobileNavOpen() ? 'max-[980px]:translate-x-0' : 'max-[980px]:-translate-x-full'"
 >
   <div class="mb-7">
-    <a routerLink="/" class="inline-flex items-center gap-3 font-bold text-gray-50 no-underline">
+    <a routerLink="/" class="inline-flex items-center gap-3 font-bold text-gray-900 no-underline hover:text-gray-950">
       <span
-        class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 text-[0.95rem] text-white shadow-[0_10px_30px_rgba(59,130,246,0.3)]"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 text-[0.95rem] text-white shadow-[0_10px_30px_rgba(59,130,246,0.25)]"
         >CM</span
       >
       <span class="text-base tracking-[0.01em]">CaseFlow</span>
     </a>
 
-    <p class="mb-1.5 mt-6 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-blue-300">
+    <p class="mb-1.5 mt-6 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-blue-600">
       Workspace
     </p>
-    <h2 class="m-0 text-xl text-slate-50">Demo Organization</h2>
+    <h2 class="m-0 text-xl text-gray-900">Demo Organization</h2>
   </div>
 
   <nav class="grid gap-2">
     <a
       routerLink="/app"
       [routerLinkActiveOptions]="{ exact: true }"
-      routerLinkActive="bg-blue-500/14 border-blue-400/22 text-slate-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
-      class="flex items-center gap-[0.85rem] rounded-2xl border border-transparent px-4 py-[0.9rem] text-slate-300 no-underline transition-all duration-200 hover:bg-white/5 hover:text-slate-50"
+      routerLinkActive="border border-blue-200 bg-blue-50 text-gray-900 shadow-sm"
+      class="flex items-center gap-[0.85rem] rounded-2xl border border-transparent px-4 py-[0.9rem] text-gray-600 no-underline transition-all duration-200 hover:bg-gray-50 hover:text-gray-900"
     >
       <span class="w-[1.2rem] text-center opacity-90">⌂</span>
       <span>Dashboard</span>
@@ -32,35 +32,17 @@
 
     <a
       routerLink="/app/cases"
-      routerLinkActive="bg-blue-500/14 border-blue-400/22 text-slate-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
-      class="flex items-center gap-[0.85rem] rounded-2xl border border-transparent px-4 py-[0.9rem] text-slate-300 no-underline transition-all duration-200 hover:bg-white/5 hover:text-slate-50"
+      routerLinkActive="border border-blue-200 bg-blue-50 text-gray-900 shadow-sm"
+      class="flex items-center gap-[0.85rem] rounded-2xl border border-transparent px-4 py-[0.9rem] text-gray-600 no-underline transition-all duration-200 hover:bg-gray-50 hover:text-gray-900"
     >
       <span class="w-[1.2rem] text-center opacity-90">▣</span>
       <span>Cases</span>
     </a>
 
     <a
-      routerLink="/app/tasks"
-      routerLinkActive="bg-blue-500/14 border-blue-400/22 text-slate-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
-      class="flex items-center gap-[0.85rem] rounded-2xl border border-transparent px-4 py-[0.9rem] text-slate-300 no-underline transition-all duration-200 hover:bg-white/5 hover:text-slate-50"
-    >
-      <span class="w-[1.2rem] text-center opacity-90">✓</span>
-      <span>Tasks</span>
-    </a>
-
-    <a
-      routerLink="/app/calendar"
-      routerLinkActive="bg-blue-500/14 border-blue-400/22 text-slate-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
-      class="flex items-center gap-[0.85rem] rounded-2xl border border-transparent px-4 py-[0.9rem] text-slate-300 no-underline transition-all duration-200 hover:bg-white/5 hover:text-slate-50"
-    >
-      <span class="w-[1.2rem] text-center opacity-90">◫</span>
-      <span>Calendar</span>
-    </a>
-
-    <a
       routerLink="/app/settings"
-      routerLinkActive="bg-blue-500/14 border-blue-400/22 text-slate-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
-      class="flex items-center gap-[0.85rem] rounded-2xl border border-transparent px-4 py-[0.9rem] text-slate-300 no-underline transition-all duration-200 hover:bg-white/5 hover:text-slate-50"
+      routerLinkActive="border border-blue-200 bg-blue-50 text-gray-900 shadow-sm"
+      class="flex items-center gap-[0.85rem] rounded-2xl border border-transparent px-4 py-[0.9rem] text-gray-600 no-underline transition-all duration-200 hover:bg-gray-50 hover:text-gray-900"
     >
       <span class="w-[1.2rem] text-center opacity-90">⚙</span>
       <span>Settings</span>
@@ -68,7 +50,7 @@
 
     <a
       routerLink="/demo"
-      class="mt-1 flex items-center gap-[0.85rem] rounded-2xl border border-transparent px-4 py-[0.9rem] text-slate-300 no-underline transition-all duration-200 hover:bg-white/5 hover:text-slate-50 min-[981px]:hidden"
+      class="mt-1 flex items-center gap-[0.85rem] rounded-2xl border border-transparent px-4 py-[0.9rem] text-gray-600 no-underline transition-all duration-200 hover:bg-gray-50 hover:text-gray-900 min-[981px]:hidden"
     >
       <span class="w-[1.2rem] text-center opacity-90">↗</span>
       <span>View Demo</span>
@@ -77,13 +59,13 @@
 
   <div class="mt-auto hidden pt-6 min-[981px]:block">
     <div
-      class="rounded-[1.25rem] border border-slate-400/14 bg-slate-900/75 p-4 shadow-[0_10px_30px_rgba(2,6,23,0.25),inset_0_1px_0_rgba(255,255,255,0.03)]"
+      class="rounded-[1.25rem] border border-gray-200 bg-slate-50 p-4 shadow-sm"
     >
-      <p class="mb-1.5 mt-0 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-blue-300">
+      <p class="mb-1.5 mt-0 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-blue-600">
         Current plan
       </p>
-      <h3 class="m-0 text-base text-slate-50">Portfolio Demo</h3>
-      <p class="mb-0 mt-2 text-[0.92rem] leading-normal text-slate-300">
+      <h3 class="m-0 text-base text-gray-900">Portfolio Demo</h3>
+      <p class="mb-0 mt-2 text-[0.92rem] leading-normal text-gray-600">
         A clean Angular + .NET case management platform demo.
       </p>
     </div>

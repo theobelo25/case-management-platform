@@ -1,0 +1,73 @@
+### Case Management API — main flows (VS Code REST Client / JetBrains HTTP Client)
+### Base URL — match your API (Docker demo: http://localhost:5202)
+@host = http://localhost:5202
+
+### Health (no auth)
+GET {{host}}/api/health
+Accept: application/json
+
+###
+### --- Register (creates user + personal org; skip if using seeded demo user) ---
+# @name register
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "reviewer@example.local",
+  "password": "ReviewPass1",
+  "confirmPassword": "ReviewPass1",
+  "firstName": "Review",
+  "lastName": "User"
+}
+
+###
+### --- Login (copy accessToken from response, or use variables below) ---
+# @name login
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "demo@example.local",
+  "password": "DemoPass1!"
+}
+
+###
+@accessToken = {{login.response.body.$.accessToken}}
+
+### Current user + organizations
+GET {{host}}/api/auth/me
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+###
+### Create case (uses active org from user profile)
+# @name createCase
+POST {{host}}/api/cases
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "title": "Demo case from HTTP file",
+  "initialMessage": "First message on the case.",
+  "priority": "medium",
+  "requesterUserId": null
+}
+
+###
+@caseId = {{createCase.response.body.$.id}}
+
+### List cases (cursor API)
+GET {{host}}/api/cases?limit=10
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+###
+### Case detail
+GET {{host}}/api/cases/{{caseId}}
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+###
+### Logout (invalidates refresh session; optional when testing with Bearer only)
+POST {{host}}/api/auth/logout
+Authorization: Bearer {{accessToken}}

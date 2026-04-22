@@ -15,5 +15,9 @@ public sealed class OrganizationConfiguration : IEntityTypeConfiguration<Organiz
         builder.Property(e => e.Name)
             .HasMaxLength(128)
             .IsRequired();
+
+        builder.Property(e => e.SlaLowHours).IsRequired();
+        builder.Property(e => e.SlaMediumHours).IsRequired();
+        builder.Property(e => e.SlaHighHours).IsRequired();
     }
 }

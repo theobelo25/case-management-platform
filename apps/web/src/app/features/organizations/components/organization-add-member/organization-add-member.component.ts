@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
   input,
   output,
@@ -23,12 +24,12 @@ import {
 
 @Component({
   selector: 'app-organization-add-member',
-  standalone: true,
   templateUrl: './organization-add-member.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrganizationAddMemberComponent {
   private readonly usersApi = inject(UsersApiService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly existingMemberIds = input.required<string[]>();
   readonly isSubmitting = input(false);
@@ -116,7 +117,10 @@ export class OrganizationAddMemberComponent {
     this.searchError.set(null);
     this.usersApi
       .searchUsers(q, cursor)
-      .pipe(finalize(() => this.loadMoreLoading.set(false)))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.loadMoreLoading.set(false)),
+      )
       .subscribe({
         next: (page) => {
           const existingIds = new Set(this.results().map((u) => u.userId));
@@ -156,3 +160,4 @@ function messageFromSearchHttp(err: unknown): string {
   }
   return 'Search failed.';
 }
+

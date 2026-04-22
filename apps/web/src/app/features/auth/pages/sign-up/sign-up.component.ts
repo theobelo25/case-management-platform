@@ -4,9 +4,9 @@ import { SignUpFormComponent } from '../../components/sign-up-form/sign-up-form.
 
 @Component({
   selector: 'app-sign-up',
-  standalone: true,
   imports: [RouterLink, SignUpFormComponent],
   templateUrl: './sign-up.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignUpComponent {}
+
