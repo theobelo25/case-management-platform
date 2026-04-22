@@ -1,0 +1,23 @@
+<section id="about" class="landing-section-y bg-white">
+  <div class="layout-container">
+    <div class="mb-8 max-w-180">
+      <p class="landing-eyebrow">About this project</p>
+      <h2 class="landing-section-h2">An enterprise-style portfolio build</h2>
+      <p class="m-0 leading-relaxed text-gray-600">
+        This case management platform is intentionally built as a realistic full-stack portfolio
+        piece. It demonstrates how product thinking, maintainable architecture, and polished UI can
+        come together in a modern business application.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-5 min-[901px]:grid-cols-2">
+      @for (highlight of highlights; track highlight) {
+        <article
+          class="rounded-[1.25rem] border border-gray-200 bg-slate-50 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.04)]"
+        >
+          <p class="m-0 leading-relaxed text-gray-700">{{ highlight }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
