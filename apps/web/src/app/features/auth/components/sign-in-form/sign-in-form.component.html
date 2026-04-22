@@ -1,13 +1,13 @@
 <form class="flex flex-col gap-2.5" [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="flex flex-col gap-1">
-    <label class="text-xs font-medium text-slate-300 sm:text-sm" for="email">Email</label>
+    <label class="text-xs font-medium text-gray-700 sm:text-sm" for="email">Email</label>
 
     <input
       id="email"
       type="email"
       formControlName="email"
       autocomplete="username"
-      class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+      class="w-full rounded-lg border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
     />
 
     <div class="mt-0.5 min-h-4.5">
@@ -20,13 +20,13 @@
   </div>
 
   <div class="flex flex-col gap-1">
-    <label class="text-xs font-medium text-slate-300 sm:text-sm" for="password">Password</label>
+    <label class="text-xs font-medium text-gray-700 sm:text-sm" for="password">Password</label>
 
     <input
       id="password"
       type="password"
       formControlName="password"
-      class="w-full rounded-lg border border-slate-500/30 bg-slate-950/50 px-2.5 py-2 text-sm text-slate-100 outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/50"
+      class="w-full rounded-lg border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
     />
 
     <div class="mt-0.5 min-h-4.5">
@@ -36,11 +36,11 @@
     </div>
   </div>
 
-  <label class="flex cursor-pointer items-center gap-2 text-xs text-slate-300 sm:text-sm">
+  <label class="flex cursor-pointer items-center gap-2 text-xs text-gray-600 sm:text-sm">
     <input
       type="checkbox"
       formControlName="rememberMe"
-      class="size-4 rounded border-slate-500/50 bg-slate-950/50 text-blue-600 focus:ring-blue-500/50"
+      class="size-4 rounded border-gray-300 bg-white text-blue-600 focus:ring-blue-200"
     />
 
     <span>Remember my email on this device</span>

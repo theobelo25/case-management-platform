@@ -49,9 +49,9 @@
   }
 
   html.auth-layout-active {
-    /* Auth (sign-in / sign-up): dark shell; match scrollbar track to host gradient. */
-    background-color: #111827;
-    scrollbar-color: rgb(71 85 105) rgb(15 23 42);
+    /* Auth layout shares the same light shell as the app/public surfaces. */
+    background-color: rgb(248 250 252);
+    scrollbar-color: rgb(148 163 184) rgb(248 250 252);
   }
 
   html.protected-layout-active {

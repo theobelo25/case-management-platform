@@ -12,8 +12,7 @@ const AUTH_LAYOUT_HTML_CLASS = 'auth-layout-active';
   templateUrl: './auth-layout.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class:
-      'block min-h-dvh text-gray-200 [background:radial-gradient(circle_at_top_left,rgba(59,130,246,0.18),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(99,102,241,0.16),transparent_28%),linear-gradient(180deg,#0f172a_0%,#111827_100%)]',
+    class: 'protected-shell-bg block min-h-dvh text-gray-800',
   },
 })
 export class AuthLayoutComponent {
